@@ -20,9 +20,13 @@ const SafeButton = Button || ((props: any) => (
     </button>
 ));
 
-const SafeForms = Forms || {
-    FormTitle: (props: any) => <h2 style={{ color: "var(--header-primary)", marginBottom: "16px", fontSize: "20px", fontWeight: "600" }} {...props}>{props.children}</h2>,
-    FormText: (props: any) => <div style={{ color: "var(--text-normal)", marginBottom: "8px" }} {...props}>{props.children}</div>
+const SafeFormTitle = Forms?.FormTitle || ((props: any) => <h2 style={{ color: "var(--header-primary)", marginBottom: "16px", fontSize: "20px", fontWeight: "600" }} {...props}>{props.children}</h2>);
+const SafeFormText = Forms?.FormText || ((props: any) => <div style={{ color: "var(--text-normal)", marginBottom: "8px" }} {...props}>{props.children}</div>);
+
+// SafeForms object to encapsulate safe form components
+const SafeForms = {
+    FormTitle: SafeFormTitle,
+    FormText: SafeFormText
 };
 
 import { useAiFunSettings } from "./index"; // Corrected import for the hook
@@ -196,11 +200,11 @@ export function AiFunSettingsPanel() {
 
     return (
         <div>
-            <SafeForms.FormTitle>
+            <SafeFormTitle>
                 AI Provider Configuration
-            </SafeForms.FormTitle>
+            </SafeFormTitle>
 
-            <SafeForms.FormText>OpenAI API Key</SafeForms.FormText>
+            <SafeFormText>OpenAI API Key</SafeFormText>
             <SafeTextInput
                 value={currentSettings.openaiApiKey}
                 onChange={(val: string) => (currentSettings.openaiApiKey = val)}
@@ -208,7 +212,7 @@ export function AiFunSettingsPanel() {
                 placeholder="Enter your OpenAI API key"
             />
 
-            <SafeForms.FormText>Google Gemini API Key</SafeForms.FormText>
+            <SafeFormText>Google Gemini API Key</SafeFormText>
             <SafeTextInput
                 value={currentSettings.geminiApiKey}
                 onChange={(val: string) => (currentSettings.geminiApiKey = val)}
@@ -216,7 +220,7 @@ export function AiFunSettingsPanel() {
                 placeholder="Enter your Gemini API key"
             />
 
-            <SafeForms.FormText>Anthropic Claude API Key</SafeForms.FormText>
+            <SafeFormText>Anthropic Claude API Key</SafeFormText>
             <SafeTextInput
                 value={currentSettings.claudeApiKey}
                 onChange={(val: string) => (currentSettings.claudeApiKey = val)}
@@ -224,7 +228,7 @@ export function AiFunSettingsPanel() {
                 placeholder="Enter your Claude API key"
             />
 
-            <SafeForms.FormText>Cohere API Key</SafeForms.FormText>
+            <SafeFormText>Cohere API Key</SafeFormText>
             <SafeTextInput
                 value={currentSettings.cohereApiKey}
                 onChange={(val: string) => (currentSettings.cohereApiKey = val)}
@@ -232,7 +236,7 @@ export function AiFunSettingsPanel() {
                 placeholder="Enter your Cohere API key"
             />
 
-            <SafeForms.FormText>Select AI Provider</SafeForms.FormText>
+            <SafeFormText>Select AI Provider</SafeFormText>
             <SafeSearchableSelect
                 options={providerOptions}
                 onChange={(val: any) => {
@@ -258,7 +262,7 @@ export function AiFunSettingsPanel() {
                 maxVisibleItems={5}
                 closeOnSelect={true}
             />
-            <SafeForms.FormText>AI Model</SafeForms.FormText>
+            <SafeFormText>AI Model</SafeFormText>
             <SafeSearchableSelect
                 options={modelOptions}
                 onChange={(val: any) =>
@@ -274,10 +278,10 @@ export function AiFunSettingsPanel() {
                 closeOnSelect={true}
             />
 
-            <SafeForms.FormTitle>Model Parameters</SafeForms.FormTitle>
-            <SafeForms.FormText>
+            <SafeFormTitle>Model Parameters</SafeFormTitle>
+            <SafeFormText>
                 Temperature (0-2): {currentSettings.temperature ?? 0.7}
-            </SafeForms.FormText>
+            </SafeFormText>
             <SafeTextInput
                 value={currentSettings.temperature?.toString() || "0.7"}
                 onChange={(val: string) =>
