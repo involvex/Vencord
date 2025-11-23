@@ -109,7 +109,7 @@ export function PluginCard({
             infoButton={
                 <button
                     role="switch"
-                    aria-checked={isEnabled()}
+                    aria-checked={isEnabled() ? "true" : "false"}
                     onClick={() => openPluginModal(plugin, onRestartNeeded)}
                     className={cl("info-button")}
                 >

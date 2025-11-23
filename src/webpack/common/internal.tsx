@@ -12,7 +12,7 @@ const logger = new Logger("Webpack");
 
 export function waitForComponent<
     T extends React.ComponentType<any> = React.ComponentType<any> &
-        Record<string, any>,
+    Record<string, any> & { contextType?: any; },
 >(name: string, filter: FilterFn | string | string[]) {
     if (IS_REPORTER)
         lazyWebpackSearchHistory.push([

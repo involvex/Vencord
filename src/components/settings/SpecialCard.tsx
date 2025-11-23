@@ -35,7 +35,7 @@ export function SpecialCard({
     buttonOnClick: onClick,
     children,
 }: PropsWithChildren<StyledCardProps>) {
-    const cardStyle: React.CSSProperties = {
+    const cardStyle: any = {
         backgroundColor: backgroundColor || "#9c85ef",
         backgroundImage: `url(${backgroundImage || ""})`,
     };

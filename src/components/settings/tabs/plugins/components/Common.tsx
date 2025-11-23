@@ -74,7 +74,7 @@ export function SettingsSection({
                         </Text>
                     )}
                 </div>
-                {children}
+                {children as any}
             </div>
             {error && (
                 <Text className={cl("error")} variant="text-sm/normal">

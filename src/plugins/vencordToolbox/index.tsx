@@ -23,7 +23,7 @@ const HeaderBarIcon = findComponentByCodeLazy(
 function VencordPopout(onClose: () => void) {
     const { useQuickCss } = useSettings(["useQuickCss"]);
 
-    const pluginEntries = [] as ReactNode[];
+    const pluginEntries: ReactNode[] = [];
 
     for (const plugin of Object.values(Vencord.Plugins.plugins)) {
         if (
@@ -54,27 +54,34 @@ function VencordPopout(onClose: () => void) {
         }
     }
 
+    const menuChildren = [
+        <Menu.MenuItem
+            id="vc-toolbox-notifications"
+            key="vc-toolbox-notifications"
+            label="Open Notification Log"
+            action={openNotificationLogModal}
+        />,
+        <Menu.MenuCheckboxItem
+            id="vc-toolbox-quickcss-toggle"
+            key="vc-toolbox-quickcss-toggle"
+            checked={useQuickCss}
+            label={"Enable QuickCSS"}
+            action={() => {
+                Settings.useQuickCss = !useQuickCss;
+            }}
+        />,
+        <Menu.MenuItem
+            id="vc-toolbox-quickcss"
+            key="vc-toolbox-quickcss"
+            label="Open QuickCSS"
+            action={() => VencordNative.quickCss.openEditor()}
+        />,
+        ...pluginEntries
+    ];
+
     return (
         <Menu.Menu navId="vc-toolbox" onClose={onClose}>
-            <Menu.MenuItem
-                id="vc-toolbox-notifications"
-                label="Open Notification Log"
-                action={openNotificationLogModal}
-            />
-            <Menu.MenuCheckboxItem
-                id="vc-toolbox-quickcss-toggle"
-                checked={useQuickCss}
-                label={"Enable QuickCSS"}
-                action={() => {
-                    Settings.useQuickCss = !useQuickCss;
-                }}
-            />
-            <Menu.MenuItem
-                id="vc-toolbox-quickcss"
-                label="Open QuickCSS"
-                action={() => VencordNative.quickCss.openEditor()}
-            />
-            {...pluginEntries}
+            {menuChildren}
         </Menu.Menu>
     );
 }
@@ -99,7 +106,7 @@ function VencordPopoutIcon(isShown: boolean) {
     );
 }
 
-function VencordPopoutButton({ buttonClass }: { buttonClass: string }) {
+function VencordPopoutButton({ buttonClass }: { buttonClass: string; }) {
     const buttonRef = useRef(null);
     const [show, setShow] = useState(false);
 
@@ -146,7 +153,7 @@ export default definePlugin({
     TrailingWrapper({
         children,
         className,
-    }: PropsWithChildren<{ className: string }>) {
+    }: PropsWithChildren<{ className: string; }>) {
         return (
             <>
                 {children}

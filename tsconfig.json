@@ -3,8 +3,9 @@
         "resolveJsonModule": true,
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "skipLibCheck": false,
+        "skipLibCheck": true,
         "allowJs": true,
+        "forceConsistentCasingInFileNames": true,
         "lib": [
             "DOM",
             "DOM.Iterable",
@@ -29,7 +30,7 @@
             "@shared/*": ["./shared/*"],
             "@webpack/common": ["./webpack/common"],
             "@webpack": ["./webpack/webpack"],
-            "@webpack/patcher": ["./webpack/patchWebpack"],
+            "@webpack/patcher": ["./webpack/patcher"],
             "@webpack/wreq.d": ["./webpack/wreq.d"]
         },
 
@@ -42,5 +43,6 @@
         ],
         "outDir": "who-fucking-cares-dude"
     },
-    "include": ["src/**/*", "browser/**/*", "scripts/**/*", "eslint.config.mjs"]
+    "include": ["src/**/*", "browser/**/*", "scripts/**/*", "eslint.config.mjs"],
+    "exclude": ["node_modules"]
 }

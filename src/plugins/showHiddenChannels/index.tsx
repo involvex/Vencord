@@ -656,7 +656,7 @@ export default definePlugin({
                 height="18"
                 width="20"
                 viewBox="0 0 24 24"
-                aria-hidden={true}
+                aria-hidden="true"
                 role="img"
             >
                 <path
@@ -683,7 +683,7 @@ export default definePlugin({
                         width="24"
                         height="24"
                         viewBox="0 0 24 24"
-                        aria-hidden={true}
+                        aria-hidden="true"
                         role="img"
                     >
                         <path

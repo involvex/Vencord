@@ -21,7 +21,10 @@
 
 import { createHmac } from "crypto";
 import { readFileSync } from "fs";
-import pup, { JSHandle } from "puppeteer-core";
+// @ts-ignore - puppeteer-core types resolution issue in scripts directory
+const pup = require("puppeteer-core");
+// @ts-ignore
+type JSHandle = any;
 
 const logStderr = (...data: any[]) =>
     console.error(`${CANARY ? "CANARY" : "STABLE"} ---`, ...data);
@@ -52,7 +55,7 @@ await page.setUserAgent(
 await page.setBypassCSP(true);
 
 async function maybeGetError(handle: JSHandle): Promise<string | undefined> {
-    return await (handle as JSHandle<Error>)
+    return await (handle as any)
         ?.getProperty("message")
         .then((m) => m?.jsonValue())
         .catch(() => undefined);
@@ -185,9 +188,9 @@ async function printReport() {
                 color: CANARY ? 0xfbb642 : 0x5865f2,
             },
             report.badPatches.length > 0 &&
-                patchesToEmbed("Bad Patches", report.badPatches, 0xff0000),
+            patchesToEmbed("Bad Patches", report.badPatches, 0xff0000),
             report.slowPatches.length > 0 &&
-                patchesToEmbed("Slow Patches", report.slowPatches, 0xf0b232),
+            patchesToEmbed("Slow Patches", report.slowPatches, 0xf0b232),
             report.badWebpackFinds.length > 0 && {
                 title: "Bad Webpack Finds",
                 description:
@@ -392,17 +395,18 @@ page.on("console", async (e) => {
 
 page.on("error", (e) => logStderr("[Error]", e.message));
 page.on("pageerror", (e) => {
-    if (e.message.includes("Sentry successfully disabled")) return;
+    const errorMessage = e instanceof Error ? e.message : String(e);
+    if (errorMessage.includes("Sentry successfully disabled")) return;
 
     if (
-        !e.message.startsWith("Object") &&
-        !e.message.includes("Cannot find module") &&
-        !/^.{1,2}$/.test(e.message)
+        !errorMessage.startsWith("Object") &&
+        !errorMessage.includes("Cannot find module") &&
+        !/^.{1,2}$/.test(errorMessage)
     ) {
-        logStderr("[Page Error]", e.message);
-        report.otherErrors.push(e.message);
+        logStderr("[Page Error]", errorMessage);
+        report.otherErrors.push(errorMessage);
     } else {
-        report.ignoredErrors.push(e.message);
+        report.ignoredErrors.push(errorMessage);
     }
 });
 

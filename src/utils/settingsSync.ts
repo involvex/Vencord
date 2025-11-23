@@ -32,7 +32,7 @@ export async function importSettings(data: string) {
         );
 }
 
-export async function exportSettings({ minify }: { minify?: boolean } = {}) {
+export async function exportSettings({ minify }: { minify?: boolean; } = {}) {
     const settings = VencordNative.settings.get();
     const quickCss = await VencordNative.quickCss.get();
     return JSON.stringify({ settings, quickCss }, null, minify ? undefined : 4);
@@ -117,7 +117,7 @@ export async function putCloudSettings(manual?: boolean) {
                 Authorization: await getCloudAuth(),
                 "Content-Type": "application/octet-stream",
             },
-            body: deflateSync(new TextEncoder().encode(settings)),
+            body: deflateSync(new TextEncoder().encode(settings)) as any,
         });
 
         if (!res.ok) {

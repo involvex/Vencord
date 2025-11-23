@@ -32,7 +32,6 @@ import {
     Constants,
     FluxDispatcher,
     Forms,
-    lodash,
     Menu,
     MessageActions,
     PermissionsBits,
@@ -165,7 +164,7 @@ function sendAudio(blob: Blob, meta: AudioMetadata) {
                 ],
                 message_reference: reply
                     ? MessageActions.getSendMessageOptionsForReply(reply)
-                          ?.messageReference
+                        ?.messageReference
                     : null,
             },
         });
@@ -187,7 +186,7 @@ function useObjectUrl() {
     return [url, setWithFree] as const;
 }
 
-function Modal({ modalProps }: { modalProps: ModalProps }) {
+function Modal({ modalProps }: { modalProps: ModalProps; }) {
     const [isRecording, setRecording] = useState(false);
     const [blob, setBlob] = useState<Blob>();
     const [blobUrl, setBlobUrl] = useObjectUrl();
@@ -210,13 +209,11 @@ function Modal({ modalProps }: { modalProps: ModalProps }) {
             const channelData = audioBuffer.getChannelData(0);
 
             // average the samples into much lower resolution bins, maximum of 256 total bins
-            const bins = new Uint8Array(
-                lodash.clamp(
-                    Math.floor(audioBuffer.duration * 10),
-                    Math.min(32, channelData.length),
-                    256,
-                ),
+            const clampedSize = Math.max(
+                Math.min(32, channelData.length),
+                Math.min(256, Math.floor(audioBuffer.duration * 10)),
             );
+            const bins = new Uint8Array(clampedSize);
             const samplesPerBin = Math.floor(channelData.length / bins.length);
 
             // Get root mean square of each bin

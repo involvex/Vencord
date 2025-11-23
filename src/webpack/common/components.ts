@@ -32,11 +32,11 @@ export const Button = ButtonCompat;
 /** @deprecated Use FormSwitch from Vencord */
 export const Switch = FormSwitchCompat as never;
 
-export const Card = waitForComponent<t.Card>(
+export const Card = waitForComponent<any>(
     "Card",
     filters.componentByCode(".editable),", ".outline:"),
 );
-export const Checkbox = waitForComponent<t.Checkbox>(
+export const Checkbox = waitForComponent<any>(
     "Checkbox",
     filters.componentByCode(".checkboxWrapperDisabled:"),
 );
@@ -44,39 +44,36 @@ export const Checkbox = waitForComponent<t.Checkbox>(
 const Tooltips = mapMangledModuleLazy(".tooltipTop,bottom:", {
     Tooltip: filters.componentByCode("this.renderTooltip()]"),
     TooltipContainer: filters.componentByCode('="div"'),
-}) as {
-    Tooltip: t.Tooltip;
-    TooltipContainer: t.TooltipContainer;
-};
+}) as any;
 
-export const Tooltip = LazyComponent(() => Tooltips.Tooltip);
-export const TooltipContainer = LazyComponent(() => Tooltips.TooltipContainer);
+export const Tooltip = LazyComponent(() => (Tooltips as any).Tooltip);
+export const TooltipContainer = LazyComponent(() => (Tooltips as any).TooltipContainer);
 
-export const TextInput = waitForComponent<t.TextInput>(
+export const TextInput = waitForComponent<any>(
     "TextInput",
     filters.componentByCode("#{intl::MAXIMUM_LENGTH_ERROR}", '"input"'),
 );
-export const TextArea = waitForComponent<t.TextArea>(
+export const TextArea = waitForComponent<any>(
     "TextArea",
     filters.componentByCode("this.getPaddingRight()},id:"),
 );
-export const Select = waitForComponent<t.Select>(
+export const Select = waitForComponent<any>(
     "Select",
     filters.componentByCode('"Select"', ".newOptionLabel"),
 );
-export const SearchableSelect = waitForComponent<t.SearchableSelect>(
+export const SearchableSelect = waitForComponent<any>(
     "SearchableSelect",
     filters.componentByCode('"SearchableSelect"'),
 );
-export const Slider = waitForComponent<t.Slider>(
+export const Slider = waitForComponent<any>(
     "Slider",
     filters.componentByCode('"markDash".concat('),
 );
-export const Popout = waitForComponent<t.Popout>(
+export const Popout = waitForComponent<any>(
     "Popout",
     filters.componentByCode("ref:this.ref,", "renderPopout:this.renderPopout,"),
 );
-export const Dialog = waitForComponent<t.Dialog>(
+export const Dialog = waitForComponent<any>(
     "Dialog",
     filters.componentByCode('role:"dialog",tabIndex:-1'),
 );
@@ -84,20 +81,20 @@ export const TabBar = waitForComponent(
     "TabBar",
     filters.componentByCode("ref:this.tabBarRef,className:"),
 );
-export const Paginator = waitForComponent<t.Paginator>(
+export const Paginator = waitForComponent<any>(
     "Paginator",
     filters.componentByCode('rel:"prev",children:'),
 );
-export const Clickable = waitForComponent<t.Clickable>(
+export const Clickable = waitForComponent<any>(
     "Clickable",
     filters.componentByCode("this.context?this.renderNonInteractive():"),
 );
-export const Avatar = waitForComponent<t.Avatar>(
+export const Avatar = waitForComponent<any>(
     "Avatar",
     filters.componentByCode(".size-1.375*"),
 );
 
-export const ColorPicker = waitForComponent<t.ColorPicker>(
+export const ColorPicker = waitForComponent<any>(
     "ColorPicker",
     filters.componentByCode(
         "#{intl::USER_SETTINGS_PROFILE_COLOR_SELECT_COLOR}",
@@ -142,21 +139,21 @@ waitFor(
 );
 
 export const ScrollerNone = LazyComponent(() =>
-    createScroller(
+    (createScroller as any)(
         scrollerClasses.none,
         scrollerClasses.fade,
         scrollerClasses.customTheme,
     ),
 );
 export const ScrollerThin = LazyComponent(() =>
-    createScroller(
+    (createScroller as any)(
         scrollerClasses.thin,
         scrollerClasses.fade,
         scrollerClasses.customTheme,
     ),
 );
 export const ScrollerAuto = LazyComponent(() =>
-    createScroller(
+    (createScroller as any)(
         scrollerClasses.auto,
         scrollerClasses.fade,
         scrollerClasses.customTheme,
@@ -164,7 +161,7 @@ export const ScrollerAuto = LazyComponent(() =>
 );
 
 export const ListScrollerNone = LazyComponent(() =>
-    createListScroller(
+    (createListScroller as any)(
         listScrollerClasses.none,
         listScrollerClasses.fade,
         "",
@@ -172,7 +169,7 @@ export const ListScrollerNone = LazyComponent(() =>
     ),
 );
 export const ListScrollerThin = LazyComponent(() =>
-    createListScroller(
+    (createListScroller as any)(
         listScrollerClasses.thin,
         listScrollerClasses.fade,
         "",
@@ -180,7 +177,7 @@ export const ListScrollerThin = LazyComponent(() =>
     ),
 );
 export const ListScrollerAuto = LazyComponent(() =>
-    createListScroller(
+    (createListScroller as any)(
         listScrollerClasses.auto,
         listScrollerClasses.fade,
         "",
@@ -188,12 +185,12 @@ export const ListScrollerAuto = LazyComponent(() =>
     ),
 );
 
-export const FocusLock = waitForComponent<t.FocusLock>(
+export const FocusLock = waitForComponent<any>(
     "FocusLock",
     filters.componentByCode(".containerRef,{keyboardModeEnabled:"),
 );
 
-export let useToken: t.useToken;
+export let useToken: any;
 waitFor(
     m => {
         if (typeof m !== "function") {
@@ -206,15 +203,15 @@ waitFor(
     m => (useToken = m),
 );
 
-export const MaskedLink = waitForComponent<t.MaskedLink>(
+export const MaskedLink = waitForComponent<any>(
     "MaskedLink",
     filters.componentByCode("MASKED_LINK)"),
 );
-export const Timestamp = waitForComponent<t.Timestamp>(
+export const Timestamp = waitForComponent<any>(
     "Timestamp",
     filters.componentByCode("#{intl::MESSAGE_EDITED_TIMESTAMP_A11Y_LABEL}"),
 );
-export const Flex = waitForComponent<t.Flex>("Flex", [
+export const Flex = waitForComponent<any>("Flex", [
     "Justify",
     "Align",
     "Wrap",

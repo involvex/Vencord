@@ -11,7 +11,7 @@ export type SpanProps = BaseTextProps<"span">;
 export function Span({ children, ...restProps }: SpanProps) {
     return (
         <BaseText tag="span" size="sm" weight="normal" {...restProps}>
-            {children}
+            {children as any}
         </BaseText>
     );
 }

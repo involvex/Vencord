@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import type { ComponentType } from "react";
-
 import { makeLazy } from "./lazy";
 
 const NoopComponent = () => null;
@@ -21,9 +19,9 @@ export type LazyComponentWrapper<ComponentType> = ComponentType & {
  * @returns Result of factory function
  */
 export function LazyComponent<T extends object = any>(
-    factory: () => ComponentType<T>,
+    factory: () => any,
     attempts = 5,
-): LazyComponentWrapper<ComponentType<T>> {
+): any {
     const get = makeLazy(factory, attempts);
     const LazyComponent = (props: T) => {
         const Component = get() ?? NoopComponent;

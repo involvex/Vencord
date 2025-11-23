@@ -14,7 +14,7 @@ import type { ComponentType, PropsWithChildren } from "react";
 export function SettingsTab({
     title,
     children,
-}: PropsWithChildren<{ title: string }>) {
+}: PropsWithChildren<{ title: string; }>) {
     return (
         <section>
             <BaseText
