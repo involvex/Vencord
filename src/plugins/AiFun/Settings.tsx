@@ -9,6 +9,26 @@ import { Button, Forms, SearchableSelect, TextInput } from "@webpack/common";
 import { useAiFunSettings } from "./index"; // Corrected import for the hook
 import { CustomCommand } from "./types"; // Import from new types.ts
 
+// Safe wrapper components to handle webpack component loading
+const SafeSearchableSelect = SearchableSelect || (({ options, ...props }: any) => (
+    <div style={{ color: "var(--text-danger)", fontSize: "12px" }}>
+        SearchableSelect not loaded
+    </div>
+));
+
+const SafeTextInput = TextInput || ((props: any) => (
+    <input
+        {...props}
+        style={{
+            background: "var(--background-secondary)",
+            border: "1px solid var(--background-tertiary)",
+            color: "var(--text-normal)",
+            padding: "8px",
+            borderRadius: "4px"
+        }}
+    />
+));
+
 export function AiFunSettingsPanel() {
     const currentSettings = useAiFunSettings();
     console.log("AiFunSettingsPanel rendered. Version: 20251123-1");
@@ -23,17 +43,17 @@ export function AiFunSettingsPanel() {
     const modelOptions =
         currentSettings.aiProvider === "openai"
             ? [
-                  { label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" },
-                  { label: "GPT-4", value: "gpt-4" },
-                  { label: "GPT-4 Turbo", value: "gpt-4-turbo" },
-                  { label: "GPT-4o", value: "gpt-4o" },
-                  { label: "GPT-4o Mini", value: "gpt-4o-mini" },
-                  { label: "GPT-4.5 Preview", value: "gpt-4.5-preview" },
-                  { label: "DALL-E 2", value: "dall-e-2" },
-                  { label: "DALL-E 3", value: "dall-e-3" },
-              ]
+                { label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" },
+                { label: "GPT-4", value: "gpt-4" },
+                { label: "GPT-4 Turbo", value: "gpt-4-turbo" },
+                { label: "GPT-4o", value: "gpt-4o" },
+                { label: "GPT-4o Mini", value: "gpt-4o-mini" },
+                { label: "GPT-4.5 Preview", value: "gpt-4.5-preview" },
+                { label: "DALL-E 2", value: "dall-e-2" },
+                { label: "DALL-E 3", value: "dall-e-3" },
+            ]
             : currentSettings.aiProvider === "gemini"
-              ? [
+                ? [
                     { label: "Gemini 2.5 Pro", value: "gemini-2.5-pro" },
                     {
                         label: "Gemini Flash Latest",
@@ -44,24 +64,24 @@ export function AiFunSettingsPanel() {
                     { label: "Gemini Pro", value: "gemini-pro" },
                     { label: "Gemini Pro Vision", value: "gemini-pro-vision" },
                 ]
-              : currentSettings.aiProvider === "claude"
-                ? [
-                      {
-                          label: "Claude 3.5 Sonnet",
-                          value: "claude-3-5-sonnet",
-                      },
-                      { label: "Claude 3 Opus", value: "claude-3-opus" },
-                      { label: "Claude 3 Sonnet", value: "claude-3-sonnet" },
-                      { label: "Claude 3 Haiku", value: "claude-3-haiku" },
-                  ]
-                : currentSettings.aiProvider === "cohere"
-                  ? [
-                        { label: "Command R+", value: "command-r-plus" },
-                        { label: "Command R", value: "command-r" },
-                        { label: "Command", value: "command" },
-                        { label: "Command Light", value: "command-light" },
+                : currentSettings.aiProvider === "claude"
+                    ? [
+                        {
+                            label: "Claude 3.5 Sonnet",
+                            value: "claude-3-5-sonnet",
+                        },
+                        { label: "Claude 3 Opus", value: "claude-3-opus" },
+                        { label: "Claude 3 Sonnet", value: "claude-3-sonnet" },
+                        { label: "Claude 3 Haiku", value: "claude-3-haiku" },
                     ]
-                  : [{ label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" }];
+                    : currentSettings.aiProvider === "cohere"
+                        ? [
+                            { label: "Command R+", value: "command-r-plus" },
+                            { label: "Command R", value: "command-r" },
+                            { label: "Command", value: "command" },
+                            { label: "Command Light", value: "command-light" },
+                        ]
+                        : [{ label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" }];
 
     const commandTypeOptions = [
         { label: "AI Meme (Image Generation)", value: "aimeme" },
@@ -125,7 +145,7 @@ export function AiFunSettingsPanel() {
             </Forms.FormTitle>
 
             <Forms.FormText>OpenAI API Key</Forms.FormText>
-            <TextInput
+            <SafeTextInput
                 value={currentSettings.openaiApiKey}
                 onChange={(val: string) => (currentSettings.openaiApiKey = val)}
                 type="password"
@@ -133,7 +153,7 @@ export function AiFunSettingsPanel() {
             />
 
             <Forms.FormText>Google Gemini API Key</Forms.FormText>
-            <TextInput
+            <SafeTextInput
                 value={currentSettings.geminiApiKey}
                 onChange={(val: string) => (currentSettings.geminiApiKey = val)}
                 type="password"
@@ -141,7 +161,7 @@ export function AiFunSettingsPanel() {
             />
 
             <Forms.FormText>Anthropic Claude API Key</Forms.FormText>
-            <TextInput
+            <SafeTextInput
                 value={currentSettings.claudeApiKey}
                 onChange={(val: string) => (currentSettings.claudeApiKey = val)}
                 type="password"
@@ -149,7 +169,7 @@ export function AiFunSettingsPanel() {
             />
 
             <Forms.FormText>Cohere API Key</Forms.FormText>
-            <TextInput
+            <SafeTextInput
                 value={currentSettings.cohereApiKey}
                 onChange={(val: string) => (currentSettings.cohereApiKey = val)}
                 type="password"
@@ -157,7 +177,7 @@ export function AiFunSettingsPanel() {
             />
 
             <Forms.FormText>Select AI Provider</Forms.FormText>
-            <SearchableSelect
+            <SafeSearchableSelect
                 options={providerOptions}
                 onChange={(option: any) => {
                     currentSettings.aiProvider = option.value;
@@ -176,9 +196,11 @@ export function AiFunSettingsPanel() {
                     o => o.value === currentSettings.aiProvider,
                 )}
                 placeholder="Select AI Provider"
+                maxVisibleItems={5}
+                closeOnSelect={true}
             />
             <Forms.FormText>AI Model</Forms.FormText>
-            <SearchableSelect
+            <SafeSearchableSelect
                 options={modelOptions}
                 onChange={(option: any) =>
                     (currentSettings.aiModel = option.value)
@@ -189,13 +211,15 @@ export function AiFunSettingsPanel() {
                     ) || modelOptions[0]
                 }
                 placeholder="Select AI Model"
+                maxVisibleItems={5}
+                closeOnSelect={true}
             />
 
             <Forms.FormTitle tag="h2">Model Parameters</Forms.FormTitle>
             <Forms.FormText>
                 Temperature (0-2): {currentSettings.temperature ?? 0.7}
             </Forms.FormText>
-            <TextInput
+            <SafeTextInput
                 value={currentSettings.temperature?.toString() || "0.7"}
                 onChange={(val: string) =>
                     (currentSettings.temperature = parseFloat(val) || 0.7)
@@ -209,7 +233,7 @@ export function AiFunSettingsPanel() {
             <Forms.FormText>
                 Max Tokens: {currentSettings.maxTokens ?? 1000}
             </Forms.FormText>
-            <TextInput
+            <SafeTextInput
                 value={currentSettings.maxTokens?.toString() || "1000"}
                 onChange={(val: string) =>
                     (currentSettings.maxTokens = parseInt(val) || 1000)
@@ -222,7 +246,7 @@ export function AiFunSettingsPanel() {
             <Forms.FormText>
                 Top P (0-1): {currentSettings.topP ?? 1.0}
             </Forms.FormText>
-            <TextInput
+            <SafeTextInput
                 value={currentSettings.topP?.toString() || "1.0"}
                 onChange={(val: string) =>
                     (currentSettings.topP = parseFloat(val) || 1.0)
@@ -237,7 +261,7 @@ export function AiFunSettingsPanel() {
                 Image Generation Settings
             </Forms.FormTitle>
             <Forms.FormText>Image Quality</Forms.FormText>
-            <SearchableSelect
+            <SafeSearchableSelect
                 options={imageQualityOptions}
                 onChange={(option: any) =>
                     (currentSettings.imageQuality = option.value)
@@ -246,10 +270,12 @@ export function AiFunSettingsPanel() {
                     o => o.value === currentSettings.imageQuality,
                 )}
                 placeholder="Select Image Quality"
+                maxVisibleItems={5}
+                closeOnSelect={true}
             />
 
             <Forms.FormText>Image Size</Forms.FormText>
-            <SearchableSelect
+            <SafeSearchableSelect
                 options={imageSizeOptions}
                 onChange={(option: any) =>
                     (currentSettings.imageSize = option.value)
@@ -258,10 +284,12 @@ export function AiFunSettingsPanel() {
                     o => o.value === currentSettings.imageSize,
                 )}
                 placeholder="Select Image Size"
+                maxVisibleItems={5}
+                closeOnSelect={true}
             />
 
             <Forms.FormText>Image Style</Forms.FormText>
-            <SearchableSelect
+            <SafeSearchableSelect
                 options={imageStyleOptions}
                 onChange={(option: any) =>
                     (currentSettings.imageStyle = option.value)
@@ -270,11 +298,13 @@ export function AiFunSettingsPanel() {
                     o => o.value === currentSettings.imageStyle,
                 )}
                 placeholder="Select Image Style"
+                maxVisibleItems={5}
+                closeOnSelect={true}
             />
 
             <Forms.FormTitle tag="h2">Advanced Settings</Forms.FormTitle>
             <Forms.FormText>System Prompt</Forms.FormText>
-            <TextInput
+            <SafeTextInput
                 value={currentSettings.systemPrompt}
                 onChange={(val: string) => (currentSettings.systemPrompt = val)}
                 placeholder="Enter system prompt for AI"
@@ -283,7 +313,7 @@ export function AiFunSettingsPanel() {
             <Forms.FormText>
                 Timeout (ms): {currentSettings.timeoutMs ?? 30000}
             </Forms.FormText>
-            <TextInput
+            <SafeTextInput
                 value={currentSettings.timeoutMs?.toString() || "30000"}
                 onChange={(val: string) =>
                     (currentSettings.timeoutMs = parseInt(val) || 30000)
@@ -305,14 +335,14 @@ export function AiFunSettingsPanel() {
                         borderRadius: "4px",
                     }}
                 >
-                    <TextInput
+                    <SafeTextInput
                         value={cmd.name}
                         onChange={(val: string) =>
                             handleCustomCommandChange(cmd.id, "name", val)
                         }
                         placeholder="/mycommand"
                     />
-                    <TextInput
+                    <SafeTextInput
                         value={cmd.description}
                         onChange={(val: string) =>
                             handleCustomCommandChange(
@@ -324,7 +354,7 @@ export function AiFunSettingsPanel() {
                         placeholder="What does this command do?"
                     />
                     <Forms.FormText>Command Type</Forms.FormText>
-                    <TextInput
+                    <SafeTextInput
                         value={cmd.type}
                         onChange={(value: string) =>
                             handleCustomCommandChange(cmd.id, "type", value)
