@@ -244,6 +244,14 @@ export default definePlugin({
             console.log(
                 "[AiFun] Plugin started. Version: 20251123-1. Registering commands...",
             );
+            // Ensure default commands are set if empty
+            if (
+                !settings.store.customCommands ||
+                (settings.store.customCommands as CustomCommand[]).length === 0
+            ) {
+                settings.store.customCommands = defaultSettings.customCommands as any;
+                console.log("[AiFun] Set default commands since none were found.");
+            }
             // Load custom commands from settings and register them
             const customCommands = settings.store
                 .customCommands as unknown as CustomCommand[];

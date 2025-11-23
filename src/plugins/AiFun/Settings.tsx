@@ -6,28 +6,84 @@
 
 import { Button, Forms, SearchableSelect, TextInput } from "@webpack/common";
 
+// Safe wrapper components to handle webpack component loading
+const SafeButton = Button || ((props: any) => (
+    <button {...props} style={{
+        color: "var(--text-normal)",
+        background: "var(--button-secondary-background)",
+        border: "none",
+        padding: "8px 12px",
+        borderRadius: "4px",
+        cursor: "pointer"
+    }}>
+        {props.children}
+    </button>
+));
+
+const SafeForms = Forms || {
+    FormTitle: (props: any) => <h2 style={{ color: "var(--header-primary)", marginBottom: "16px", fontSize: "20px", fontWeight: "600" }} {...props}>{props.children}</h2>,
+    FormText: (props: any) => <div style={{ color: "var(--text-normal)", marginBottom: "8px" }} {...props}>{props.children}</div>
+};
+
 import { useAiFunSettings } from "./index"; // Corrected import for the hook
 import { CustomCommand } from "./types"; // Import from new types.ts
 
 // Safe wrapper components to handle webpack component loading
-const SafeSearchableSelect = SearchableSelect || (({ options, ...props }: any) => (
-    <div style={{ color: "var(--text-danger)", fontSize: "12px" }}>
-        SearchableSelect not loaded
-    </div>
-));
+const SafeSearchableSelect = SearchableSelect || ((props: any) => {
+    const { onChange, value, options, placeholder, ...restProps } = props;
 
-const SafeTextInput = TextInput || ((props: any) => (
-    <input
-        {...props}
-        style={{
-            background: "var(--background-secondary)",
-            border: "1px solid var(--background-tertiary)",
-            color: "var(--text-normal)",
-            padding: "8px",
-            borderRadius: "4px"
-        }}
-    />
-));
+    return (
+        <div style={{ color: "var(--text-danger)", fontSize: "12px", padding: "4px 0" }}>
+            SearchableSelect not loaded - fallback mode
+            {onChange && (
+                <button
+                    onClick={() => {
+                        if (options && options.length > 0) {
+                            onChange(options[0].value);
+                        }
+                    }}
+                    style={{
+                        marginLeft: "8px",
+                        padding: "4px 8px",
+                        background: "var(--background-accent)",
+                        border: "1px solid var(--background-floating)",
+                        borderRadius: "4px",
+                        color: "var(--text-normal)",
+                        cursor: "pointer"
+                    }}
+                >
+                    Select {options?.[0]?.label || "first option"}
+                </button>
+            )}
+        </div>
+    );
+});
+
+const SafeTextInput = TextInput || ((props: any) => {
+    const { onChange, value, type, placeholder, ...restProps } = props;
+
+    return (
+        <input
+            {...restProps}
+            value={value || ""}
+            type={type || "text"}
+            placeholder={placeholder || ""}
+            onChange={e => {
+                if (onChange) {
+                    onChange(e.target.value);
+                }
+            }}
+            style={{
+                background: "var(--background-secondary)",
+                border: "1px solid var(--background-tertiary)",
+                color: "var(--text-normal)",
+                padding: "8px",
+                borderRadius: "4px",
+                width: "100%"
+            }}
+        />
+    );
+});
 
 export function AiFunSettingsPanel() {
     const currentSettings = useAiFunSettings();
@@ -140,11 +196,11 @@ export function AiFunSettingsPanel() {
 
     return (
         <div>
-            <Forms.FormTitle tag="h2">
+            <SafeForms.FormTitle>
                 AI Provider Configuration
-            </Forms.FormTitle>
+            </SafeForms.FormTitle>
 
-            <Forms.FormText>OpenAI API Key</Forms.FormText>
+            <SafeForms.FormText>OpenAI API Key</SafeForms.FormText>
             <SafeTextInput
                 value={currentSettings.openaiApiKey}
                 onChange={(val: string) => (currentSettings.openaiApiKey = val)}
@@ -152,7 +208,7 @@ export function AiFunSettingsPanel() {
                 placeholder="Enter your OpenAI API key"
             />
 
-            <Forms.FormText>Google Gemini API Key</Forms.FormText>
+            <SafeForms.FormText>Google Gemini API Key</SafeForms.FormText>
             <SafeTextInput
                 value={currentSettings.geminiApiKey}
                 onChange={(val: string) => (currentSettings.geminiApiKey = val)}
@@ -160,7 +216,7 @@ export function AiFunSettingsPanel() {
                 placeholder="Enter your Gemini API key"
             />
 
-            <Forms.FormText>Anthropic Claude API Key</Forms.FormText>
+            <SafeForms.FormText>Anthropic Claude API Key</SafeForms.FormText>
             <SafeTextInput
                 value={currentSettings.claudeApiKey}
                 onChange={(val: string) => (currentSettings.claudeApiKey = val)}
@@ -168,7 +224,7 @@ export function AiFunSettingsPanel() {
                 placeholder="Enter your Claude API key"
             />
 
-            <Forms.FormText>Cohere API Key</Forms.FormText>
+            <SafeForms.FormText>Cohere API Key</SafeForms.FormText>
             <SafeTextInput
                 value={currentSettings.cohereApiKey}
                 onChange={(val: string) => (currentSettings.cohereApiKey = val)}
@@ -176,21 +232,24 @@ export function AiFunSettingsPanel() {
                 placeholder="Enter your Cohere API key"
             />
 
-            <Forms.FormText>Select AI Provider</Forms.FormText>
+            <SafeForms.FormText>Select AI Provider</SafeForms.FormText>
             <SafeSearchableSelect
                 options={providerOptions}
-                onChange={(option: any) => {
-                    currentSettings.aiProvider = option.value;
+                onChange={(val: any) => {
+                    const provider = typeof val === "string" ? val : val.value;
+                    console.log("[AiFun] Switching provider to", provider);
+                    currentSettings.aiProvider = provider;
                     // Set default model based on new provider
-                    if (option.value === "openai") {
+                    if (provider === "openai") {
                         currentSettings.aiModel = "gpt-3.5-turbo";
-                    } else if (option.value === "gemini") {
+                    } else if (provider === "gemini") {
                         currentSettings.aiModel = "gemini-2.5-pro";
-                    } else if (option.value === "claude") {
+                    } else if (provider === "claude") {
                         currentSettings.aiModel = "claude-3-5-sonnet";
-                    } else if (option.value === "cohere") {
+                    } else if (provider === "cohere") {
                         currentSettings.aiModel = "command-r-plus";
                     }
+                    console.log("[AiFun] Set model to", currentSettings.aiModel);
                 }}
                 value={providerOptions.find(
                     o => o.value === currentSettings.aiProvider,
@@ -199,11 +258,11 @@ export function AiFunSettingsPanel() {
                 maxVisibleItems={5}
                 closeOnSelect={true}
             />
-            <Forms.FormText>AI Model</Forms.FormText>
+            <SafeForms.FormText>AI Model</SafeForms.FormText>
             <SafeSearchableSelect
                 options={modelOptions}
-                onChange={(option: any) =>
-                    (currentSettings.aiModel = option.value)
+                onChange={(val: any) =>
+                    (currentSettings.aiModel = typeof val === "string" ? val : val.value)
                 }
                 value={
                     modelOptions.find(
@@ -215,10 +274,10 @@ export function AiFunSettingsPanel() {
                 closeOnSelect={true}
             />
 
-            <Forms.FormTitle tag="h2">Model Parameters</Forms.FormTitle>
-            <Forms.FormText>
+            <SafeForms.FormTitle>Model Parameters</SafeForms.FormTitle>
+            <SafeForms.FormText>
                 Temperature (0-2): {currentSettings.temperature ?? 0.7}
-            </Forms.FormText>
+            </SafeForms.FormText>
             <SafeTextInput
                 value={currentSettings.temperature?.toString() || "0.7"}
                 onChange={(val: string) =>
@@ -230,9 +289,9 @@ export function AiFunSettingsPanel() {
                 step="0.1"
             />
 
-            <Forms.FormText>
+            <SafeForms.FormText>
                 Max Tokens: {currentSettings.maxTokens ?? 1000}
-            </Forms.FormText>
+            </SafeForms.FormText>
             <SafeTextInput
                 value={currentSettings.maxTokens?.toString() || "1000"}
                 onChange={(val: string) =>
@@ -243,9 +302,9 @@ export function AiFunSettingsPanel() {
                 max="4000"
             />
 
-            <Forms.FormText>
+            <SafeForms.FormText>
                 Top P (0-1): {currentSettings.topP ?? 1.0}
-            </Forms.FormText>
+            </SafeForms.FormText>
             <SafeTextInput
                 value={currentSettings.topP?.toString() || "1.0"}
                 onChange={(val: string) =>
@@ -257,14 +316,14 @@ export function AiFunSettingsPanel() {
                 step="0.1"
             />
 
-            <Forms.FormTitle tag="h2">
+            <SafeForms.FormTitle>
                 Image Generation Settings
-            </Forms.FormTitle>
-            <Forms.FormText>Image Quality</Forms.FormText>
+            </SafeForms.FormTitle>
+            <SafeForms.FormText>Image Quality</SafeForms.FormText>
             <SafeSearchableSelect
                 options={imageQualityOptions}
-                onChange={(option: any) =>
-                    (currentSettings.imageQuality = option.value)
+                onChange={(val: any) =>
+                    (currentSettings.imageQuality = typeof val === "string" ? val : val.value)
                 }
                 value={imageQualityOptions.find(
                     o => o.value === currentSettings.imageQuality,
@@ -274,11 +333,11 @@ export function AiFunSettingsPanel() {
                 closeOnSelect={true}
             />
 
-            <Forms.FormText>Image Size</Forms.FormText>
+            <SafeForms.FormText>Image Size</SafeForms.FormText>
             <SafeSearchableSelect
                 options={imageSizeOptions}
-                onChange={(option: any) =>
-                    (currentSettings.imageSize = option.value)
+                onChange={(val: any) =>
+                    (currentSettings.imageSize = typeof val === "string" ? val : val.value)
                 }
                 value={imageSizeOptions.find(
                     o => o.value === currentSettings.imageSize,
@@ -288,11 +347,11 @@ export function AiFunSettingsPanel() {
                 closeOnSelect={true}
             />
 
-            <Forms.FormText>Image Style</Forms.FormText>
+            <SafeForms.FormText>Image Style</SafeForms.FormText>
             <SafeSearchableSelect
                 options={imageStyleOptions}
-                onChange={(option: any) =>
-                    (currentSettings.imageStyle = option.value)
+                onChange={(val: any) =>
+                    (currentSettings.imageStyle = typeof val === "string" ? val : val.value)
                 }
                 value={imageStyleOptions.find(
                     o => o.value === currentSettings.imageStyle,
@@ -302,17 +361,19 @@ export function AiFunSettingsPanel() {
                 closeOnSelect={true}
             />
 
-            <Forms.FormTitle tag="h2">Advanced Settings</Forms.FormTitle>
-            <Forms.FormText>System Prompt</Forms.FormText>
+            <SafeForms.FormTitle>
+                Advanced Settings
+            </SafeForms.FormTitle>
+            <SafeForms.FormText>System Prompt</SafeForms.FormText>
             <SafeTextInput
                 value={currentSettings.systemPrompt}
                 onChange={(val: string) => (currentSettings.systemPrompt = val)}
                 placeholder="Enter system prompt for AI"
             />
 
-            <Forms.FormText>
+            <SafeForms.FormText>
                 Timeout (ms): {currentSettings.timeoutMs ?? 30000}
-            </Forms.FormText>
+            </SafeForms.FormText>
             <SafeTextInput
                 value={currentSettings.timeoutMs?.toString() || "30000"}
                 onChange={(val: string) =>
@@ -324,56 +385,59 @@ export function AiFunSettingsPanel() {
                 step="5000"
             />
 
-            <Forms.FormTitle tag="h2">Custom Commands</Forms.FormTitle>
-            {currentSettings.customCommands?.map((cmd: CustomCommand) => (
-                <div
-                    key={cmd.id}
-                    style={{
-                        border: "1px solid var(--background-modifier-accent)",
-                        padding: "10px",
-                        margin: "10px 0",
-                        borderRadius: "4px",
-                    }}
-                >
-                    <SafeTextInput
-                        value={cmd.name}
-                        onChange={(val: string) =>
-                            handleCustomCommandChange(cmd.id, "name", val)
-                        }
-                        placeholder="/mycommand"
-                    />
-                    <SafeTextInput
-                        value={cmd.description}
-                        onChange={(val: string) =>
-                            handleCustomCommandChange(
-                                cmd.id,
-                                "description",
-                                val,
-                            )
-                        }
-                        placeholder="What does this command do?"
-                    />
-                    <Forms.FormText>Command Type</Forms.FormText>
-                    <SafeTextInput
-                        value={cmd.type}
-                        onChange={(value: string) =>
-                            handleCustomCommandChange(cmd.id, "type", value)
-                        }
-                        placeholder={commandTypeOptions
-                            .map(o => o.value)
-                            .join(" or ")}
-                    />
-                    <Button
-                        color={Button.Colors.RED}
-                        onClick={() => deleteCustomCommand(cmd.id)}
+            <SafeForms.FormTitle>
+                Custom Commands
+            </SafeForms.FormTitle>
+            {
+                currentSettings.customCommands?.map((cmd: CustomCommand) => (
+                    <div
+                        key={cmd.id}
+                        style={{
+                            border: "1px solid var(--background-modifier-accent)",
+                            padding: "10px",
+                            margin: "10px 0",
+                            borderRadius: "4px",
+                        }}
                     >
-                        Delete Command
-                    </Button>
-                </div>
-            ))}
-            <Button color={Button.Colors.GREEN} onClick={addCustomCommand}>
+                        <SafeTextInput
+                            value={cmd.name}
+                            onChange={(val: string) =>
+                                handleCustomCommandChange(cmd.id, "name", val)
+                            }
+                            placeholder="/mycommand"
+                        />
+                        <SafeTextInput
+                            value={cmd.description}
+                            onChange={(val: string) =>
+                                handleCustomCommandChange(
+                                    cmd.id,
+                                    "description",
+                                    val,
+                                )
+                            }
+                            placeholder="What does this command do?"
+                        />
+                        <SafeForms.FormText>Command Type</SafeForms.FormText>
+                        <SafeTextInput
+                            value={cmd.type}
+                            onChange={(value: string) =>
+                                handleCustomCommandChange(cmd.id, "type", value)
+                            }
+                            placeholder={commandTypeOptions
+                                .map(o => o.value)
+                                .join(" or ")}
+                        />
+                        <SafeButton
+                            onClick={() => deleteCustomCommand(cmd.id)}
+                        >
+                            Delete Command
+                        </SafeButton>
+                    </div>
+                ))
+            }
+            <SafeButton onClick={addCustomCommand}>
                 Add New Custom Command
-            </Button>
-        </div>
+            </SafeButton>
+        </div >
     );
 }

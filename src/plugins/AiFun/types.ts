@@ -84,7 +84,6 @@ export const defaultSettings: AiFunSettings = {
     openaiApiKey: "",
     geminiApiKey: "",
     claudeApiKey: "",
-    anthropicApiKey: "",
     cohereApiKey: "",
     // Enhanced model settings
     temperature: 0.7,
