@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./Switch.css";
+import "@components/Switch.css";
 
 import { classNameFactory } from "@api/Styles";
 import { classes } from "@utils/misc";

@@ -14,6 +14,7 @@ import { LazyComponent } from "@utils/lazyReact";
 import * as t from "@vencord/discord-types";
 import { filters, mapMangledModuleLazy, waitFor } from "@webpack";
 
+// eslint-disable-next-line path-alias/no-relative
 import { waitForComponent } from "./internal";
 
 export const Forms = {
@@ -47,7 +48,9 @@ const Tooltips = mapMangledModuleLazy(".tooltipTop,bottom:", {
 }) as any;
 
 export const Tooltip = LazyComponent(() => (Tooltips as any).Tooltip);
-export const TooltipContainer = LazyComponent(() => (Tooltips as any).TooltipContainer);
+export const TooltipContainer = LazyComponent(
+    () => (Tooltips as any).TooltipContainer,
+);
 
 export const TextInput = waitForComponent<any>(
     "TextInput",
@@ -211,11 +214,7 @@ export const Timestamp = waitForComponent<any>(
     "Timestamp",
     filters.componentByCode("#{intl::MESSAGE_EDITED_TIMESTAMP_A11Y_LABEL}"),
 );
-export const Flex = waitForComponent<any>("Flex", [
-    "Justify",
-    "Align",
-    "Wrap",
-]);
+export const Flex = waitForComponent<any>("Flex", ["Justify", "Align", "Wrap"]);
 export const OAuth2AuthorizeModal = waitForComponent(
     "OAuth2AuthorizeModal",
     filters.componentByCode(".authorize,children:", ".contentBackground"),

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./styles.css";
+import "@components/settings/tabs/plugins/styles.css";
 
 import * as DataStore from "@api/DataStore";
 import { useSettings } from "@api/Settings";
@@ -14,6 +14,7 @@ import ErrorBoundary from "@components/ErrorBoundary";
 import { HeadingTertiary } from "@components/Heading";
 import { Paragraph } from "@components/Paragraph";
 import { SettingsTab, wrapTab } from "@components/settings/tabs/BaseTab";
+import { PluginCard } from "@components/settings/tabs/plugins/PluginCard";
 import { ChangeList } from "@utils/ChangeList";
 import { Logger } from "@utils/Logger";
 import { Margins } from "@utils/margins";
@@ -36,12 +37,10 @@ import { JSX } from "react";
 
 import Plugins, { ExcludedPlugins } from "~plugins";
 
-import { PluginCard } from "./PluginCard";
-
 export const cl = classNameFactory("vc-plugins-");
 export const logger = new Logger("PluginSettings", "#a6d189");
 
-function ReloadRequiredCard({ required }: { required: boolean }) {
+function ReloadRequiredCard({ required }: { required: boolean; }) {
     return (
         <Card
             className={classes(cl("info-card"), required && "vc-warning-card")}
@@ -82,7 +81,7 @@ const enum SearchStatus {
     NEW,
 }
 
-function ExcludedPluginsList({ search }: { search: string }) {
+function ExcludedPluginsList({ search }: { search: string; }) {
     const matchingExcludedPlugins = Object.entries(ExcludedPlugins).filter(
         ([name]) => name.toLowerCase().includes(search),
     );
@@ -248,10 +247,10 @@ function PluginSettings() {
                 p.required || !depMap[p.name]
                     ? "This plugin is required for Vencord to function."
                     : makeDependencyList(
-                          depMap[p.name]?.filter(
-                              d => settings.plugins[d].enabled,
-                          ),
-                      );
+                        depMap[p.name]?.filter(
+                            d => settings.plugins[d].enabled,
+                        ),
+                    );
 
             requiredPlugins.push(
                 <Tooltip text={tooltipText} key={p.name}>

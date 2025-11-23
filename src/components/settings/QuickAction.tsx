@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./QuickAction.css";
+import "@components/settings/QuickAction.css";
 
 import { classNameFactory } from "@api/Styles";
 import { Card } from "@webpack/common";
@@ -13,7 +13,7 @@ import type { ComponentType, PropsWithChildren, ReactNode } from "react";
 const cl = classNameFactory("vc-settings-quickActions-");
 
 export interface QuickActionProps {
-    Icon: ComponentType<{ className?: string }>;
+    Icon: ComponentType<{ className?: string; }>;
     text: ReactNode;
     action?: () => void;
     disabled?: boolean;

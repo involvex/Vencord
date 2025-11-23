@@ -4,10 +4,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { LazyComponent } from "@utils/react";
 import { filters, findByCodeLazy, mapMangledModuleLazy } from "@webpack";
 import type { ComponentType, PropsWithChildren, ReactNode, Ref } from "react";
-
-import { LazyComponent } from "./react";
 
 export const enum ModalSize {
     SMALL = "small",
@@ -150,7 +149,7 @@ interface ModalAPI {
      */
     openModalLazy: (
         render: () => Promise<RenderFunction>,
-        options?: ModalOptions & { contextKey?: string },
+        options?: ModalOptions & { contextKey?: string; },
     ) => Promise<string>;
     /**
      * Open a Modal with the given render function.

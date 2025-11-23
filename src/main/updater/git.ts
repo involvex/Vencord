@@ -4,13 +4,12 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { serializeErrors } from "@main/updater/common";
 import { IpcEvents } from "@shared/IpcEvents";
 import { execFile as cpExecFile } from "child_process";
 import { ipcMain } from "electron";
 import { join } from "path";
 import { promisify } from "util";
-
-import { serializeErrors } from "./common";
 
 const VENCORD_SRC_DIR = join(__dirname, "..");
 

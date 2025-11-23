@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./SpecialCard.css";
+import "@components/settings/SpecialCard.css";
 
 import { classNameFactory } from "@api/Styles";
 import { Divider } from "@components/Divider";

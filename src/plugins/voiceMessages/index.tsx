@@ -164,7 +164,7 @@ function sendAudio(blob: Blob, meta: AudioMetadata) {
                 ],
                 message_reference: reply
                     ? MessageActions.getSendMessageOptionsForReply(reply)
-                        ?.messageReference
+                          ?.messageReference
                     : null,
             },
         });
@@ -186,7 +186,7 @@ function useObjectUrl() {
     return [url, setWithFree] as const;
 }
 
-function Modal({ modalProps }: { modalProps: ModalProps; }) {
+function Modal({ modalProps }: { modalProps: ModalProps }) {
     const [isRecording, setRecording] = useState(false);
     const [blob, setBlob] = useState<Blob>();
     const [blobUrl, setBlobUrl] = useObjectUrl();

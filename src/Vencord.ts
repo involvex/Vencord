@@ -17,25 +17,25 @@ export * as Webpack from "./webpack";
 export * as WebpackPatcher from "./webpack/patchWebpack";
 export { PlainSettings, Settings };
 
-import "./utils/quickCss";
+import "@utils/quickCss";
 import "./webpack/patchWebpack";
 
+import { get as dsGet } from "@api/DataStore";
+import { NotificationData, showNotification } from "@api/Notifications";
+import { PlainSettings, Settings } from "@api/Settings";
 import { addVencordUiStyles } from "@components/css";
 import { openUpdaterModal } from "@components/settings/tabs/updater";
 import { IS_WINDOWS } from "@utils/constants";
 import { createAndAppendStyle } from "@utils/css";
+import { localStorage } from "@utils/localStorage";
+import { relaunch } from "@utils/native";
+import { getCloudSettings, putCloudSettings } from "@utils/settingsSync";
 import { StartAt } from "@utils/types";
+import { checkForUpdates, update, UpdateLogger } from "@utils/updater";
+import { SettingsRouter } from "@webpack/common";
 
-import { get as dsGet } from "./api/DataStore";
-import { NotificationData, showNotification } from "./api/Notifications";
-import { PlainSettings, Settings } from "./api/Settings";
 import { patches, PMLogger, startAllPlugins } from "./plugins";
-import { localStorage } from "./utils/localStorage";
-import { relaunch } from "./utils/native";
-import { getCloudSettings, putCloudSettings } from "./utils/settingsSync";
-import { checkForUpdates, update, UpdateLogger } from "./utils/updater";
 import { onceReady } from "./webpack";
-import { SettingsRouter } from "./webpack/common";
 
 if (IS_REPORTER) {
     require("./debug/runReporter");
@@ -153,9 +153,9 @@ async function init() {
                 "You are seeing this warning because this is a Development build of Vencord.",
                 "\nThe following patches have not been applied:",
                 "\n\n" +
-                    pendingPatches
-                        .map(p => `${p.plugin}: ${p.find}`)
-                        .join("\n"),
+                pendingPatches
+                    .map(p => `${p.plugin}: ${p.find}`)
+                    .join("\n"),
             );
     }
 }

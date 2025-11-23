@@ -16,13 +16,12 @@ import {
 import { Link } from "@components/Link";
 import { QuickAction, QuickActionCard } from "@components/settings/QuickAction";
 import { openPluginModal } from "@components/settings/tabs/plugins/PluginModal";
+import { ThemeCard } from "@components/settings/tabs/themes/ThemeCard";
 import { UserThemeHeader } from "@main/themes";
 import { findLazy } from "@webpack";
 import { Card, Forms, useEffect, useRef, useState } from "@webpack/common";
 import ClientThemePlugin from "plugins/clientTheme";
 import type { ComponentType, Ref, SyntheticEvent } from "react";
-
-import { ThemeCard } from "./ThemeCard";
 
 const cl = classNameFactory("vc-settings-theme-");
 
@@ -30,7 +29,7 @@ type FileInput = ComponentType<{
     ref: Ref<HTMLInputElement>;
     onChange: (e: SyntheticEvent<HTMLInputElement>) => void;
     multiple?: boolean;
-    filters?: { name?: string; extensions: string[] }[];
+    filters?: { name?: string; extensions: string[]; }[];
 }>;
 
 const FileInput: FileInput = findLazy(
@@ -175,14 +174,14 @@ export function LocalThemesTab() {
                         {Vencord.Plugins.isPluginEnabled(
                             ClientThemePlugin.name,
                         ) && (
-                            <QuickAction
-                                text="Edit ClientTheme"
-                                action={() =>
-                                    openPluginModal(ClientThemePlugin)
-                                }
-                                Icon={PencilIcon}
-                            />
-                        )}
+                                <QuickAction
+                                    text="Edit ClientTheme"
+                                    action={() =>
+                                        openPluginModal(ClientThemePlugin)
+                                    }
+                                    Icon={PencilIcon}
+                                />
+                            )}
                     </>
                 </QuickActionCard>
 

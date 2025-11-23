@@ -4,8 +4,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { runtimeHashMessageKey, runtimeHashMessageKeyLegacy } from "./intlHash";
-import { Patch, PatchReplacement, ReplaceFn } from "./types";
+import {
+    runtimeHashMessageKey,
+    runtimeHashMessageKeyLegacy,
+} from "@utils/intlHash";
+import { Patch, PatchReplacement, ReplaceFn } from "@utils/types";
 
 // TODO: remove legacy hashing function once Discord ships new one everywhere for a while
 

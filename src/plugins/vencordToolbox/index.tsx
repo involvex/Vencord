@@ -76,7 +76,7 @@ function VencordPopout(onClose: () => void) {
             label="Open QuickCSS"
             action={() => VencordNative.quickCss.openEditor()}
         />,
-        ...pluginEntries
+        ...pluginEntries,
     ];
 
     return (
@@ -106,7 +106,7 @@ function VencordPopoutIcon(isShown: boolean) {
     );
 }
 
-function VencordPopoutButton({ buttonClass }: { buttonClass: string; }) {
+function VencordPopoutButton({ buttonClass }: { buttonClass: string }) {
     const buttonRef = useRef(null);
     const [show, setShow] = useState(false);
 
@@ -153,7 +153,7 @@ export default definePlugin({
     TrailingWrapper({
         children,
         className,
-    }: PropsWithChildren<{ className: string; }>) {
+    }: PropsWithChildren<{ className: string }>) {
         return (
             <>
                 {children}

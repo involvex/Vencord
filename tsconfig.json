@@ -30,6 +30,7 @@
             "@shared/*": ["./shared/*"],
             "@webpack/common": ["./webpack/common"],
             "@webpack": ["./webpack/webpack"],
+            "@webpack/internal": ["./webpack/common/internal"],
             "@webpack/patcher": ["./webpack/patcher"],
             "@webpack/wreq.d": ["./webpack/wreq.d"]
         },
@@ -43,6 +44,11 @@
         ],
         "outDir": "who-fucking-cares-dude"
     },
-    "include": ["src/**/*", "browser/**/*", "scripts/**/*", "eslint.config.mjs"],
+    "include": [
+        "src/**/*",
+        "browser/**/*",
+        "scripts/**/*",
+        "eslint.config.mjs"
+    ],
     "exclude": ["node_modules"]
 }

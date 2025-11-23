@@ -4,13 +4,19 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./PluginModal.css";
+import "@components/settings/tabs/plugins/PluginModal.css";
 
 import { generateId } from "@api/Commands";
 import { useSettings } from "@api/Settings";
 import { classNameFactory } from "@api/Styles";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Flex } from "@components/Flex";
+import { OptionComponentMap } from "@components/settings/tabs/plugins/components";
+import { openContributorModal } from "@components/settings/tabs/plugins/ContributorModal";
+import {
+    GithubButton,
+    WebsiteButton,
+} from "@components/settings/tabs/plugins/LinkIconButton";
 import { debounce } from "@shared/debounce";
 import { gitRemote } from "@shared/vencordUserAgent";
 import { proxyLazy } from "@utils/lazy";
@@ -44,10 +50,6 @@ import {
 import { Constructor } from "type-fest";
 
 import { PluginMeta } from "~plugins";
-
-import { OptionComponentMap } from "./components";
-import { openContributorModal } from "./ContributorModal";
-import { GithubButton, WebsiteButton } from "./LinkIconButton";
 
 const cl = classNameFactory("vc-plugin-modal-");
 
@@ -106,8 +108,8 @@ export default function PluginModal({
                 try {
                     const author = user.id
                         ? await UserUtils.getUser(String(user.id)).catch(() =>
-                              makeDummyUser({ username: user.name }),
-                          )
+                            makeDummyUser({ username: user.name }),
+                        )
                         : makeDummyUser({ username: user.name });
 
                     setAuthors(a => [...a, author]);

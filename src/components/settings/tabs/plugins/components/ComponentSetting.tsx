@@ -4,9 +4,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { ComponentSettingProps } from "@components/settings/tabs/plugins/components/Common";
 import { PluginOptionComponent } from "@utils/types";
-
-import { ComponentSettingProps } from "./Common";
 
 export function ComponentSetting({
     option,

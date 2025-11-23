@@ -11,14 +11,6 @@ import { interpolateIfDefined } from "@utils/misc";
 import { canonicalizeReplacement } from "@utils/patches";
 import { Patch, PatchReplacement } from "@utils/types";
 import { WebpackRequire } from "@vencord/discord-types/webpack";
-
-import { traceFunctionWithResults } from "../debug/Tracer";
-import {
-    AnyModuleFactory,
-    AnyWebpackRequire,
-    MaybePatchedModuleFactory,
-    PatchedModuleFactory,
-} from "./types";
 import {
     _blacklistBadModules,
     _initWebpack,
@@ -27,7 +19,15 @@ import {
     moduleListeners,
     waitForSubscriptions,
     wreq,
-} from "./webpack";
+} from "@webpack";
+
+import { traceFunctionWithResults } from "../debug/Tracer";
+import {
+    AnyModuleFactory,
+    AnyWebpackRequire,
+    MaybePatchedModuleFactory,
+    PatchedModuleFactory,
+} from "./types";
 
 export const patches = [] as Patch[];
 

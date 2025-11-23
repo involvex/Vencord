@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./BaseText.css";
+import "@components/BaseText.css";
 
 import { classNameFactory } from "@api/Styles";
 import { classes } from "@utils/misc";

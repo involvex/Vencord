@@ -4,14 +4,13 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./Button.css";
+import "@components/Button.css";
 
 import { classNameFactory } from "@api/Styles";
+import { OpenExternalIcon } from "@components/Icons";
 import { classes } from "@utils/misc";
 import type { Button as DiscordButton } from "@vencord/discord-types";
 import type { ComponentPropsWithRef } from "react";
-
-import { OpenExternalIcon } from "./Icons";
 
 const btnCls = classNameFactory("vc-btn-");
 const textBtnCls = classNameFactory("vc-text-btn-");

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { checkIntersecting } from "@utils/misc";
 import {
     React,
     useEffect,
@@ -12,8 +13,6 @@ import {
     useState,
 } from "@webpack/common";
 import { ActionDispatch, ReactNode } from "react";
-
-import { checkIntersecting } from "./misc";
 
 export * from "./lazyReact";
 

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./iconStyles.css";
+import "@components/iconStyles.css";
 
 import { getIntlMessage } from "@utils/discord";
 import { classes } from "@utils/misc";

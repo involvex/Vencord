@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./LinkIconButton.css";
+import "@components/settings/tabs/plugins/LinkIconButton.css";
 
 import { GithubIcon, WebsiteIcon } from "@components/Icons";
 import { getTheme, Theme } from "@utils/discord";
@@ -37,7 +37,7 @@ interface Props {
     href: string;
 }
 
-function LinkIcon({ text, href, Icon }: Props & { Icon: React.ComponentType }) {
+function LinkIcon({ text, href, Icon }: Props & { Icon: React.ComponentType; }) {
     return (
         <Tooltip text={text}>
             {props => (

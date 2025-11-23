@@ -4,13 +4,12 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { initIpc } from "@main/ipcMain";
+import { RendererSettings } from "@main/settings";
+import { IS_VANILLA } from "@main/utils/constants";
 import { onceDefined } from "@shared/onceDefined";
 import electron, { app, BrowserWindowConstructorOptions, Menu } from "electron";
 import { dirname, join } from "path";
-
-import { initIpc } from "./ipcMain";
-import { RendererSettings } from "./settings";
-import { IS_VANILLA } from "./utils/constants";
 
 console.log("[Vencord] Starting up...");
 

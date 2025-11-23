@@ -4,10 +4,13 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import {
+    resolveError,
+    SettingProps,
+    SettingsSection,
+} from "@components/settings/tabs/plugins/components/Common";
 import { PluginOptionSelect } from "@utils/types";
 import { React, Select, useState } from "@webpack/common";
-
-import { resolveError, SettingProps, SettingsSection } from "./Common";
 
 export function SelectSetting({
     option,

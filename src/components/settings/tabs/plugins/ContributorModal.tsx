@@ -4,12 +4,17 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./ContributorModal.css";
+import "@components/settings/tabs/plugins/ContributorModal.css";
 
 import { useSettings } from "@api/Settings";
 import { classNameFactory } from "@api/Styles";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Link } from "@components/Link";
+import {
+    GithubButton,
+    WebsiteButton,
+} from "@components/settings/tabs/plugins/LinkIconButton";
+import { PluginCard } from "@components/settings/tabs/plugins/PluginCard";
 import { DevsById } from "@utils/constants";
 import { fetchUserProfile } from "@utils/discord";
 import { classes, pluralise } from "@utils/misc";
@@ -26,9 +31,6 @@ import {
 
 import Plugins from "~plugins";
 
-import { GithubButton, WebsiteButton } from "./LinkIconButton";
-import { PluginCard } from "./PluginCard";
-
 const cl = classNameFactory("vc-author-modal-");
 
 export function openContributorModal(user: User) {
@@ -43,7 +45,7 @@ export function openContributorModal(user: User) {
     ));
 }
 
-function ContributorModal({ user }: { user: User }) {
+function ContributorModal({ user }: { user: User; }) {
     useSettings();
 
     const profile = useStateFromStores([UserProfileStore], () =>
@@ -55,10 +57,10 @@ function ContributorModal({ user }: { user: User }) {
     }, [user.id, user.bot, profile]);
 
     const githubName = profile?.connectedAccounts?.find(
-        a => a.type === "github",
+        a => a.type === "github"
     )?.name;
     const website = profile?.connectedAccounts?.find(
-        a => a.type === "domain",
+        a => a.type === "domain"
     )?.name;
 
     const plugins = useMemo(() => {
@@ -66,8 +68,8 @@ function ContributorModal({ user }: { user: User }) {
         const pluginsByAuthor = DevsById[user.id]
             ? allPlugins.filter(p => p.authors.includes(DevsById[user.id]))
             : allPlugins.filter(p =>
-                  p.authors.some(a => a.name === user.username),
-              );
+                p.authors.some(a => a.name === user.username)
+            );
 
         return pluginsByAuthor
             .filter(p => !p.name.endsWith("API"))

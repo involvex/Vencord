@@ -7,11 +7,10 @@
 import * as DataStore from "@api/DataStore";
 import { showNotification } from "@api/Notifications";
 import { Settings } from "@api/Settings";
+import { Logger } from "@utils/Logger";
+import { openModal } from "@utils/modal";
+import { relaunch } from "@utils/native";
 import { Alerts, OAuth2AuthorizeModal, UserStore } from "@webpack/common";
-
-import { Logger } from "./Logger";
-import { openModal } from "./modal";
-import { relaunch } from "./native";
 
 export const cloudLogger = new Logger("Cloud", "#39b7e0");
 
@@ -72,7 +71,7 @@ export async function getAuthorization() {
                 secrets[`${origin}:${getUserId()}`] = secrets[origin];
                 delete secrets[origin];
                 return secrets;
-            },
+            }
         );
 
         // since this doesn't update the original object, we'll early return the existing authorization
@@ -89,7 +88,7 @@ async function setAuthorization(secret: string) {
             secrets ??= {};
             secrets[`${getCloudUrlOrigin()}:${getUserId()}`] = secret;
             return secrets;
-        },
+        }
     );
 }
 
@@ -100,7 +99,7 @@ export async function deauthorizeCloud() {
             secrets ??= {};
             delete secrets[`${getCloudUrlOrigin()}:${getUserId()}`];
             return secrets;
-        },
+        }
     );
 }
 

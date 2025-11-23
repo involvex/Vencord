@@ -6,6 +6,12 @@
 
 import { MessageObject } from "@api/MessageEvents";
 import {
+    runtimeHashMessageKey,
+    runtimeHashMessageKeyLegacy,
+} from "@utils/intlHash";
+import { Logger } from "@utils/Logger";
+import { MediaModalItem, MediaModalProps, openMediaModal } from "@utils/modal";
+import {
     Channel,
     CloudUpload,
     Guild,
@@ -33,10 +39,6 @@ import {
     UserUtils,
 } from "@webpack/common";
 import { Except } from "type-fest";
-
-import { runtimeHashMessageKey, runtimeHashMessageKeyLegacy } from "./intlHash";
-import { Logger } from "./Logger";
-import { MediaModalItem, MediaModalProps, openMediaModal } from "./modal";
 
 const IntlManagerLogger = new Logger("IntlManager");
 
@@ -165,12 +167,12 @@ interface MessageOptions {
             poll_media: {
                 text: string;
                 attachment_ids?: unknown;
-                emoji?: { name: string; id?: string };
+                emoji?: { name: string; id?: string; };
             };
         }>;
         duration: number;
         layout_type: number;
-        question: { text: string };
+        question: { text: string; };
     };
 }
 

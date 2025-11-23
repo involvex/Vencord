@@ -4,16 +4,15 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./styles.css";
+import "@components/settings/tabs/themes/styles.css";
 
 import { Link } from "@components/Link";
 import { SettingsTab, wrapTab } from "@components/settings/tabs/BaseTab";
+import { CspErrorCard } from "@components/settings/tabs/themes/CspErrorCard";
+import { LocalThemesTab } from "@components/settings/tabs/themes/LocalThemesTab";
+import { OnlineThemesTab } from "@components/settings/tabs/themes/OnlineThemesTab";
 import { getStylusWebStoreUrl } from "@utils/web";
 import { Card, Forms, React, TabBar, useState } from "@webpack/common";
-
-import { CspErrorCard } from "./CspErrorCard";
-import { LocalThemesTab } from "./LocalThemesTab";
-import { OnlineThemesTab } from "./OnlineThemesTab";
 
 const enum ThemeTab {
     LOCAL,

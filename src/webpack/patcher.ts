@@ -4,8 +4,4 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-export {
-    getBuildNumber,
-    patches,
-    patchTimings,
-} from "./patchWebpack";
+export { getBuildNumber, patches, patchTimings } from "./patchWebpack";

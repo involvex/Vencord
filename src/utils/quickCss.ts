@@ -5,9 +5,8 @@
  */
 
 import { Settings, SettingsStore } from "@api/Settings";
+import { createAndAppendStyle } from "@utils/css";
 import { ThemeStore } from "@webpack/common";
-
-import { createAndAppendStyle } from "./css";
 
 let style: HTMLStyleElement;
 let themesStyle: HTMLStyleElement;
@@ -48,8 +47,8 @@ async function initThemes() {
         ThemeStore == null
             ? undefined
             : ThemeStore.theme === "light"
-              ? "light"
-              : "dark";
+                ? "light"
+                : "dark";
 
     const links = themeLinks
         .map(rawLink => {

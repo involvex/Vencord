@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./ErrorCard.css";
+import "@components/ErrorCard.css";
 
 import { classes } from "@utils/misc";
 import type { HTMLProps } from "react";

@@ -21,7 +21,14 @@ import {
     CommandOption,
 } from "@vencord/discord-types";
 
-import { askAI, generateMeme } from "./AIService";
+import {
+    analyzeText,
+    askAI,
+    generateCode,
+    generateMeme,
+    summarizeText,
+    translateText,
+} from "./AIService";
 import { AiFunSettingsPanel } from "./Settings";
 import { CustomCommand, defaultSettings } from "./types";
 
@@ -35,22 +42,23 @@ const executeAiMeme = async (
     ctx: CommandContext,
 ) => {
     const prompt = args.find(arg => arg.name === "prompt")?.value as string;
-    const user = args.find(arg => arg.name === "user")?.value as string; // This will be the user ID as a string
+    const user = args.find(arg => arg.name === "user")?.value as string;
 
     try {
         await sendBotMessage(ctx.channel.id, {
             content: `Generating meme for "${prompt}"${user ? ` about <@${user}>` : ""}...`,
         });
-        const { apiKey, aiModel, aiProvider } = settings.store;
+        const currentSettings = settings.store;
         const imageUrl = await generateMeme(
             prompt,
             user,
-            apiKey ?? "",
-            aiModel ?? "",
-            aiProvider ?? "",
+            currentSettings.apiKey ?? "",
+            currentSettings.aiModel ?? "",
+            currentSettings.aiProvider ?? "",
+            currentSettings,
         );
         await sendBotMessage(ctx.channel.id, {
-            content: imageUrl, // Discord will embed the image from the URL
+            content: imageUrl,
         });
     } catch (error: any) {
         console.error(`[AiFun] Error executing /${commandName}:`, error);
@@ -72,12 +80,13 @@ const executeAskAi = async (
         await sendBotMessage(ctx.channel.id, {
             content: `Thinking about "${prompt}"...`,
         });
-        const { apiKey, aiModel, aiProvider } = settings.store;
+        const currentSettings = settings.store;
         const aiResponse = await askAI(
             prompt,
-            apiKey ?? "",
-            aiModel ?? "",
-            aiProvider ?? "",
+            currentSettings.apiKey ?? "",
+            currentSettings.aiModel ?? "",
+            currentSettings.aiProvider ?? "",
+            currentSettings,
         );
         await sendBotMessage(ctx.channel.id, {
             content: aiResponse,
@@ -86,6 +95,139 @@ const executeAskAi = async (
         console.error(`[AiFun] Error executing /${commandName}:`, error);
         await sendBotMessage(ctx.channel.id, {
             content: `Failed to get AI response: ${error.message}`,
+        });
+    }
+};
+
+// New command execution functions
+const executeAiSummarize = async (
+    commandName: string,
+    args: CommandArgument[],
+    ctx: CommandContext,
+) => {
+    const text = args.find(arg => arg.name === "text")?.value as string;
+
+    try {
+        await sendBotMessage(ctx.channel.id, {
+            content: "Summarizing text...",
+        });
+        const currentSettings = settings.store;
+        const summary = await summarizeText(
+            text,
+            currentSettings.apiKey ?? "",
+            currentSettings.aiModel ?? "",
+            currentSettings.aiProvider ?? "",
+            currentSettings,
+        );
+        await sendBotMessage(ctx.channel.id, {
+            content: summary,
+        });
+    } catch (error: any) {
+        console.error(`[AiFun] Error executing /${commandName}:`, error);
+        await sendBotMessage(ctx.channel.id, {
+            content: `Failed to summarize text: ${error.message}`,
+        });
+    }
+};
+
+const executeAiTranslate = async (
+    commandName: string,
+    args: CommandArgument[],
+    ctx: CommandContext,
+) => {
+    const text = args.find(arg => arg.name === "text")?.value as string;
+    const language =
+        (args.find(arg => arg.name === "language")?.value as string) ||
+        "English";
+
+    try {
+        await sendBotMessage(ctx.channel.id, {
+            content: `Translating text to ${language}...`,
+        });
+        const currentSettings = settings.store;
+        const translation = await translateText(
+            text,
+            language,
+            currentSettings.apiKey ?? "",
+            currentSettings.aiModel ?? "",
+            currentSettings.aiProvider ?? "",
+            currentSettings,
+        );
+        await sendBotMessage(ctx.channel.id, {
+            content: translation,
+        });
+    } catch (error: any) {
+        console.error(`[AiFun] Error executing /${commandName}:`, error);
+        await sendBotMessage(ctx.channel.id, {
+            content: `Failed to translate text: ${error.message}`,
+        });
+    }
+};
+
+const executeAiCode = async (
+    commandName: string,
+    args: CommandArgument[],
+    ctx: CommandContext,
+) => {
+    const description = args.find(arg => arg.name === "description")
+        ?.value as string;
+    const language = args.find(arg => arg.name === "language")
+        ?.value as string;
+
+    try {
+        await sendBotMessage(ctx.channel.id, {
+            content: "Generating code...",
+        });
+        const currentSettings = settings.store;
+        const code = await generateCode(
+            description,
+            currentSettings.apiKey ?? "",
+            currentSettings.aiModel ?? "",
+            currentSettings.aiProvider ?? "",
+            language,
+            currentSettings,
+        );
+        await sendBotMessage(ctx.channel.id, {
+            content: `\`\`\`${language || "javascript"}\n${code}\n\`\`\``,
+        });
+    } catch (error: any) {
+        console.error(`[AiFun] Error executing /${commandName}:`, error);
+        await sendBotMessage(ctx.channel.id, {
+            content: `Failed to generate code: ${error.message}`,
+        });
+    }
+};
+
+const executeAiAnalyze = async (
+    commandName: string,
+    args: CommandArgument[],
+    ctx: CommandContext,
+) => {
+    const text = args.find(arg => arg.name === "text")?.value as string;
+    const analysisType =
+        (args.find(arg => arg.name === "type")?.value as string) ||
+        "general analysis";
+
+    try {
+        await sendBotMessage(ctx.channel.id, {
+            content: `Analyzing text for ${analysisType}...`,
+        });
+        const currentSettings = settings.store;
+        const analysis = await analyzeText(
+            text,
+            analysisType,
+            currentSettings.apiKey ?? "",
+            currentSettings.aiModel ?? "",
+            currentSettings.aiProvider ?? "",
+            currentSettings,
+        );
+        await sendBotMessage(ctx.channel.id, {
+            content: analysis,
+        });
+    } catch (error: any) {
+        console.error(`[AiFun] Error executing /${commandName}:`, error);
+        await sendBotMessage(ctx.channel.id, {
+            content: `Failed to analyze text: ${error.message}`,
         });
     }
 };
@@ -133,6 +275,62 @@ export default definePlugin({
                             type: ApplicationCommandOptionType.STRING,
                             required: true,
                         });
+                    } else if (cmd.type === "aisummarize") {
+                        commandOptions.push({
+                            name: "text",
+                            description: "The text to summarize.",
+                            type: ApplicationCommandOptionType.STRING,
+                            required: true,
+                        });
+                    } else if (cmd.type === "aitranslate") {
+                        commandOptions.push(
+                            {
+                                name: "text",
+                                description: "The text to translate.",
+                                type: ApplicationCommandOptionType.STRING,
+                                required: true,
+                            },
+                            {
+                                name: "language",
+                                description:
+                                    "Target language (default: English).",
+                                type: ApplicationCommandOptionType.STRING,
+                                required: false,
+                            },
+                        );
+                    } else if (cmd.type === "aicode") {
+                        commandOptions.push(
+                            {
+                                name: "description",
+                                description:
+                                    "Description of the code to generate.",
+                                type: ApplicationCommandOptionType.STRING,
+                                required: true,
+                            },
+                            {
+                                name: "language",
+                                description:
+                                    "Programming language (default: javascript).",
+                                type: ApplicationCommandOptionType.STRING,
+                                required: false,
+                            },
+                        );
+                    } else if (cmd.type === "aianalyze") {
+                        commandOptions.push(
+                            {
+                                name: "text",
+                                description: "The text to analyze.",
+                                type: ApplicationCommandOptionType.STRING,
+                                required: true,
+                            },
+                            {
+                                name: "type",
+                                description:
+                                    "Type of analysis (default: general analysis).",
+                                type: ApplicationCommandOptionType.STRING,
+                                required: false,
+                            },
+                        );
                     }
 
                     const vencordCommand: VencordCommand = {
@@ -145,6 +343,14 @@ export default definePlugin({
                                 await executeAiMeme(cmd.name, args, ctx);
                             } else if (cmd.type === "askai") {
                                 await executeAskAi(cmd.name, args, ctx);
+                            } else if (cmd.type === "aisummarize") {
+                                await executeAiSummarize(cmd.name, args, ctx);
+                            } else if (cmd.type === "aitranslate") {
+                                await executeAiTranslate(cmd.name, args, ctx);
+                            } else if (cmd.type === "aicode") {
+                                await executeAiCode(cmd.name, args, ctx);
+                            } else if (cmd.type === "aianalyze") {
+                                await executeAiAnalyze(cmd.name, args, ctx);
                             }
                         },
                     };

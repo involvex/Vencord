@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./styles.css";
+import "@components/settings/tabs/styles.css";
 
 export * from "./BaseTab";
 export { default as PatchHelperTab } from "./patchHelper";

@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./styles.css";
+import "@api/Notifications/styles.css";
 
+import { NotificationData } from "@api/Notifications/Notifications";
 import { useSettings } from "@api/Settings";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { classes } from "@utils/misc";
@@ -17,8 +18,6 @@ import {
     useStateFromStores,
     WindowStore,
 } from "@webpack/common";
-
-import { NotificationData } from "./Notifications";
 
 export default ErrorBoundary.wrap(
     function NotificationComponent({
@@ -33,7 +32,7 @@ export default ErrorBoundary.wrap(
         permanent,
         className,
         dismissOnClick,
-    }: NotificationData & { className?: string }) {
+    }: NotificationData & { className?: string; }) {
         const { timeout, position } = useSettings([
             "notifications.timeout",
             "notifications.position",

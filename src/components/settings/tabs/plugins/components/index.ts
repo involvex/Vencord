@@ -4,18 +4,20 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./styles.css";
+import "@components/settings/tabs/plugins/components/styles.css";
 
+import { BooleanSetting } from "@components/settings/tabs/plugins/components/BooleanSetting";
+import {
+    ComponentSettingProps,
+    SettingProps,
+} from "@components/settings/tabs/plugins/components/Common";
+import { ComponentSetting } from "@components/settings/tabs/plugins/components/ComponentSetting";
+import { NumberSetting } from "@components/settings/tabs/plugins/components/NumberSetting";
+import { SelectSetting } from "@components/settings/tabs/plugins/components/SelectSetting";
+import { SliderSetting } from "@components/settings/tabs/plugins/components/SliderSetting";
+import { TextSetting } from "@components/settings/tabs/plugins/components/TextSetting";
 import { OptionType } from "@utils/types";
 import { ComponentType } from "react";
-
-import { BooleanSetting } from "./BooleanSetting";
-import { ComponentSettingProps, SettingProps } from "./Common";
-import { ComponentSetting } from "./ComponentSetting";
-import { NumberSetting } from "./NumberSetting";
-import { SelectSetting } from "./SelectSetting";
-import { SliderSetting } from "./SliderSetting";
-import { TextSetting } from "./TextSetting";
 
 export const OptionComponentMap: Record<
     OptionType,

@@ -4,11 +4,14 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import {
+    resolveError,
+    SettingProps,
+    SettingsSection,
+} from "@components/settings/tabs/plugins/components/Common";
 import { Switch } from "@components/Switch";
 import { PluginOptionBoolean } from "@utils/types";
 import { React, useState } from "@webpack/common";
-
-import { resolveError, SettingProps, SettingsSection } from "./Common";
 
 export function BooleanSetting({
     option,

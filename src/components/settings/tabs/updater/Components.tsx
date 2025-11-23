@@ -7,6 +7,7 @@
 import { ErrorCard } from "@components/ErrorCard";
 import { Flex } from "@components/Flex";
 import { Link } from "@components/Link";
+import { runWithDispatch } from "@components/settings/tabs/updater/runWithDispatch";
 import { Margins } from "@utils/margins";
 import { classes } from "@utils/misc";
 import { relaunch } from "@utils/native";
@@ -20,8 +21,6 @@ import {
     Toasts,
     useState,
 } from "@webpack/common";
-
-import { runWithDispatch } from "./runWithDispatch";
 
 export interface CommonProps {
     repo: string;
@@ -48,7 +47,7 @@ export function Changes({
     updates,
     repo,
     repoPending,
-}: CommonProps & { updates: typeof changes }) {
+}: CommonProps & { updates: typeof changes; }) {
     return (
         <Card style={{ padding: "0 0.5em" }}>
             {updates.map(({ hash, author, message }) => (

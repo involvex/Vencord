@@ -13,6 +13,12 @@ import {
     SettingsTab,
     wrapTab,
 } from "@components/settings/tabs/BaseTab";
+import {
+    CommonProps,
+    HashLink,
+    Newer,
+    Updatable,
+} from "@components/settings/tabs/updater/Components";
 import { Margins } from "@utils/margins";
 import {
     ModalCloseButton,
@@ -27,8 +33,6 @@ import { getRepo, isNewer, UpdateLogger } from "@utils/updater";
 import { Forms, React } from "@webpack/common";
 
 import gitHash from "~git-hash";
-
-import { CommonProps, HashLink, Newer, Updatable } from "./Components";
 
 function Updater() {
     const settings = useSettings(["autoUpdate", "autoUpdateNotification"]);

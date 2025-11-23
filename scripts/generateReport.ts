@@ -188,9 +188,9 @@ async function printReport() {
                 color: CANARY ? 0xfbb642 : 0x5865f2,
             },
             report.badPatches.length > 0 &&
-            patchesToEmbed("Bad Patches", report.badPatches, 0xff0000),
+                patchesToEmbed("Bad Patches", report.badPatches, 0xff0000),
             report.slowPatches.length > 0 &&
-            patchesToEmbed("Slow Patches", report.slowPatches, 0xf0b232),
+                patchesToEmbed("Slow Patches", report.slowPatches, 0xf0b232),
             report.badWebpackFinds.length > 0 && {
                 title: "Bad Webpack Finds",
                 description:

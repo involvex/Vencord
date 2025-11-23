@@ -4,14 +4,13 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./FormSwitch.css";
+import "@components/FormSwitch.css";
 
+import { Divider } from "@components/Divider";
+import { Span } from "@components/Span";
+import { Switch } from "@components/Switch";
 import { classes } from "@utils/misc";
 import type { PropsWithChildren, ReactNode } from "react";
-
-import { Divider } from "./Divider";
-import { Span } from "./Span";
-import { Switch } from "./Switch";
 
 export interface FormSwitchProps {
     title: ReactNode;

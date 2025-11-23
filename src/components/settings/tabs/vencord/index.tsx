@@ -20,16 +20,18 @@ import { SpecialCard } from "@components/settings/SpecialCard";
 import { SettingsTab, wrapTab } from "@components/settings/tabs/BaseTab";
 import { openContributorModal } from "@components/settings/tabs/plugins/ContributorModal";
 import { openPluginModal } from "@components/settings/tabs/plugins/PluginModal";
+import {
+    DonateButtonComponent,
+    isDonor,
+} from "@components/settings/tabs/vencord/DonateButton";
+import { VibrancySettings } from "@components/settings/tabs/vencord/MacVibrancySettings";
+import { NotificationSection } from "@components/settings/tabs/vencord/NotificationSettings";
 import { gitRemote } from "@shared/vencordUserAgent";
 import { IS_MAC, IS_WINDOWS } from "@utils/constants";
 import { Margins } from "@utils/margins";
 import { isPluginDev } from "@utils/misc";
 import { relaunch } from "@utils/native";
 import { Alerts, Forms, React, useMemo, UserStore } from "@webpack/common";
-
-import { DonateButtonComponent, isDonor } from "./DonateButton";
-import { VibrancySettings } from "./MacVibrancySettings";
-import { NotificationSection } from "./NotificationSettings";
 
 const DEFAULT_DONATE_IMAGE =
     "https://cdn.discordapp.com/emojis/1026533090627174460.png";
@@ -70,17 +72,17 @@ function Switches() {
             restartRequired: true,
         },
         !IS_WEB &&
-            (!IS_DISCORD_DESKTOP || !IS_WINDOWS
-                ? {
-                      key: "frameless",
-                      title: "Disable the window frame",
-                      restartRequired: true,
-                  }
-                : {
-                      key: "winNativeTitleBar",
-                      title: "Use Windows' native title bar instead of Discord's custom one",
-                      restartRequired: true,
-                  }),
+        (!IS_DISCORD_DESKTOP || !IS_WINDOWS
+            ? {
+                key: "frameless",
+                title: "Disable the window frame",
+                restartRequired: true,
+            }
+            : {
+                key: "winNativeTitleBar",
+                title: "Use Windows' native title bar instead of Discord's custom one",
+                restartRequired: true,
+            }),
         !IS_WEB && {
             key: "transparent",
             title: "Enable window transparency",
@@ -94,19 +96,19 @@ function Switches() {
             restartRequired: true,
         },
         !IS_WEB &&
-            IS_WINDOWS && {
-                key: "winCtrlQ",
-                title: "Register Ctrl+Q as shortcut to close Discord (Alternative to Alt+F4)",
-                restartRequired: true,
-            },
+        IS_WINDOWS && {
+            key: "winCtrlQ",
+            title: "Register Ctrl+Q as shortcut to close Discord (Alternative to Alt+F4)",
+            restartRequired: true,
+        },
     ] satisfies Array<
         | false
         | {
-              key: KeysOfType<typeof settings, boolean>;
-              title: string;
-              description?: string;
-              restartRequired?: boolean;
-          }
+            key: KeysOfType<typeof settings, boolean>;
+            title: string;
+            description?: string;
+            restartRequired?: boolean;
+        }
     >;
 
     return Switches.map(setting => {

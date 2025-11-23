@@ -70,7 +70,7 @@ export const settings = definePluginSettings({
     },
 });
 
-function isUncategorized(objChannel: { channel: Channel; comparator: number; }) {
+function isUncategorized(objChannel: { channel: Channel; comparator: number }) {
     return (
         objChannel.channel.id === "null" &&
         objChannel.channel.name === "Uncategorized" &&
@@ -216,7 +216,7 @@ export default definePlugin({
                     predicate: () =>
                         settings.store.hideUnreads === false &&
                         settings.store.showMode ===
-                        ShowMode.HiddenIconWithMutedStyle,
+                            ShowMode.HiddenIconWithMutedStyle,
                     match: /(?<=\.LOCKED;if\()(?<={channel:(\i).+?)/,
                     replace: (_, channel) =>
                         `!$self.isHiddenChannel(${channel})&&`,
@@ -559,7 +559,7 @@ export default definePlugin({
     },
 
     isHiddenChannel(
-        channel: Channel & { channelId?: string; },
+        channel: Channel & { channelId?: string },
         checkConnect = false,
     ) {
         try {
@@ -596,7 +596,7 @@ export default definePlugin({
     resolveGuildChannels(
         channels: Record<
             string | number,
-            Array<{ channel: Channel; comparator: number; }> | string | number
+            Array<{ channel: Channel; comparator: number }> | string | number
         >,
         shouldIncludeHidden: boolean,
     ) {

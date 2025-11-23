@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import type { MapValue } from "type-fest/source/entry";
+type MapValue<BaseType> = BaseType extends Map<unknown, infer ValueType> ? ValueType : never;
 
 export type Style = MapValue<typeof VencordStyles>;
 
@@ -158,16 +158,16 @@ type ClassNameFactoryArg =
  */
 export const classNameFactory =
     (prefix: string = "") =>
-    (...args: ClassNameFactoryArg[]) => {
-        const classNames = new Set<string>();
-        for (const arg of args) {
-            if (arg && typeof arg === "string") classNames.add(arg);
-            else if (Array.isArray(arg))
-                arg.forEach(name => classNames.add(name));
-            else if (arg && typeof arg === "object")
-                Object.entries(arg).forEach(
-                    ([name, value]) => value && classNames.add(name),
-                );
-        }
-        return Array.from(classNames, name => prefix + name).join(" ");
-    };
+        (...args: ClassNameFactoryArg[]) => {
+            const classNames = new Set<string>();
+            for (const arg of args) {
+                if (arg && typeof arg === "string") classNames.add(arg);
+                else if (Array.isArray(arg))
+                    arg.forEach(name => classNames.add(name));
+                else if (arg && typeof arg === "object")
+                    Object.entries(arg).forEach(
+                        ([name, value]) => value && classNames.add(name),
+                    );
+            }
+            return Array.from(classNames, name => prefix + name).join(" ");
+        };

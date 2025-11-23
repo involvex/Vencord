@@ -4,10 +4,19 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./updater";
-import "./ipcPlugins";
-import "./settings";
+import "@main/updater";
+import "@main/ipcPlugins";
+import "@main/settings";
 
+import { registerCspIpcHandlers } from "@main/csp/manager";
+import { getThemeInfo, stripBOM, UserThemeHeader } from "@main/themes";
+import {
+    ALLOWED_PROTOCOLS,
+    QUICKCSS_PATH,
+    SETTINGS_DIR,
+    THEMES_DIR,
+} from "@main/utils/constants";
+import { makeLinksOpenExternally } from "@main/utils/externalLinks";
 import { debounce } from "@shared/debounce";
 import { IpcEvents } from "@shared/IpcEvents";
 import { BrowserWindow, ipcMain, shell, systemPreferences } from "electron";
@@ -15,16 +24,6 @@ import monacoHtml from "file://monacoWin.html?minify&base64";
 import { FSWatcher, mkdirSync, watch, writeFileSync } from "fs";
 import { open, readdir, readFile } from "fs/promises";
 import { join, normalize } from "path";
-
-import { registerCspIpcHandlers } from "./csp/manager";
-import { getThemeInfo, stripBOM, UserThemeHeader } from "./themes";
-import {
-    ALLOWED_PROTOCOLS,
-    QUICKCSS_PATH,
-    SETTINGS_DIR,
-    THEMES_DIR,
-} from "./utils/constants";
-import { makeLinksOpenExternally } from "./utils/externalLinks";
 
 mkdirSync(THEMES_DIR, { recursive: true });
 
@@ -118,7 +117,7 @@ export function initIpc(mainWindow: BrowserWindow) {
                 }, 50),
             );
         })
-        .catch(() => {});
+        .catch(() => { });
 
     const themesWatcher = watch(
         THEMES_DIR,

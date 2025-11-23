@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import "./Divider.css";
+import "@components/Divider.css";
 
 import { classes } from "@utils/misc";
 import type { ComponentPropsWithoutRef } from "react";

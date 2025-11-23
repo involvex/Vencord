@@ -194,7 +194,7 @@ const hasAttachmentPerms = (channelId: string) =>
     hasPermission(channelId, PermissionsBits.ATTACH_FILES);
 
 function makeBypassPatches(): Omit<Patch, "plugin"> {
-    const mapping: Array<{ func: string; predicate?: () => boolean; }> = [
+    const mapping: Array<{ func: string; predicate?: () => boolean }> = [
         {
             func: "canUseCustomStickersEverywhere",
             predicate: () => settings.store.enableStickerBypass,
@@ -522,11 +522,11 @@ export default definePlugin({
         const newAppearanceProto =
             currentAppearanceSettings != null
                 ? AppearanceSettingsActionCreators.fromBinary(
-                    AppearanceSettingsActionCreators.toBinary(
-                        currentAppearanceSettings,
-                    ),
-                    BINARY_READ_OPTIONS,
-                )
+                      AppearanceSettingsActionCreators.toBinary(
+                          currentAppearanceSettings,
+                      ),
+                      BINARY_READ_OPTIONS,
+                  )
                 : AppearanceSettingsActionCreators.create();
 
         newAppearanceProto.theme = theme;
@@ -608,7 +608,7 @@ export default definePlugin({
                     let url: URL | null = null;
                     try {
                         url = new URL(child.props.href);
-                    } catch { }
+                    } catch {}
 
                     const emojiName =
                         EmojiStore.getCustomEmojiById(fakeNitroMatch[1])
@@ -744,7 +744,7 @@ export default definePlugin({
                 let url: URL | null = null;
                 try {
                     url = new URL(item);
-                } catch { }
+                } catch {}
 
                 const stickerName =
                     StickersStore.getStickerById(imgMatch[1])?.name ??
@@ -929,9 +929,13 @@ export default definePlugin({
 
         gif.finish();
 
-        const file = new File([new Uint8Array(gif.bytesView())], `${stickerId}.gif`, {
-            type: "image/gif",
-        });
+        const file = new File(
+            [new Uint8Array(gif.bytesView())],
+            `${stickerId}.gif`,
+            {
+                type: "image/gif",
+            },
+        );
         UploadHandler.promptToUpload(
             [file],
             ChannelStore.getChannel(channelId),

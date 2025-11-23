@@ -7,6 +7,7 @@
 import { showNotice } from "@api/Notices";
 import { CogWheel, InfoIcon } from "@components/Icons";
 import { AddonCard } from "@components/settings/AddonCard";
+import { openPluginModal } from "@components/settings/tabs/plugins/PluginModal";
 import { proxyLazy } from "@utils/lazy";
 import { isObjectEmpty } from "@utils/misc";
 import { Plugin } from "@utils/types";
@@ -14,7 +15,6 @@ import { React, showToast, Toasts } from "@webpack/common";
 import { Settings } from "Vencord";
 
 import { cl, logger } from ".";
-import { openPluginModal } from "./PluginModal";
 
 // Avoid circular dependency
 const { startDependenciesRecursive, startPlugin, stopPlugin, isPluginEnabled } =

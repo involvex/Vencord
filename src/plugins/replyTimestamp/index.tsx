@@ -18,7 +18,11 @@ const MessageClasses = findByPropsLazy("separator", "latin24CompactTimeStamp");
 
 function Sep(props: HTMLAttributes<HTMLElement>) {
     return (
-        <i className={MessageClasses.separator} aria-hidden="true" {...(props as any)} />
+        <i
+            className={MessageClasses.separator}
+            aria-hidden="true"
+            {...(props as any)}
+        />
     );
 }
 
@@ -29,12 +33,12 @@ const enum ReferencedMessageState {
 }
 
 type ReferencedMessage =
-    | { state: ReferencedMessageState.LOADED; message: Message; }
+    | { state: ReferencedMessageState.LOADED; message: Message }
     | {
-        state:
-        | ReferencedMessageState.NOT_LOADED
-        | ReferencedMessageState.DELETED;
-    };
+          state:
+              | ReferencedMessageState.NOT_LOADED
+              | ReferencedMessageState.DELETED;
+      };
 
 function ReplyTimestamp({
     referencedMessage,

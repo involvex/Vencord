@@ -5,6 +5,8 @@
  */
 
 import * as DataStore from "@api/DataStore";
+import NotificationComponent from "@api/Notifications/NotificationComponent";
+import type { NotificationData } from "@api/Notifications/Notifications";
 import { Settings } from "@api/Settings";
 import { classNameFactory } from "@api/Styles";
 import { Flex } from "@components/Flex";
@@ -34,9 +36,6 @@ import {
 } from "@webpack/common";
 import { nanoid } from "nanoid";
 import type { DispatchWithoutAction } from "react";
-
-import NotificationComponent from "./NotificationComponent";
-import type { NotificationData } from "./Notifications";
 
 interface PersistentNotificationData
     extends Pick<
@@ -122,7 +121,7 @@ export function useLogs() {
     return [log, pending] as const;
 }
 
-function NotificationEntry({ data }: { data: PersistentNotificationData }) {
+function NotificationEntry({ data }: { data: PersistentNotificationData; }) {
     const [removing, setRemoving] = useState(false);
 
     return (
