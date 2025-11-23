@@ -29,7 +29,7 @@ type FileInput = ComponentType<{
     ref: Ref<HTMLInputElement>;
     onChange: (e: SyntheticEvent<HTMLInputElement>) => void;
     multiple?: boolean;
-    filters?: { name?: string; extensions: string[]; }[];
+    filters?: { name?: string; extensions: string[] }[];
 }>;
 
 const FileInput: FileInput = findLazy(
@@ -174,14 +174,14 @@ export function LocalThemesTab() {
                         {Vencord.Plugins.isPluginEnabled(
                             ClientThemePlugin.name,
                         ) && (
-                                <QuickAction
-                                    text="Edit ClientTheme"
-                                    action={() =>
-                                        openPluginModal(ClientThemePlugin)
-                                    }
-                                    Icon={PencilIcon}
-                                />
-                            )}
+                            <QuickAction
+                                text="Edit ClientTheme"
+                                action={() =>
+                                    openPluginModal(ClientThemePlugin)
+                                }
+                                Icon={PencilIcon}
+                            />
+                        )}
                     </>
                 </QuickActionCard>
 

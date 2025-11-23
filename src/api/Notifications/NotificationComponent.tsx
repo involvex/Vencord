@@ -32,7 +32,7 @@ export default ErrorBoundary.wrap(
         permanent,
         className,
         dismissOnClick,
-    }: NotificationData & { className?: string; }) {
+    }: NotificationData & { className?: string }) {
         const { timeout, position } = useSettings([
             "notifications.timeout",
             "notifications.position",

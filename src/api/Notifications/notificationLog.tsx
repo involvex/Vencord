@@ -121,7 +121,7 @@ export function useLogs() {
     return [log, pending] as const;
 }
 
-function NotificationEntry({ data }: { data: PersistentNotificationData; }) {
+function NotificationEntry({ data }: { data: PersistentNotificationData }) {
     const [removing, setRemoving] = useState(false);
 
     return (

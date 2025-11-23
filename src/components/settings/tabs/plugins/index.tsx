@@ -40,7 +40,7 @@ import Plugins, { ExcludedPlugins } from "~plugins";
 export const cl = classNameFactory("vc-plugins-");
 export const logger = new Logger("PluginSettings", "#a6d189");
 
-function ReloadRequiredCard({ required }: { required: boolean; }) {
+function ReloadRequiredCard({ required }: { required: boolean }) {
     return (
         <Card
             className={classes(cl("info-card"), required && "vc-warning-card")}
@@ -81,7 +81,7 @@ const enum SearchStatus {
     NEW,
 }
 
-function ExcludedPluginsList({ search }: { search: string; }) {
+function ExcludedPluginsList({ search }: { search: string }) {
     const matchingExcludedPlugins = Object.entries(ExcludedPlugins).filter(
         ([name]) => name.toLowerCase().includes(search),
     );
@@ -247,10 +247,10 @@ function PluginSettings() {
                 p.required || !depMap[p.name]
                     ? "This plugin is required for Vencord to function."
                     : makeDependencyList(
-                        depMap[p.name]?.filter(
-                            d => settings.plugins[d].enabled,
-                        ),
-                    );
+                          depMap[p.name]?.filter(
+                              d => settings.plugins[d].enabled,
+                          ),
+                      );
 
             requiredPlugins.push(
                 <Tooltip text={tooltipText} key={p.name}>

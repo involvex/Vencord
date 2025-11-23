@@ -71,7 +71,7 @@ export async function getAuthorization() {
                 secrets[`${origin}:${getUserId()}`] = secrets[origin];
                 delete secrets[origin];
                 return secrets;
-            }
+            },
         );
 
         // since this doesn't update the original object, we'll early return the existing authorization
@@ -88,7 +88,7 @@ async function setAuthorization(secret: string) {
             secrets ??= {};
             secrets[`${getCloudUrlOrigin()}:${getUserId()}`] = secret;
             return secrets;
-        }
+        },
     );
 }
 
@@ -99,7 +99,7 @@ export async function deauthorizeCloud() {
             secrets ??= {};
             delete secrets[`${getCloudUrlOrigin()}:${getUserId()}`];
             return secrets;
-        }
+        },
     );
 }
 

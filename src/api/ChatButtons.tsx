@@ -17,7 +17,7 @@ import { HTMLProps, JSX, MouseEventHandler, ReactNode } from "react";
 let ChannelTextAreaClasses: Record<"button" | "buttonContainer", string>;
 waitFor(
     ["buttonContainer", "channelTextArea"],
-    m => ChannelTextAreaClasses = m,
+    m => (ChannelTextAreaClasses = m),
 );
 
 export interface ChatBarProps {
@@ -79,7 +79,7 @@ export interface ChatBarProps {
 }
 
 export type ChatBarButtonFactory = (
-    props: ChatBarProps & { isMainChat: boolean; },
+    props: ChatBarProps & { isMainChat: boolean },
 ) => JSX.Element | null;
 
 const buttonFactories = new Map<string, ChatBarButtonFactory>();

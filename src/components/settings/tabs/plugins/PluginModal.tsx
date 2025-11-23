@@ -108,8 +108,8 @@ export default function PluginModal({
                 try {
                     const author = user.id
                         ? await UserUtils.getUser(String(user.id)).catch(() =>
-                            makeDummyUser({ username: user.name }),
-                        )
+                              makeDummyUser({ username: user.name }),
+                          )
                         : makeDummyUser({ username: user.name });
 
                     setAuthors(a => [...a, author]);

@@ -37,7 +37,7 @@ interface Props {
     href: string;
 }
 
-function LinkIcon({ text, href, Icon }: Props & { Icon: React.ComponentType; }) {
+function LinkIcon({ text, href, Icon }: Props & { Icon: React.ComponentType }) {
     return (
         <Tooltip text={text}>
             {props => (

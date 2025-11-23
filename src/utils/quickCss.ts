@@ -47,8 +47,8 @@ async function initThemes() {
         ThemeStore == null
             ? undefined
             : ThemeStore.theme === "light"
-                ? "light"
-                : "dark";
+              ? "light"
+              : "dark";
 
     const links = themeLinks
         .map(rawLink => {

@@ -45,7 +45,7 @@ export function openContributorModal(user: User) {
     ));
 }
 
-function ContributorModal({ user }: { user: User; }) {
+function ContributorModal({ user }: { user: User }) {
     useSettings();
 
     const profile = useStateFromStores([UserProfileStore], () =>
@@ -57,10 +57,10 @@ function ContributorModal({ user }: { user: User; }) {
     }, [user.id, user.bot, profile]);
 
     const githubName = profile?.connectedAccounts?.find(
-        a => a.type === "github"
+        a => a.type === "github",
     )?.name;
     const website = profile?.connectedAccounts?.find(
-        a => a.type === "domain"
+        a => a.type === "domain",
     )?.name;
 
     const plugins = useMemo(() => {
@@ -68,8 +68,8 @@ function ContributorModal({ user }: { user: User; }) {
         const pluginsByAuthor = DevsById[user.id]
             ? allPlugins.filter(p => p.authors.includes(DevsById[user.id]))
             : allPlugins.filter(p =>
-                p.authors.some(a => a.name === user.username)
-            );
+                  p.authors.some(a => a.name === user.username),
+              );
 
         return pluginsByAuthor
             .filter(p => !p.name.endsWith("API"))

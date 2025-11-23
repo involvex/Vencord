@@ -31,7 +31,7 @@ export async function importSettings(data: string) {
         );
 }
 
-export async function exportSettings({ minify }: { minify?: boolean; } = {}) {
+export async function exportSettings({ minify }: { minify?: boolean } = {}) {
     const settings = VencordNative.settings.get();
     const quickCss = await VencordNative.quickCss.get();
     return JSON.stringify({ settings, quickCss }, null, minify ? undefined : 4);

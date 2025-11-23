@@ -49,8 +49,12 @@ let commandIdOffset: number;
 export const _init = function (cmds: VencordCommand[]) {
     try {
         BUILT_IN = cmds;
-        OptionalMessageOption = cmds.find(c => c.untranslatedName || c.displayName === "shrug")!.options![0];
-        RequiredMessageOption = cmds.find(c => c.untranslatedName || c.displayName === "me")!.options![0];
+        OptionalMessageOption = cmds.find(
+            c => c.untranslatedName || c.displayName === "shrug",
+        )!.options![0];
+        RequiredMessageOption = cmds.find(
+            c => c.untranslatedName || c.displayName === "me",
+        )!.options![0];
         commandIdOffset =
             Math.abs(
                 BUILT_IN.map(x => Number(x.id)).sort((x, y) => x - y)[0],

@@ -21,7 +21,6 @@ export interface AiFunSettings {
     openaiApiKey: string;
     geminiApiKey: string;
     claudeApiKey: string;
-    anthropicApiKey: string;
     cohereApiKey: string;
     // Enhanced model settings
     temperature: number;

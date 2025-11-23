@@ -72,17 +72,17 @@ function Switches() {
             restartRequired: true,
         },
         !IS_WEB &&
-        (!IS_DISCORD_DESKTOP || !IS_WINDOWS
-            ? {
-                key: "frameless",
-                title: "Disable the window frame",
-                restartRequired: true,
-            }
-            : {
-                key: "winNativeTitleBar",
-                title: "Use Windows' native title bar instead of Discord's custom one",
-                restartRequired: true,
-            }),
+            (!IS_DISCORD_DESKTOP || !IS_WINDOWS
+                ? {
+                      key: "frameless",
+                      title: "Disable the window frame",
+                      restartRequired: true,
+                  }
+                : {
+                      key: "winNativeTitleBar",
+                      title: "Use Windows' native title bar instead of Discord's custom one",
+                      restartRequired: true,
+                  }),
         !IS_WEB && {
             key: "transparent",
             title: "Enable window transparency",
@@ -96,19 +96,19 @@ function Switches() {
             restartRequired: true,
         },
         !IS_WEB &&
-        IS_WINDOWS && {
-            key: "winCtrlQ",
-            title: "Register Ctrl+Q as shortcut to close Discord (Alternative to Alt+F4)",
-            restartRequired: true,
-        },
+            IS_WINDOWS && {
+                key: "winCtrlQ",
+                title: "Register Ctrl+Q as shortcut to close Discord (Alternative to Alt+F4)",
+                restartRequired: true,
+            },
     ] satisfies Array<
         | false
         | {
-            key: KeysOfType<typeof settings, boolean>;
-            title: string;
-            description?: string;
-            restartRequired?: boolean;
-        }
+              key: KeysOfType<typeof settings, boolean>;
+              title: string;
+              description?: string;
+              restartRequired?: boolean;
+          }
     >;
 
     return Switches.map(setting => {

@@ -69,7 +69,7 @@ if (IS_VESKTOP || !IS_VANILLA) {
                             err,
                         ),
                     );
-        } catch { }
+        } catch {}
 
         initCsp();
     });

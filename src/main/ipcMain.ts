@@ -117,7 +117,7 @@ export function initIpc(mainWindow: BrowserWindow) {
                 }, 50),
             );
         })
-        .catch(() => { });
+        .catch(() => {});
 
     const themesWatcher = watch(
         THEMES_DIR,

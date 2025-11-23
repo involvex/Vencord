@@ -153,9 +153,9 @@ async function init() {
                 "You are seeing this warning because this is a Development build of Vencord.",
                 "\nThe following patches have not been applied:",
                 "\n\n" +
-                pendingPatches
-                    .map(p => `${p.plugin}: ${p.find}`)
-                    .join("\n"),
+                    pendingPatches
+                        .map(p => `${p.plugin}: ${p.find}`)
+                        .join("\n"),
             );
     }
 }

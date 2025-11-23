@@ -23,35 +23,45 @@ export function AiFunSettingsPanel() {
     const modelOptions =
         currentSettings.aiProvider === "openai"
             ? [
-                { label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" },
-                { label: "GPT-4", value: "gpt-4" },
-                { label: "GPT-4 Turbo", value: "gpt-4-turbo" },
-                { label: "GPT-4o", value: "gpt-4o" },
-                { label: "GPT-4o Mini", value: "gpt-4o-mini" },
-                { label: "DALL-E 2", value: "dall-e-2" },
-                { label: "DALL-E 3", value: "dall-e-3" },
-            ]
+                  { label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" },
+                  { label: "GPT-4", value: "gpt-4" },
+                  { label: "GPT-4 Turbo", value: "gpt-4-turbo" },
+                  { label: "GPT-4o", value: "gpt-4o" },
+                  { label: "GPT-4o Mini", value: "gpt-4o-mini" },
+                  { label: "GPT-4.5 Preview", value: "gpt-4.5-preview" },
+                  { label: "DALL-E 2", value: "dall-e-2" },
+                  { label: "DALL-E 3", value: "dall-e-3" },
+              ]
             : currentSettings.aiProvider === "gemini"
-                ? [
+              ? [
+                    { label: "Gemini 2.5 Pro", value: "gemini-2.5-pro" },
+                    {
+                        label: "Gemini Flash Latest",
+                        value: "gemini-flash-latest",
+                    },
+                    { label: "Gemini 1.5 Flash", value: "gemini-1.5-flash" },
+                    { label: "Gemini 1.5 Pro", value: "gemini-1.5-pro" },
                     { label: "Gemini Pro", value: "gemini-pro" },
                     { label: "Gemini Pro Vision", value: "gemini-pro-vision" },
-                    { label: "Gemini 1.5 Pro", value: "gemini-1.5-pro" },
-                    { label: "Gemini 1.5 Flash", value: "gemini-1.5-flash" },
                 ]
-                : currentSettings.aiProvider === "claude"
-                    ? [
-                        { label: "Claude 3 Opus", value: "claude-3-opus" },
-                        { label: "Claude 3 Sonnet", value: "claude-3-sonnet" },
-                        { label: "Claude 3 Haiku", value: "claude-3-haiku" },
+              : currentSettings.aiProvider === "claude"
+                ? [
+                      {
+                          label: "Claude 3.5 Sonnet",
+                          value: "claude-3-5-sonnet",
+                      },
+                      { label: "Claude 3 Opus", value: "claude-3-opus" },
+                      { label: "Claude 3 Sonnet", value: "claude-3-sonnet" },
+                      { label: "Claude 3 Haiku", value: "claude-3-haiku" },
+                  ]
+                : currentSettings.aiProvider === "cohere"
+                  ? [
+                        { label: "Command R+", value: "command-r-plus" },
+                        { label: "Command R", value: "command-r" },
+                        { label: "Command", value: "command" },
+                        { label: "Command Light", value: "command-light" },
                     ]
-                    : currentSettings.aiProvider === "cohere"
-                        ? [
-                            { label: "Command", value: "command" },
-                            { label: "Command Light", value: "command-light" },
-                            { label: "Command R", value: "command-r" },
-                            { label: "Command R+", value: "command-r-plus" },
-                        ]
-                        : [{ label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" }];
+                  : [{ label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" }];
 
     const commandTypeOptions = [
         { label: "AI Meme (Image Generation)", value: "aimeme" },
@@ -149,9 +159,19 @@ export function AiFunSettingsPanel() {
             <Forms.FormText>Select AI Provider</Forms.FormText>
             <SearchableSelect
                 options={providerOptions}
-                onChange={(option: any) =>
-                    (currentSettings.aiProvider = option.value)
-                }
+                onChange={(option: any) => {
+                    currentSettings.aiProvider = option.value;
+                    // Set default model based on new provider
+                    if (option.value === "openai") {
+                        currentSettings.aiModel = "gpt-3.5-turbo";
+                    } else if (option.value === "gemini") {
+                        currentSettings.aiModel = "gemini-2.5-pro";
+                    } else if (option.value === "claude") {
+                        currentSettings.aiModel = "claude-3-5-sonnet";
+                    } else if (option.value === "cohere") {
+                        currentSettings.aiModel = "command-r-plus";
+                    }
+                }}
                 value={providerOptions.find(
                     o => o.value === currentSettings.aiProvider,
                 )}
@@ -163,9 +183,11 @@ export function AiFunSettingsPanel() {
                 onChange={(option: any) =>
                     (currentSettings.aiModel = option.value)
                 }
-                value={modelOptions.find(
-                    o => o.value === currentSettings.aiModel,
-                )}
+                value={
+                    modelOptions.find(
+                        o => o.value === currentSettings.aiModel,
+                    ) || modelOptions[0]
+                }
                 placeholder="Select AI Model"
             />
 
@@ -197,7 +219,9 @@ export function AiFunSettingsPanel() {
                 max="4000"
             />
 
-            <Forms.FormText>Top P (0-1): {currentSettings.topP ?? 1.0}</Forms.FormText>
+            <Forms.FormText>
+                Top P (0-1): {currentSettings.topP ?? 1.0}
+            </Forms.FormText>
             <TextInput
                 value={currentSettings.topP?.toString() || "1.0"}
                 onChange={(val: string) =>

@@ -167,12 +167,12 @@ interface MessageOptions {
             poll_media: {
                 text: string;
                 attachment_ids?: unknown;
-                emoji?: { name: string; id?: string; };
+                emoji?: { name: string; id?: string };
             };
         }>;
         duration: number;
         layout_type: number;
-        question: { text: string; };
+        question: { text: string };
     };
 }
 

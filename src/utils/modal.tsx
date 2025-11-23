@@ -149,7 +149,7 @@ interface ModalAPI {
      */
     openModalLazy: (
         render: () => Promise<RenderFunction>,
-        options?: ModalOptions & { contextKey?: string; },
+        options?: ModalOptions & { contextKey?: string },
     ) => Promise<string>;
     /**
      * Open a Modal with the given render function.

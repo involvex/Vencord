@@ -47,7 +47,7 @@ export function Changes({
     updates,
     repo,
     repoPending,
-}: CommonProps & { updates: typeof changes; }) {
+}: CommonProps & { updates: typeof changes }) {
     return (
         <Card style={{ padding: "0 0.5em" }}>
             {updates.map(({ hash, author, message }) => (
