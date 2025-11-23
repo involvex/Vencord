@@ -5,7 +5,7 @@ export const enum ActivityType {
     WATCHING = 3,
     CUSTOM_STATUS = 4,
     COMPETING = 5,
-    HANG_STATUS = 6
+    HANG_STATUS = 6,
 }
 
 export const enum ActivityFlags {
@@ -20,11 +20,11 @@ export const enum ActivityFlags {
     PARTY_PRIVACY_FRIENDS = 1 << 6,
     PARTY_PRIVACY_VOICE_CHANNEL = 1 << 7,
     EMBEDDED = 1 << 8,
-    CONTEXTLESS = 1 << 9
+    CONTEXTLESS = 1 << 9,
 }
 
 export const enum ActivityStatusDisplayType {
     NAME = 0,
     STATE = 1,
-    DETAILS = 2
+    DETAILS = 2,
 }

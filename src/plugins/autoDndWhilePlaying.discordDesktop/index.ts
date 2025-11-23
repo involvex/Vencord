@@ -29,19 +29,20 @@ const settings = definePluginSettings({
             {
                 label: "Do Not Disturb",
                 value: "dnd",
-                default: true
+                default: true,
             },
             {
                 label: "Invisible",
                 value: "invisible",
-            }
-        ]
-    }
+            },
+        ],
+    },
 });
 
 export default definePlugin({
     name: "AutoDNDWhilePlaying",
-    description: "Automatically updates your online status (online, idle, dnd) when launching games",
+    description:
+        "Automatically updates your online status (online, idle, dnd) when launching games",
     authors: [Devs.thororen],
     settings,
     flux: {
@@ -53,9 +54,12 @@ export default definePlugin({
                     savedStatus = status;
                     StatusSettings.updateSetting(settings.store.statusToSet);
                 }
-            } else if (savedStatus && savedStatus !== settings.store.statusToSet) {
+            } else if (
+                savedStatus &&
+                savedStatus !== settings.store.statusToSet
+            ) {
                 StatusSettings.updateSetting(savedStatus);
             }
-        }
-    }
+        },
+    },
 });

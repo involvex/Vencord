@@ -4,7 +4,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-export function createAndAppendStyle(id: string, target = document.documentElement) {
+export function createAndAppendStyle(
+    id: string,
+    target = document.documentElement,
+) {
     const style = document.createElement("style");
     style.id = id;
     target.append(style);

@@ -3,19 +3,20 @@
 }
 
 .messagelogger-deleted
-:is(
-    .messagelogger-deleted-attachment,
-    .emoji,
-    [data-type="sticker"],
-    [class*="embedIframe"],
-    [class*="embedSpotify"],
-    [class*="imageContainer"]
-) {
+    :is(
+        .messagelogger-deleted-attachment,
+        .emoji,
+        [data-type="sticker"],
+        [class*="embedIframe"],
+        [class*="embedSpotify"],
+        [class*="imageContainer"]
+    ) {
     filter: grayscale(1) !important;
     transition: 150ms filter ease-in-out;
 
     &[class*="hiddenMosaicItem_"] {
-        filter: grayscale(1) blur(var(--custom-message-attachment-spoiler-blur-radius, 44px)) !important;
+        filter: grayscale(1)
+            blur(var(--custom-message-attachment-spoiler-blur-radius, 44px)) !important;
     }
 
     &:hover {

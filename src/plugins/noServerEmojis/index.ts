@@ -16,10 +16,16 @@ const settings = definePluginSettings({
         default: "onlyUnicode",
         options: [
             { label: "Only unicode emojis", value: "onlyUnicode" },
-            { label: "Unicode emojis and server emojis from current server", value: "currentServer" },
-            { label: "Unicode emojis and all server emojis (Discord default)", value: "all" }
-        ]
-    }
+            {
+                label: "Unicode emojis and server emojis from current server",
+                value: "currentServer",
+            },
+            {
+                label: "Unicode emojis and all server emojis (Discord default)",
+                value: "all",
+            },
+        ],
+    },
 });
 
 export default definePlugin({
@@ -33,9 +39,9 @@ export default definePlugin({
             find: "}searchWithoutFetchingLatest(",
             replacement: {
                 match: /\.nameMatchesChain\(\i\)\.reduce\(\((\i),(\i)\)=>\{(?<=channel:(\i).+?)/,
-                replace: "$&if($self.shouldSkip($3,$2))return $1;"
-            }
-        }
+                replace: "$&if($self.shouldSkip($3,$2))return $1;",
+            },
+        },
     ],
 
     shouldSkip(channel: Channel | undefined | null, emoji: Emoji) {
@@ -48,9 +54,12 @@ export default definePlugin({
         }
 
         if (settings.store.shownEmojis === "currentServer") {
-            return emoji.guildId !== (channel != null ? channel.getGuildId() : null);
+            return (
+                emoji.guildId !==
+                (channel != null ? channel.getGuildId() : null)
+            );
         }
 
         return false;
-    }
+    },
 });

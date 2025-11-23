@@ -15,7 +15,12 @@ export interface FullPatchInputProps {
     setReplacement(v: string | ReplaceFn): void;
 }
 
-export function FullPatchInput({ setFind, setParsedFind, setMatch, setReplacement }: FullPatchInputProps) {
+export function FullPatchInput({
+    setFind,
+    setParsedFind,
+    setMatch,
+    setReplacement,
+}: FullPatchInputProps) {
     const [patch, setPatch] = useState<string>("");
     const [error, setError] = useState<string>("");
 
@@ -39,18 +44,25 @@ export function FullPatchInput({ setFind, setParsedFind, setMatch, setReplacemen
             if (!replacement) throw new Error("No 'replacement' field");
 
             if (replacement instanceof Array) {
-                if (replacement.length === 0) throw new Error("Invalid replacement");
+                if (replacement.length === 0)
+                    throw new Error("Invalid replacement");
 
                 // Only test the first replacement
                 replacement = replacement[0];
             }
 
-            if (!replacement.match) throw new Error("No 'replacement.match' field");
-            if (replacement.replace == null) throw new Error("No 'replacement.replace' field");
+            if (!replacement.match)
+                throw new Error("No 'replacement.match' field");
+            if (replacement.replace == null)
+                throw new Error("No 'replacement.replace' field");
 
             setFind(find instanceof RegExp ? `/${find.source}/` : find);
             setParsedFind(find);
-            setMatch(replacement.match instanceof RegExp ? replacement.match.source : replacement.match);
+            setMatch(
+                replacement.match instanceof RegExp
+                    ? replacement.match.source
+                    : replacement.match,
+            );
             setReplacement(replacement.replace);
             setError("");
         } catch (e) {
@@ -77,7 +89,11 @@ export function FullPatchInput({ setFind, setParsedFind, setMatch, setReplacemen
                 onChange={setPatch}
                 onBlur={update}
             />
-            {error !== "" && <Forms.FormText style={{ color: "var(--text-danger)" }}>{error}</Forms.FormText>}
+            {error !== "" && (
+                <Forms.FormText style={{ color: "var(--text-danger)" }}>
+                    {error}
+                </Forms.FormText>
+            )}
         </>
     );
 }

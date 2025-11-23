@@ -1,22 +1,15 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
-import { ApplicationCommandInputType, findOption, OptionalMessageOption, sendBotMessage } from "@api/Commands";
+import {
+    ApplicationCommandInputType,
+    findOption,
+    OptionalMessageOption,
+    sendBotMessage,
+} from "@api/Commands";
 import { Devs } from "@utils/constants";
 import { sendMessage } from "@utils/discord";
 import definePlugin from "@utils/types";
@@ -57,7 +50,10 @@ interface Track {
 const Spotify = findByPropsLazy("getPlayerState");
 const PendingReplyStore = findByPropsLazy("getPendingReply");
 
-function makeCommand(name: string, formatUrl: (track: Track) => string): Command {
+function makeCommand(
+    name: string,
+    formatUrl: (track: Track) => string,
+): Command {
     return {
         name,
         description: `Share your current Spotify ${name} in chat`,
@@ -67,14 +63,14 @@ function makeCommand(name: string, formatUrl: (track: Track) => string): Command
             const track: Track | null = Spotify.getTrack();
             if (!track) {
                 return sendBotMessage(channel.id, {
-                    content: "You're not listening to any music."
+                    content: "You're not listening to any music.",
                 });
             }
 
             // local tracks have an id of null
             if (track.id == null) {
                 return sendBotMessage(channel.id, {
-                    content: "Failed to find the track on spotify."
+                    content: "Failed to find the track on spotify.",
                 });
             }
 
@@ -87,22 +83,36 @@ function makeCommand(name: string, formatUrl: (track: Track) => string): Command
                 channel.id,
                 { content: message ? `${message} ${data}` : data },
                 false,
-                MessageActions.getSendMessageOptionsForReply(PendingReplyStore.getPendingReply(channel.id))
+                MessageActions.getSendMessageOptionsForReply(
+                    PendingReplyStore.getPendingReply(channel.id),
+                ),
             ).then(() => {
-                FluxDispatcher.dispatch({ type: "DELETE_PENDING_REPLY", channelId: channel.id });
+                FluxDispatcher.dispatch({
+                    type: "DELETE_PENDING_REPLY",
+                    channelId: channel.id,
+                });
             });
-
-        }
+        },
     };
 }
 
 export default definePlugin({
     name: "SpotifyShareCommands",
-    description: "Share your current Spotify track, album or artist via slash command (/track, /album, /artist)",
+    description:
+        "Share your current Spotify track, album or artist via slash command (/track, /album, /artist)",
     authors: [Devs.katlyn],
     commands: [
-        makeCommand("track", track => `https://open.spotify.com/track/${track.id}`),
-        makeCommand("album", track => `https://open.spotify.com/album/${track.album.id}`),
-        makeCommand("artist", track => track.artists[0].external_urls.spotify)
-    ]
+        makeCommand(
+            "track",
+            track => `https://open.spotify.com/track/${track.id}`,
+        ),
+        makeCommand(
+            "album",
+            track => `https://open.spotify.com/album/${track.album.id}`,
+        ),
+        makeCommand(
+            "artist",
+            track => track.artists[0].external_urls.spotify,
+        ),
+    ],
 });

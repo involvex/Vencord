@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import "./shiki.css";
 
@@ -32,7 +20,8 @@ import { clearStyles } from "./utils/createStyle";
 
 export default definePlugin({
     name: "ShikiCodeblocks",
-    description: "Brings vscode-style codeblocks into Discord, powered by Shiki",
+    description:
+        "Brings vscode-style codeblocks into Discord, powered by Shiki",
     authors: [Devs.Vap],
     reporterTestable: ReporterTestable.Patches,
     settings,
@@ -42,16 +31,17 @@ export default definePlugin({
             find: "codeBlock:{react(",
             replacement: {
                 match: /codeBlock:\{react\((\i),(\i),(\i)\)\{/,
-                replace: "$&return $self.renderHighlighter($1,$2,$3);"
-            }
+                replace: "$&return $self.renderHighlighter($1,$2,$3);",
+            },
         },
         {
             find: "#{intl::PREVIEW_NUM_LINES}",
             replacement: {
                 match: /(?<=function \i\((\i)\)\{)(?=let\{text:\i,language:)/,
-                replace: "return $self.renderHighlighter({lang:$1.language,content:$1.text});"
-            }
-        }
+                replace:
+                    "return $self.renderHighlighter({lang:$1.language,content:$1.text});",
+            },
+        },
     ],
     start: async () => {
         if (settings.store.useDevIcon !== DeviconSetting.Disabled)
@@ -63,16 +53,23 @@ export default definePlugin({
         shiki.destroy();
         clearStyles();
     },
-    settingsAboutComponent: () => createHighlighter({
-        lang: "tsx",
-        content: previewExampleText,
-        isPreview: true
-    }),
+    settingsAboutComponent: () =>
+        createHighlighter({
+            lang: "tsx",
+            content: previewExampleText,
+            isPreview: true,
+        }),
 
     // exports
     shiki,
     createHighlighter,
-    renderHighlighter: ({ lang, content }: { lang: string; content: string; }) => {
+    renderHighlighter: ({
+        lang,
+        content,
+    }: {
+        lang: string;
+        content: string;
+    }) => {
         return createHighlighter({
             lang: lang?.toLowerCase(),
             content,

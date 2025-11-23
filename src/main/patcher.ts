@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { onceDefined } from "@shared/onceDefined";
 import electron, { app, BrowserWindowConstructorOptions, Menu } from "electron";
@@ -30,7 +18,9 @@ console.log("[Vencord] Starting up...");
 const injectorPath = require.main!.filename;
 
 // special discord_arch_electron injection method
-const asarName = require.main!.path.endsWith("app.asar") ? "_app.asar" : "app.asar";
+const asarName = require.main!.path.endsWith("app.asar")
+    ? "_app.asar"
+    : "app.asar";
 
 // The original app.asar
 const asarPath = join(dirname(injectorPath), "..", asarName);
@@ -58,7 +48,7 @@ if (!IS_VANILLA) {
                             visible: false,
                             acceleratorWorksWhenHidden: true,
                             accelerator: "Control+Q",
-                            click: () => app.quit()
+                            click: () => app.quit(),
                         });
                     }
                 }
@@ -71,14 +61,22 @@ if (!IS_VANILLA) {
         constructor(options: BrowserWindowConstructorOptions) {
             if (options?.webPreferences?.preload && options.title) {
                 const original = options.webPreferences.preload;
-                options.webPreferences.preload = join(__dirname, IS_DISCORD_DESKTOP ? "preload.js" : "vencordDesktopPreload.js");
+                options.webPreferences.preload = join(
+                    __dirname,
+                    IS_DISCORD_DESKTOP
+                        ? "preload.js"
+                        : "vencordDesktopPreload.js",
+                );
                 options.webPreferences.sandbox = false;
                 // work around discord unloading when in background
                 options.webPreferences.backgroundThrottling = false;
 
                 if (settings.frameless) {
                     options.frame = false;
-                } else if (process.platform === "win32" && settings.winNativeTitleBar) {
+                } else if (
+                    process.platform === "win32" &&
+                    settings.winNativeTitleBar
+                ) {
                     delete options.frame;
                 }
 
@@ -92,7 +90,9 @@ if (!IS_VANILLA) {
                     options.minHeight = 0;
                 }
 
-                const needsVibrancy = process.platform === "darwin" && settings.macosVibrancyStyle;
+                const needsVibrancy =
+                    process.platform === "darwin" &&
+                    settings.macosVibrancyStyle;
 
                 if (needsVibrancy) {
                     options.backgroundColor = "#00000000";
@@ -107,7 +107,7 @@ if (!IS_VANILLA) {
 
                 if (settings.disableMinSize) {
                     // Disable the Electron call entirely so that Discord can't dynamically change the size
-                    this.setMinimumSize = (width: number, height: number) => { };
+                    this.setMinimumSize = (width: number, height: number) => {};
                 }
 
                 initIpc(this);
@@ -118,19 +118,25 @@ if (!IS_VANILLA) {
     // esbuild may rename our BrowserWindow, which leads to it being excluded
     // from getFocusedWindow(), so this is necessary
     // https://github.com/discord/electron/blob/13-x-y/lib/browser/api/browser-window.ts#L60-L62
-    Object.defineProperty(BrowserWindow, "name", { value: "BrowserWindow", configurable: true });
+    Object.defineProperty(BrowserWindow, "name", {
+        value: "BrowserWindow",
+        configurable: true,
+    });
 
     // Replace electrons exports with our custom BrowserWindow
     const electronPath = require.resolve("electron");
     delete require.cache[electronPath]!.exports;
     require.cache[electronPath]!.exports = {
         ...electron,
-        BrowserWindow
+        BrowserWindow,
     };
 
     // Patch appSettings to force enable devtools
     onceDefined(global, "appSettings", s => {
-        s.set("DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING", true);
+        s.set(
+            "DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING",
+            true,
+        );
     });
 
     process.env.DATA_DIR = join(app.getPath("userData"), "..", "Vencord");

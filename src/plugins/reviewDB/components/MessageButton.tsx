@@ -1,35 +1,31 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { DeleteIcon } from "@components/Icons";
 import { classes } from "@utils/misc";
 import { findByPropsLazy } from "@webpack";
 import { Tooltip } from "@webpack/common";
 
-const iconClasses = findByPropsLazy("button", "wrapper", "disabled", "separator");
+const iconClasses = findByPropsLazy(
+    "button",
+    "wrapper",
+    "disabled",
+    "separator",
+);
 
-export function DeleteButton({ onClick }: { onClick(): void; }) {
+export function DeleteButton({ onClick }: { onClick(): void }) {
     return (
         <Tooltip text="Delete Review">
             {props => (
                 <div
                     {...props}
-                    className={classes(iconClasses.button, iconClasses.dangerous)}
+                    className={classes(
+                        iconClasses.button,
+                        iconClasses.dangerous,
+                    )}
                     onClick={onClick}
                     role="button"
                 >
@@ -40,7 +36,7 @@ export function DeleteButton({ onClick }: { onClick(): void; }) {
     );
 }
 
-export function ReportButton({ onClick }: { onClick(): void; }) {
+export function ReportButton({ onClick }: { onClick(): void }) {
     return (
         <Tooltip text="Report Review">
             {props => (
@@ -62,7 +58,13 @@ export function ReportButton({ onClick }: { onClick(): void; }) {
     );
 }
 
-export function BlockButton({ onClick, isBlocked }: { onClick(): void; isBlocked: boolean; }) {
+export function BlockButton({
+    onClick,
+    isBlocked,
+}: {
+    onClick(): void;
+    isBlocked: boolean;
+}) {
     return (
         <Tooltip text={`${isBlocked ? "Unblock" : "Block"} user`}>
             {props => (
@@ -72,11 +74,17 @@ export function BlockButton({ onClick, isBlocked }: { onClick(): void; isBlocked
                     onClick={onClick}
                     role="button"
                 >
-                    <svg height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
-                        {isBlocked
-                            ? <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
-                            : <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q54 0 104-17.5t92-50.5L228-676q-33 42-50.5 92T160-480q0 134 93 227t227 93Zm252-124q33-42 50.5-92T800-480q0-134-93-227t-227-93q-54 0-104 17.5T284-732l448 448Z" />
-                        }
+                    <svg
+                        height="20"
+                        viewBox="0 -960 960 960"
+                        width="20"
+                        fill="currentColor"
+                    >
+                        {isBlocked ? (
+                            <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                        ) : (
+                            <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q54 0 104-17.5t92-50.5L228-676q-33 42-50.5 92T160-480q0 134 93 227t227 93Zm252-124q33-42 50.5-92T800-480q0-134-93-227t-227-93q-54 0-104 17.5T284-732l448 448Z" />
+                        )}
                     </svg>
                 </div>
             )}

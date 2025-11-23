@@ -14,7 +14,9 @@ import { useCurrentUserDecorationsStore } from "../../lib/stores/CurrentUserDeco
 import { cl } from "../";
 import { openChangeDecorationModal } from "../modals/ChangeDecorationModal";
 
-const CustomizationSection = findComponentByCodeLazy(".customizationSectionBackground");
+const CustomizationSection = findComponentByCodeLazy(
+    ".customizationSectionBackground",
+);
 
 export interface DecorSectionProps {
     hideTitle?: boolean;
@@ -22,39 +24,54 @@ export interface DecorSectionProps {
     noMargin?: boolean;
 }
 
-export default function DecorSection({ hideTitle = false, hideDivider = false, noMargin = false }: DecorSectionProps) {
+export default function DecorSection({
+    hideTitle = false,
+    hideDivider = false,
+    noMargin = false,
+}: DecorSectionProps) {
     const authorization = useAuthorizationStore();
-    const { selectedDecoration, select: selectDecoration, fetch: fetchDecorations } = useCurrentUserDecorationsStore();
+    const {
+        selectedDecoration,
+        select: selectDecoration,
+        fetch: fetchDecorations,
+    } = useCurrentUserDecorationsStore();
 
     useEffect(() => {
         if (authorization.isAuthorized()) fetchDecorations();
     }, [authorization.token]);
 
-    return <CustomizationSection
-        title={!hideTitle && "Decor"}
-        hasBackground={true}
-        hideDivider={hideDivider}
-        className={noMargin && cl("section-remove-margin")}
-    >
-        <Flex style={{ gap: "4px " }}>
-            <Button
-                onClick={() => {
-                    if (!authorization.isAuthorized()) {
-                        authorization.authorize().then(openChangeDecorationModal).catch(() => { });
-                    } else openChangeDecorationModal();
-                }}
-                variant="primary"
-                size="small"
-            >
-                Change Decoration
-            </Button>
-            {selectedDecoration && authorization.isAuthorized() && <Button
-                onClick={() => selectDecoration(null)}
-                variant="secondary"
-                size={"small"}
-            >
-                Remove Decoration
-            </Button>}
-        </Flex>
-    </CustomizationSection>;
+    return (
+        <CustomizationSection
+            title={!hideTitle && "Decor"}
+            hasBackground={true}
+            hideDivider={hideDivider}
+            className={noMargin && cl("section-remove-margin")}
+        >
+            <Flex style={{ gap: "4px " }}>
+                <Button
+                    onClick={() => {
+                        if (!authorization.isAuthorized()) {
+                            authorization
+                                .authorize()
+                                .then(openChangeDecorationModal)
+                                .catch(() => {});
+                        } else openChangeDecorationModal();
+                    }}
+                    variant="primary"
+                    size="small"
+                >
+                    Change Decoration
+                </Button>
+                {selectedDecoration && authorization.isAuthorized() && (
+                    <Button
+                        onClick={() => selectDecoration(null)}
+                        variant="secondary"
+                        size={"small"}
+                    >
+                        Remove Decoration
+                    </Button>
+                )}
+            </Flex>
+        </CustomizationSection>
+    );
 }

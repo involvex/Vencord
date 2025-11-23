@@ -23,6 +23,7 @@ const userStore: UserStore = findStore("UserStore"); // findStore is up to you t
 ## Enums
 
 This library also exports some const enums that you can use from Typescript code:
+
 ```ts
 import { ApplicationCommandType } from "@vencord/discord-types/enums";
 

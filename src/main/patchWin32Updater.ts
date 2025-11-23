@@ -1,23 +1,18 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { app } from "electron";
-import { existsSync, mkdirSync, readdirSync, renameSync, statSync, writeFileSync } from "original-fs";
+import {
+    existsSync,
+    mkdirSync,
+    readdirSync,
+    renameSync,
+    statSync,
+    writeFileSync,
+} from "original-fs";
 import { basename, dirname, join } from "path";
 
 function isNewer($new: string, old: string) {
@@ -40,9 +35,7 @@ function patchLatest() {
         const discordPath = join(currentAppPath, "..");
 
         const latestVersion = readdirSync(discordPath).reduce((prev, curr) => {
-            return (curr.startsWith("app-") && isNewer(curr, prev))
-                ? curr
-                : prev;
+            return curr.startsWith("app-") && isNewer(curr, prev) ? curr : prev;
         }, currentVersion as string);
 
         if (latestVersion === currentVersion) return;
@@ -57,11 +50,17 @@ function patchLatest() {
 
         renameSync(app, _app);
         mkdirSync(app);
-        writeFileSync(join(app, "package.json"), JSON.stringify({
-            name: "discord",
-            main: "index.js"
-        }));
-        writeFileSync(join(app, "index.js"), `require(${JSON.stringify(join(__dirname, "patcher.js"))});`);
+        writeFileSync(
+            join(app, "package.json"),
+            JSON.stringify({
+                name: "discord",
+                main: "index.js",
+            }),
+        );
+        writeFileSync(
+            join(app, "index.js"),
+            `require(${JSON.stringify(join(__dirname, "patcher.js"))});`,
+        );
     } catch (err) {
         console.error("[Vencord] Failed to repatch latest host update", err);
     }

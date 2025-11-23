@@ -23,7 +23,11 @@ interface PatchPreviewProps {
     setReplacementError(error: any): void;
 }
 
-function makeDiff(original: string, patched: string, match: RegExpMatchArray | null) {
+function makeDiff(
+    original: string,
+    patched: string,
+    match: RegExpMatchArray | null,
+) {
     if (!match || original === patched) return null;
 
     const changeSize = patched.length - original.length;
@@ -40,16 +44,20 @@ function makeDiff(original: string, patched: string, match: RegExpMatchArray | n
     return differ.diffWordsWithSpace(context, patchedContext);
 }
 
-function Match({ matchResult }: { matchResult: RegExpMatchArray | null; }) {
-    if (!matchResult)
-        return null;
+function Match({ matchResult }: { matchResult: RegExpMatchArray | null }) {
+    if (!matchResult) return null;
 
-    const fullMatch = matchResult[0]
-        ? makeCodeblock(matchResult[0], "js")
-        : "";
-    const groups = matchResult.length > 1
-        ? makeCodeblock(matchResult.slice(1).map((g, i) => `Group ${i + 1}: ${g}`).join("\n"), "yml")
-        : "";
+    const fullMatch = matchResult[0] ? makeCodeblock(matchResult[0], "js") : "";
+    const groups =
+        matchResult.length > 1
+            ? makeCodeblock(
+                  matchResult
+                      .slice(1)
+                      .map((g, i) => `Group ${i + 1}: ${g}`)
+                      .join("\n"),
+                  "yml",
+              )
+            : "";
 
     return (
         <>
@@ -60,21 +68,21 @@ function Match({ matchResult }: { matchResult: RegExpMatchArray | null; }) {
     );
 }
 
-function Diff({ diff }: { diff: Change[] | null; }) {
-    if (!diff?.length)
-        return null;
+function Diff({ diff }: { diff: Change[] | null }) {
+    if (!diff?.length) return null;
 
     const diffLines = diff.map((p, idx) => {
-        const color = p.added
-            ? "lime"
-            : p.removed
-                ? "red"
-                : "grey";
+        const color = p.added ? "lime" : p.removed ? "red" : "grey";
 
         return (
             <div
                 key={idx}
-                style={{ color, userSelect: "text", wordBreak: "break-all", lineBreak: "anywhere" }}
+                style={{
+                    color,
+                    userSelect: "text",
+                    wordBreak: "break-all",
+                    lineBreak: "anywhere",
+                }}
             >
                 {p.value}
             </div>
@@ -89,11 +97,18 @@ function Diff({ diff }: { diff: Change[] | null; }) {
     );
 }
 
-export function PatchPreview({ module, match, replacement, setReplacementError }: PatchPreviewProps) {
+export function PatchPreview({
+    module,
+    match,
+    replacement,
+    setReplacementError,
+}: PatchPreviewProps) {
     const [id, fact] = module;
     const [compileResult, setCompileResult] = useState<[boolean, string]>();
 
-    const [patchedCode, matchResult, diff] = useMemo<[string, RegExpMatchArray | null, Change[] | null]>(() => {
+    const [patchedCode, matchResult, diff] = useMemo<
+        [string, RegExpMatchArray | null, Change[] | null]
+    >(() => {
         const src: string = fact.toString().replaceAll("\n", "");
 
         try {
@@ -104,8 +119,14 @@ export function PatchPreview({ module, match, replacement, setReplacementError }
 
         const canonicalMatch = canonicalizeMatch(new RegExp(match));
         try {
-            const canonicalReplace = canonicalizeReplace(replacement, 'Vencord.Plugins.plugins["YourPlugin"]');
-            var patched = src.replace(canonicalMatch, canonicalReplace as string);
+            const canonicalReplace = canonicalizeReplace(
+                replacement,
+                'Vencord.Plugins.plugins["YourPlugin"]',
+            );
+            var patched = src.replace(
+                canonicalMatch,
+                canonicalReplace as string,
+            );
             setReplacementError(void 0);
         } catch (e) {
             setReplacementError((e as Error).message);
@@ -128,7 +149,9 @@ export function PatchPreview({ module, match, replacement, setReplacementError }
                     className={Margins.top20}
                     onClick={() => {
                         try {
-                            Function(patchedCode.replace(/^(?=function\()/, "0,"));
+                            Function(
+                                patchedCode.replace(/^(?=function\()/, "0,"),
+                            );
                             setCompileResult([true, "Compiled successfully"]);
                         } catch (err) {
                             setCompileResult([false, (err as Error).message]);
@@ -140,7 +163,13 @@ export function PatchPreview({ module, match, replacement, setReplacementError }
             )}
 
             {compileResult && (
-                <Forms.FormText style={{ color: compileResult[0] ? "var(--status-positive)" : "var(--text-danger)" }}>
+                <Forms.FormText
+                    style={{
+                        color: compileResult[0]
+                            ? "var(--status-positive)"
+                            : "var(--text-danger)",
+                    }}
+                >
                     {compileResult[1]}
                 </Forms.FormText>
             )}

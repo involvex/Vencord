@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { ChatBarButton, ChatBarButtonFactory } from "@api/ChatButtons";
 import { updateMessage } from "@api/MessageUpdater";
@@ -33,17 +21,16 @@ let steggo: any;
 
 function PopOverIcon() {
     return (
-
         <svg
             fill="var(--header-secondary)"
-            width={24} height={24}
+            width={24}
+            height={24}
             viewBox={"0 0 64 64"}
         >
             <path d="M 32 9 C 24.832 9 19 14.832 19 22 L 19 27.347656 C 16.670659 28.171862 15 30.388126 15 33 L 15 49 C 15 52.314 17.686 55 21 55 L 43 55 C 46.314 55 49 52.314 49 49 L 49 33 C 49 30.388126 47.329341 28.171862 45 27.347656 L 45 22 C 45 14.832 39.168 9 32 9 z M 32 13 C 36.963 13 41 17.038 41 22 L 41 27 L 23 27 L 23 22 C 23 17.038 27.037 13 32 13 z" />
         </svg>
     );
 }
-
 
 function Indicator() {
     return (
@@ -60,9 +47,7 @@ function Indicator() {
                 />
             )}
         </Tooltip>
-
     );
-
 }
 
 const ChatBarIcon: ChatBarButtonFactory = ({ isMainChat }) => {
@@ -84,7 +69,10 @@ const ChatBarIcon: ChatBarButtonFactory = ({ isMainChat }) => {
                 viewBox={"0 0 64 64"}
                 style={{ scale: "1.39", translate: "0 -1px" }}
             >
-                <path fill="currentColor" d="M 32 9 C 24.832 9 19 14.832 19 22 L 19 27.347656 C 16.670659 28.171862 15 30.388126 15 33 L 15 49 C 15 52.314 17.686 55 21 55 L 43 55 C 46.314 55 49 52.314 49 49 L 49 33 C 49 30.388126 47.329341 28.171862 45 27.347656 L 45 22 C 45 14.832 39.168 9 32 9 z M 32 13 C 36.963 13 41 17.038 41 22 L 41 27 L 23 27 L 23 22 C 23 17.038 27.037 13 32 13 z" />
+                <path
+                    fill="currentColor"
+                    d="M 32 9 C 24.832 9 19 14.832 19 22 L 19 27.347656 C 16.670659 28.171862 15 30.388126 15 33 L 15 49 C 15 52.314 17.686 55 21 55 L 43 55 C 46.314 55 49 52.314 49 49 L 49 33 C 49 30.388126 47.329341 28.171862 45 27.347656 L 45 22 C 45 14.832 39.168 9 32 9 z M 32 13 C 36.963 13 41 17.038 41 22 L 41 27 L 23 27 L 23 22 C 23 17.038 27.037 13 32 13 z"
+                />
             </svg>
         </ChatBarButton>
     );
@@ -94,8 +82,8 @@ const settings = definePluginSettings({
     savedPasswords: {
         type: OptionType.STRING,
         default: "password, Password",
-        description: "Saved Passwords (Seperated with a , )"
-    }
+        description: "Saved Passwords (Seperated with a , )",
+    },
 });
 
 export default definePlugin({
@@ -112,8 +100,9 @@ export default definePlugin({
             find: ".SEND_FAILED,",
             replacement: {
                 match: /let\{className:\i,message:\i[^}]*\}=(\i)/,
-                replace: "try {$1 && $self.INV_REGEX.test($1.message.content) ? $1.content.push($self.indicator()) : null } catch {};$&"
-            }
+                replace:
+                    "try {$1 && $self.INV_REGEX.test($1.message.content) ? $1.content.push($self.indicator()) : null } catch {};$&",
+            },
         },
     ],
 
@@ -130,19 +119,17 @@ export default definePlugin({
     renderMessagePopoverButton(message) {
         return this.INV_REGEX.test(message?.content)
             ? {
-                label: "Decrypt Message",
-                icon: this.popOverIcon,
-                message: message,
-                channel: ChannelStore.getChannel(message.channel_id),
-                onClick: async () => {
-                    const res = await iteratePasswords(message);
+                  label: "Decrypt Message",
+                  icon: this.popOverIcon,
+                  message: message,
+                  channel: ChannelStore.getChannel(message.channel_id),
+                  onClick: async () => {
+                      const res = await iteratePasswords(message);
 
-                    if (res)
-                        this.buildEmbed(message, res);
-                    else
-                        buildDecModal({ message });
-                }
-            }
+                      if (res) this.buildEmbed(message, res);
+                      else buildDecModal({ message });
+                  },
+              }
             : null;
     },
 
@@ -150,7 +137,7 @@ export default definePlugin({
 
     colorCodeFromNumber(color: number): string {
         return `#${[color >> 16, color >> 8, color]
-            .map(x => (x & 0xFF).toString(16))
+            .map(x => (x & 0xff).toString(16))
             .join("")}`;
     },
 
@@ -159,8 +146,8 @@ export default definePlugin({
         const { body } = await RestAPI.post({
             url: Constants.Endpoints.UNFURL_EMBED_URLS,
             body: {
-                urls: [url]
-            }
+                urls: [url],
+            },
         });
         // The endpoint returns the color as a number, but Discord expects a string
         body.embeds[0].color = this.colorCodeFromNumber(body.embeds[0].color);
@@ -182,22 +169,31 @@ export default definePlugin({
 
         if (urlCheck?.length) {
             const embed = await this.getEmbed(new URL(urlCheck[0]));
-            if (embed)
-                message.embeds.push(embed);
+            if (embed) message.embeds.push(embed);
         }
 
-        updateMessage(message.channel_id, message.id, { embeds: message.embeds });
+        updateMessage(message.channel_id, message.id, {
+            embeds: message.embeds,
+        });
     },
 
     popOverIcon: () => <PopOverIcon />,
-    indicator: ErrorBoundary.wrap(Indicator, { noop: true })
+    indicator: ErrorBoundary.wrap(Indicator, { noop: true }),
 });
 
-export function encrypt(secret: string, password: string, cover: string): string {
+export function encrypt(
+    secret: string,
+    password: string,
+    cover: string,
+): string {
     return steggo.hide(secret + "\u200b", password, cover);
 }
 
-export function decrypt(encrypted: string, password: string, removeIndicator: boolean): string {
+export function decrypt(
+    encrypted: string,
+    password: string,
+    removeIndicator: boolean,
+): string {
     const decrypted = steggo.reveal(encrypted, password);
     return removeIndicator ? decrypted.replace("\u200b", "") : decrypted;
 }
@@ -206,8 +202,12 @@ export function isCorrectPassword(result: string): boolean {
     return result.endsWith("\u200b");
 }
 
-export async function iteratePasswords(message: Message): Promise<string | false> {
-    const passwords = settings.store.savedPasswords.split(",").map(s => s.trim());
+export async function iteratePasswords(
+    message: Message,
+): Promise<string | false> {
+    const passwords = settings.store.savedPasswords
+        .split(",")
+        .map(s => s.trim());
 
     if (!message?.content || !passwords?.length) return false;
 

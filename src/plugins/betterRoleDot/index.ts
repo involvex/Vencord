@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { Settings } from "@api/Settings";
 import { Devs } from "@utils/constants";
@@ -32,7 +20,8 @@ export default definePlugin({
             find: ".dotBorderBase",
             replacement: {
                 match: /,viewBox:"0 0 20 20"/,
-                replace: "$&,onClick:()=>$self.copyToClipBoard(arguments[0].color),style:{cursor:'pointer'}",
+                replace:
+                    "$&,onClick:()=>$self.copyToClipBoard(arguments[0].color),style:{cursor:'pointer'}",
             },
         },
         {
@@ -49,23 +38,27 @@ export default definePlugin({
         {
             find: "#{intl::ADD_ROLE_A11Y_LABEL}",
             all: true,
-            predicate: () => Settings.plugins.BetterRoleDot.copyRoleColorInProfilePopout && !Settings.plugins.BetterRoleDot.bothStyles,
+            predicate: () =>
+                Settings.plugins.BetterRoleDot.copyRoleColorInProfilePopout &&
+                !Settings.plugins.BetterRoleDot.bothStyles,
             noWarn: true,
             replacement: {
                 match: /"dot"===\i/,
-                replace: "true"
-            }
+                replace: "true",
+            },
         },
         {
             find: ".roleVerifiedIcon",
             all: true,
-            predicate: () => Settings.plugins.BetterRoleDot.copyRoleColorInProfilePopout && !Settings.plugins.BetterRoleDot.bothStyles,
+            predicate: () =>
+                Settings.plugins.BetterRoleDot.copyRoleColorInProfilePopout &&
+                !Settings.plugins.BetterRoleDot.bothStyles,
             noWarn: true,
             replacement: {
                 match: /"dot"===\i/,
-                replace: "true"
-            }
-        }
+                replace: "true",
+            },
+        },
     ],
 
     options: {
@@ -77,10 +70,11 @@ export default definePlugin({
         },
         copyRoleColorInProfilePopout: {
             type: OptionType.BOOLEAN,
-            description: "Allow click on role dot in profile popout to copy role color",
+            description:
+                "Allow click on role dot in profile popout to copy role color",
             restartNeeded: true,
-            default: false
-        }
+            default: false,
+        },
     },
 
     copyToClipBoard(color: string) {

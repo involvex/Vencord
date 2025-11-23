@@ -24,16 +24,40 @@ export interface FormSwitchProps {
     hideBorder?: boolean;
 }
 
-export function FormSwitch({ onChange, title, value, description, disabled, className, hideBorder }: FormSwitchProps) {
+export function FormSwitch({
+    onChange,
+    title,
+    value,
+    description,
+    disabled,
+    className,
+    hideBorder,
+}: FormSwitchProps) {
     return (
         <label className="vc-form-switch-wrapper">
-            <div className={classes("vc-form-switch", className, disabled && "vc-form-switch-disabled")}>
+            <div
+                className={classes(
+                    "vc-form-switch",
+                    className,
+                    disabled && "vc-form-switch-disabled",
+                )}
+            >
                 <div className={"vc-form-switch-text"}>
-                    <Span size="md" weight="medium">{title}</Span>
-                    {description && <Span size="sm" weight="normal">{description}</Span>}
+                    <Span size="md" weight="medium">
+                        {title}
+                    </Span>
+                    {description && (
+                        <Span size="sm" weight="normal">
+                            {description}
+                        </Span>
+                    )}
                 </div>
 
-                <Switch checked={value} onChange={onChange} disabled={disabled} />
+                <Switch
+                    checked={value}
+                    onChange={onChange}
+                    disabled={disabled}
+                />
             </div>
             {!hideBorder && <Divider className="vc-form-switch-border" />}
         </label>
@@ -42,8 +66,14 @@ export function FormSwitch({ onChange, title, value, description, disabled, clas
 
 // #region Old compatibility
 
-export function FormSwitchCompat({ note, children, ...restProps }: PropsWithChildren<any>) {
-    return <FormSwitch title={children ?? ""} description={note} {...restProps} />;
+export function FormSwitchCompat({
+    note,
+    children,
+    ...restProps
+}: PropsWithChildren<any>) {
+    return (
+        <FormSwitch title={children ?? ""} description={note} {...restProps} />
+    );
 }
 
 // #endregion

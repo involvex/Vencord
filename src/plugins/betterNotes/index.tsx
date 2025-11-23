@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { definePluginSettings, Settings } from "@api/Settings";
 import { Devs } from "@utils/constants";
@@ -26,14 +14,14 @@ const settings = definePluginSettings({
         type: OptionType.BOOLEAN,
         description: "Hide notes",
         default: false,
-        restartNeeded: true
+        restartNeeded: true,
     },
     noSpellCheck: {
         type: OptionType.BOOLEAN,
         description: "Disable spellcheck in notes",
         disabled: () => Settings.plugins.BetterNotesBox.hide,
-        default: false
-    }
+        default: false,
+    },
 });
 
 export default definePlugin({
@@ -54,24 +42,28 @@ export default definePlugin({
                 replace: (m, rest) => {
                     const destructuringMatch = rest.match(/}=.+/);
                     if (destructuringMatch) {
-                        const defaultValueMatch = m.match(canonicalizeMatch(/hideNote:(\i)=!?\d/));
-                        return defaultValueMatch ? `hideNote:${defaultValueMatch[1]}=!0` : m;
+                        const defaultValueMatch = m.match(
+                            canonicalizeMatch(/hideNote:(\i)=!?\d/),
+                        );
+                        return defaultValueMatch
+                            ? `hideNote:${defaultValueMatch[1]}=!0`
+                            : m;
                     }
 
                     return "hideNote:!0";
-                }
-            }
+                },
+            },
         },
         {
             find: "#{intl::NOTE_PLACEHOLDER}",
             replacement: {
                 match: /#{intl::NOTE_PLACEHOLDER}\),/,
-                replace: "$&spellCheck:!$self.noSpellCheck,"
-            }
-        }
+                replace: "$&spellCheck:!$self.noSpellCheck,",
+            },
+        },
     ],
 
     get noSpellCheck() {
         return settings.store.noSpellCheck;
-    }
+    },
 });

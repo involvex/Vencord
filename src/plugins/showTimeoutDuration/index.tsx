@@ -14,15 +14,24 @@ import { canonicalizeMatch } from "@utils/patches";
 import definePlugin, { OptionType } from "@utils/types";
 import { Message } from "@vencord/discord-types";
 import { findComponentLazy } from "@webpack";
-import { ChannelStore, GuildMemberStore, Text, TooltipContainer } from "@webpack/common";
+import {
+    ChannelStore,
+    GuildMemberStore,
+    Text,
+    TooltipContainer,
+} from "@webpack/common";
 import { ReactNode } from "react";
 
 const countDownFilter = canonicalizeMatch(/#{intl::MAX_AGE_NEVER}/);
-const CountDown = findComponentLazy(m => m.prototype?.render && countDownFilter.test(m.prototype.render.toString()));
+const CountDown = findComponentLazy(
+    m =>
+        m.prototype?.render &&
+        countDownFilter.test(m.prototype.render.toString()),
+);
 
 const enum DisplayStyle {
     Tooltip = "tooltip",
-    Inline = "ssalggnikool"
+    Inline = "ssalggnikool",
 }
 
 const settings = definePluginSettings({
@@ -31,9 +40,13 @@ const settings = definePluginSettings({
         type: OptionType.SELECT,
         options: [
             { label: "In the Tooltip", value: DisplayStyle.Tooltip },
-            { label: "Next to the timeout icon", value: DisplayStyle.Inline, default: true },
+            {
+                label: "Next to the timeout icon",
+                value: DisplayStyle.Inline,
+                default: true,
+            },
         ],
-    }
+    },
 });
 
 function renderTimeout(message: Message, inline: boolean) {
@@ -53,20 +66,21 @@ function renderTimeout(message: Message, inline: boolean) {
 
     getIntlMessage("GUILD_ENABLE_COMMUNICATION_TIME_REMAINING", {
         username: message.author.username,
-        countdown
+        countdown,
     });
 
     return inline
         ? countdown()
         : getIntlMessage("GUILD_ENABLE_COMMUNICATION_TIME_REMAINING", {
-            username: message.author.username,
-            countdown
-        });
+              username: message.author.username,
+              countdown,
+          });
 }
 
 export default definePlugin({
     name: "ShowTimeoutDuration",
-    description: "Shows how much longer a user's timeout will last, either in the timeout icon tooltip or next to it",
+    description:
+        "Shows how much longer a user's timeout will last, either in the timeout icon tooltip or next to it",
     authors: [Devs.Ven, Devs.Sqaaakoi],
 
     settings,
@@ -77,23 +91,39 @@ export default definePlugin({
             replacement: [
                 {
                     match: /\i\.\i,{(text:.{0,30}#{intl::GUILD_COMMUNICATION_DISABLED_ICON_TOOLTIP_BODY}\))/,
-                    replace: "$self.TooltipWrapper,{message:arguments[0].message,$1"
-                }
-            ]
-        }
+                    replace:
+                        "$self.TooltipWrapper,{message:arguments[0].message,$1",
+                },
+            ],
+        },
     ],
 
-    TooltipWrapper: ErrorBoundary.wrap(({ message, children, text }: { message: Message; children: ReactNode; text: ReactNode; }) => {
-        if (settings.store.displayStyle === DisplayStyle.Tooltip)
-            return <TooltipContainer text={renderTimeout(message, false)}>{children}</TooltipContainer>;
+    TooltipWrapper: ErrorBoundary.wrap(
+        ({
+            message,
+            children,
+            text,
+        }: {
+            message: Message;
+            children: ReactNode;
+            text: ReactNode;
+        }) => {
+            if (settings.store.displayStyle === DisplayStyle.Tooltip)
+                return (
+                    <TooltipContainer text={renderTimeout(message, false)}>
+                        {children}
+                    </TooltipContainer>
+                );
 
-        return (
-            <div className="vc-std-wrapper">
-                <TooltipContainer text={text}>{children}</TooltipContainer>
-                <Text variant="text-md/normal" color="status-danger">
-                    {renderTimeout(message, true)} timeout remaining
-                </Text>
-            </div>
-        );
-    }, { noop: true })
+            return (
+                <div className="vc-std-wrapper">
+                    <TooltipContainer text={text}>{children}</TooltipContainer>
+                    <Text variant="text-md/normal" color="status-danger">
+                        {renderTimeout(message, true)} timeout remaining
+                    </Text>
+                </div>
+            );
+        },
+        { noop: true },
+    ),
 });

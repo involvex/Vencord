@@ -11,10 +11,19 @@ type FluxEventsAutoComplete = LiteralUnion<FluxEvents, string>;
 export interface FluxDispatcher {
     _actionHandlers: any;
     _subscriptions: any;
-    dispatch(event: { [key: string]: unknown; type: FluxEventsAutoComplete; }): Promise<void>;
+    dispatch(event: {
+        [key: string]: unknown;
+        type: FluxEventsAutoComplete;
+    }): Promise<void>;
     isDispatching(): boolean;
-    subscribe(event: FluxEventsAutoComplete, callback: (data: any) => void): void;
-    unsubscribe(event: FluxEventsAutoComplete, callback: (data: any) => void): void;
+    subscribe(
+        event: FluxEventsAutoComplete,
+        callback: (data: any) => void,
+    ): void;
+    unsubscribe(
+        event: FluxEventsAutoComplete,
+        callback: (data: any) => void,
+    ): void;
     wait(callback: () => void): void;
 }
 
@@ -28,8 +37,19 @@ export type Parser = Record<
     | "parseAutoModerationSystemMessage"
     | "parseForumPostGuidelines"
     | "parseForumPostMostRecentMessage",
-    (content: string, inline?: boolean, state?: Record<string, any>) => ReactNode[]
-> & Record<"defaultRules" | "guildEventRules", Record<string, Record<"react" | "html" | "parse" | "match" | "order", any>>>;
+    (
+        content: string,
+        inline?: boolean,
+        state?: Record<string, any>,
+    ) => ReactNode[]
+> &
+    Record<
+        "defaultRules" | "guildEventRules",
+        Record<
+            string,
+            Record<"react" | "html" | "parse" | "match" | "order", any>
+        >
+    >;
 
 export interface Alerts {
     show(alert: {
@@ -65,9 +85,13 @@ interface RestRequestData {
     retries?: number;
 }
 
-export type RestAPI = Record<"del" | "get" | "patch" | "post" | "put", (data: RestRequestData) => Promise<any>>;
+export type RestAPI = Record<
+    "del" | "get" | "patch" | "post" | "put",
+    (data: RestRequestData) => Promise<any>
+>;
 
-export type Permissions = "CREATE_INSTANT_INVITE"
+export type Permissions =
+    | "CREATE_INSTANT_INVITE"
     | "KICK_MEMBERS"
     | "BAN_MEMBERS"
     | "ADMINISTRATOR"
@@ -153,20 +177,64 @@ export interface ChannelRouter {
 }
 
 export interface IconUtils {
-    getUserAvatarURL(user: User, canAnimate?: boolean, size?: number, format?: string): string;
+    getUserAvatarURL(
+        user: User,
+        canAnimate?: boolean,
+        size?: number,
+        format?: string,
+    ): string;
     getDefaultAvatarURL(id: string, discriminator?: string): string;
-    getUserBannerURL(data: { id: string, banner: string, canAnimate?: boolean, size: number; }): string | undefined;
-    getAvatarDecorationURL(dara: { avatarDecoration: string, size: number; canCanimate?: boolean; }): string | undefined;
+    getUserBannerURL(data: {
+        id: string;
+        banner: string;
+        canAnimate?: boolean;
+        size: number;
+    }): string | undefined;
+    getAvatarDecorationURL(dara: {
+        avatarDecoration: string;
+        size: number;
+        canCanimate?: boolean;
+    }): string | undefined;
 
-    getGuildMemberAvatarURL(member: GuildMember, canAnimate?: string): string | null;
-    getGuildMemberAvatarURLSimple(data: { guildId: string, userId: string, avatar: string, canAnimate?: boolean; size?: number; }): string;
-    getGuildMemberBannerURL(data: { id: string, guildId: string, banner: string, canAnimate?: boolean, size: number; }): string | undefined;
+    getGuildMemberAvatarURL(
+        member: GuildMember,
+        canAnimate?: string,
+    ): string | null;
+    getGuildMemberAvatarURLSimple(data: {
+        guildId: string;
+        userId: string;
+        avatar: string;
+        canAnimate?: boolean;
+        size?: number;
+    }): string;
+    getGuildMemberBannerURL(data: {
+        id: string;
+        guildId: string;
+        banner: string;
+        canAnimate?: boolean;
+        size: number;
+    }): string | undefined;
 
-    getGuildIconURL(data: { id: string, icon?: string, size?: number, canAnimate?: boolean; }): string | undefined;
+    getGuildIconURL(data: {
+        id: string;
+        icon?: string;
+        size?: number;
+        canAnimate?: boolean;
+    }): string | undefined;
     getGuildBannerURL(guild: Guild, canAnimate?: boolean): string | null;
 
-    getChannelIconURL(data: { id: string; icon?: string; applicationId?: string; size?: number; }): string | undefined;
-    getEmojiURL(data: { id: string, animated: boolean, size: number, forcePNG?: boolean; }): string;
+    getChannelIconURL(data: {
+        id: string;
+        icon?: string;
+        applicationId?: string;
+        size?: number;
+    }): string | undefined;
+    getEmojiURL(data: {
+        id: string;
+        animated: boolean;
+        size: number;
+        forcePNG?: boolean;
+    }): string;
 
     hasAnimatedGuildIcon(guild: Guild): boolean;
     isAnimatedIconHash(hash: string): boolean;
@@ -202,14 +270,17 @@ export interface Constants {
     FriendsSections: Record<string, string>;
 }
 
-export type ActiveView = LiteralUnion<"emoji" | "gif" | "sticker" | "soundboard", string>;
+export type ActiveView = LiteralUnion<
+    "emoji" | "gif" | "sticker" | "soundboard",
+    string
+>;
 
 export interface ExpressionPickerStoreState extends Record<PropertyKey, any> {
     activeView: ActiveView | null;
     lastActiveView: ActiveView | null;
     activeViewType: any | null;
     searchQuery: string;
-    isSearchSuggestion: boolean,
+    isSearchSuggestion: boolean;
     pickerId: string;
 }
 
@@ -221,7 +292,9 @@ export interface ExpressionPickerStore {
     setExpressionPickerView(activeView: ActiveView): void;
     setSearchQuery(searchQuery: string, isSearchSuggestion?: boolean): void;
     useExpressionPickerStore(): ExpressionPickerStoreState;
-    useExpressionPickerStore<T>(selector: (state: ExpressionPickerStoreState) => T): T;
+    useExpressionPickerStore<T>(
+        selector: (state: ExpressionPickerStoreState) => T,
+    ): T;
 }
 
 export interface BrowserWindowFeatures {
@@ -248,12 +321,19 @@ export interface BrowserWindowFeatures {
 }
 
 export interface PopoutActions {
-    open(key: string, render: (windowKey: string) => ReactNode, features?: BrowserWindowFeatures);
+    open(
+        key: string,
+        render: (windowKey: string) => ReactNode,
+        features?: BrowserWindowFeatures,
+    );
     close(key: string): void;
     setAlwaysOnTop(key: string, alwaysOnTop: boolean): void;
 }
 
-export type UserNameUtilsTagInclude = LiteralUnion<"auto" | "always" | "never", string>;
+export type UserNameUtilsTagInclude = LiteralUnion<
+    "auto" | "always" | "never",
+    string
+>;
 export interface UserNameUtilsTagOptions {
     forcePomelo?: boolean;
     identifiable?: UserNameUtilsTagInclude;
@@ -268,7 +348,6 @@ export interface UsernameUtils {
     useName(user: User): string;
     getUserTag(user: User, options?: UserNameUtilsTagOptions): string;
     useUserTag(user: User, options?: UserNameUtilsTagOptions): string;
-
 
     useDirectMessageRecipient: any;
     humanizeStatus: any;
@@ -298,7 +377,7 @@ export class DisplayProfile {
         icon: string;
         link?: string;
     }>;
-    getBannerURL(options: { canAnimate: boolean; size: number; }): string;
+    getBannerURL(options: { canAnimate: boolean; size: number }): string;
     getLegacyUsername(): string | null;
     hasFullProfile(): boolean;
     hasPremiumCustomization(): boolean;
@@ -309,15 +388,27 @@ export class DisplayProfile {
 }
 
 export interface DisplayProfileUtils {
-    getDisplayProfile(userId: string, guildId?: string, customStores?: any): DisplayProfile | null;
-    useDisplayProfile(userId: string, guildId?: string, customStores?: any): DisplayProfile | null;
+    getDisplayProfile(
+        userId: string,
+        guildId?: string,
+        customStores?: any,
+    ): DisplayProfile | null;
+    useDisplayProfile(
+        userId: string,
+        guildId?: string,
+        customStores?: any,
+    ): DisplayProfile | null;
 }
 
 export interface DateUtils {
     isSameDay(date1: Date, date2: Date): boolean;
     calendarFormat(date: Date): string;
     dateFormat(date: Date, format: string): string;
-    diffAsUnits(start: Date, end: Date, stopAtOneSecond?: boolean): Record<"days" | "hours" | "minutes" | "seconds", number>;
+    diffAsUnits(
+        start: Date,
+        end: Date,
+        stopAtOneSecond?: boolean,
+    ): Record<"days" | "hours" | "minutes" | "seconds", number>;
 }
 
 export interface CommandOptions {

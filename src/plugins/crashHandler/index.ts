@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { showNotification } from "@api/Notifications";
 import { definePluginSettings } from "@api/Settings";
@@ -24,7 +12,13 @@ import { closeAllModals } from "@utils/modal";
 import definePlugin, { OptionType } from "@utils/types";
 import { maybePromptToUpdate } from "@utils/updater";
 import { filters, findBulk, proxyLazyWebpack } from "@webpack";
-import { DraftType, ExpressionPickerStore, FluxDispatcher, NavigationRouter, SelectedChannelStore } from "@webpack/common";
+import {
+    DraftType,
+    ExpressionPickerStore,
+    FluxDispatcher,
+    NavigationRouter,
+    SelectedChannelStore,
+} from "@webpack/common";
 
 const CrashHandlerLogger = new Logger("CrashHandler");
 
@@ -36,7 +30,7 @@ const { ModalStack, DraftManager } = proxyLazyWebpack(() => {
 
     return {
         ModalStack,
-        DraftManager
+        DraftManager,
     };
 });
 
@@ -44,13 +38,14 @@ const settings = definePluginSettings({
     attemptToPreventCrashes: {
         type: OptionType.BOOLEAN,
         description: "Whether to attempt to prevent Discord crashes.",
-        default: true
+        default: true,
     },
     attemptToNavigateToHome: {
         type: OptionType.BOOLEAN,
-        description: "Whether to attempt to navigate to the home when preventing Discord crashes.",
-        default: false
-    }
+        description:
+            "Whether to attempt to navigate to the home when preventing Discord crashes.",
+        default: false,
+    },
 });
 
 let hasCrashedOnce = false;
@@ -59,7 +54,8 @@ let shouldAttemptRecover = true;
 
 export default definePlugin({
     name: "CrashHandler",
-    description: "Utility plugin for handling and possibly recovering from crashes without a restart",
+    description:
+        "Utility plugin for handling and possibly recovering from crashes without a restart",
     authors: [Devs.Nuckyz],
     enabledByDefault: true,
 
@@ -70,9 +66,9 @@ export default definePlugin({
             find: "#{intl::ERRORS_UNEXPECTED_CRASH}",
             replacement: {
                 match: /this\.setState\((.+?)\)/,
-                replace: "$self.handleCrash(this,$1);"
-            }
-        }
+                replace: "$self.handleCrash(this,$1);",
+            },
+        },
     ],
 
     handleCrash(_this: any, errorState: any) {
@@ -92,24 +88,27 @@ export default definePlugin({
                             color: "#eed202",
                             title: "Discord has crashed!",
                             body: "Awn :( Discord has crashed two times rapidly, not attempting to recover.",
-                            noPersist: true
+                            noPersist: true,
                         });
-                    } catch { }
+                    } catch {}
 
                     return;
                 }
 
                 shouldAttemptRecover = false;
                 // This is enough to avoid a crash loop
-                setTimeout(() => shouldAttemptRecover = true, 1000);
-            } catch { }
+                setTimeout(() => (shouldAttemptRecover = true), 1000);
+            } catch {}
 
             try {
                 if (!hasCrashedOnce) {
                     hasCrashedOnce = true;
-                    maybePromptToUpdate("Uh oh, Discord has just crashed... but good news, there is a Vencord update available that might fix this issue! Would you like to update now?", true);
+                    maybePromptToUpdate(
+                        "Uh oh, Discord has just crashed... but good news, there is a Vencord update available that might fix this issue! Would you like to update now?",
+                        true,
+                    );
                 }
-            } catch { }
+            } catch {}
 
             try {
                 if (settings.store.attemptToPreventCrashes) {
@@ -127,9 +126,9 @@ export default definePlugin({
                 color: "#eed202",
                 title: "Discord has crashed!",
                 body: "Attempting to recover...",
-                noPersist: true
+                noPersist: true,
             });
-        } catch { }
+        } catch {}
 
         try {
             const channelId = SelectedChannelStore.getChannelId();
@@ -144,8 +143,7 @@ export default definePlugin({
         }
         try {
             ExpressionPickerStore.closeExpressionPicker();
-        }
-        catch (err) {
+        } catch (err) {
             CrashHandlerLogger.debug("Failed to close expression picker.", err);
         }
         try {
@@ -176,7 +174,7 @@ export default definePlugin({
         try {
             FluxDispatcher.dispatch({
                 type: "DEV_TOOLS_SETTINGS_UPDATE",
-                settings: { displayTools: false, lastOpenTabId: "analytics" }
+                settings: { displayTools: false, lastOpenTabId: "analytics" },
             });
         } catch (err) {
             CrashHandlerLogger.debug("Failed to close DevTools.", err);
@@ -191,12 +189,15 @@ export default definePlugin({
         }
 
         // Set isRecovering to false before setting the state to allow us to handle the next crash error correcty, in case it happens
-        setImmediate(() => isRecovering = false);
+        setImmediate(() => (isRecovering = false));
 
         try {
             _this.setState({ error: null, info: null });
         } catch (err) {
-            CrashHandlerLogger.debug("Failed to update crash handler component.", err);
+            CrashHandlerLogger.debug(
+                "Failed to update crash handler component.",
+                err,
+            );
         }
-    }
+    },
 });

@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { makeLazy } from "./lazy";
 
@@ -24,7 +12,9 @@ import { makeLazy } from "./lazy";
 
 // needed to parse APNGs in the nitroBypass plugin
 export const importApngJs = makeLazy(() => {
-    return require("./apng-canvas").APNG as { parseURL(url: string): Promise<ApngFrameData>; };
+    return require("./apng-canvas").APNG as {
+        parseURL(url: string): Promise<ApngFrameData>;
+    };
 });
 
 // https://wiki.mozilla.org/APNG_Specification#.60fcTL.60:_The_Frame_Control_Chunk
@@ -40,13 +30,13 @@ export const enum ApngDisposeOp {
     /**
      * the frame's region of the output buffer is to be reverted to the previous contents before rendering the next frame.
      */
-    PREVIOUS
+    PREVIOUS,
 }
 
 // TODO: Might need to somehow implement this
 export const enum ApngBlendOp {
     SOURCE,
-    OVER
+    OVER,
 }
 export interface ApngFrame {
     left: number;
@@ -70,7 +60,11 @@ export interface ApngFrameData {
 // Browser (extension) builds do not contain these remote imports.
 
 export const shikiWorkerSrc = `https://cdn.jsdelivr.net/npm/@vap/shiki-worker@0.0.8/dist/${IS_DEV ? "index.js" : "index.min.js"}`;
-export const shikiOnigasmSrc = "https://cdn.jsdelivr.net/npm/@vap/shiki@0.10.3/dist/onig.wasm";
+export const shikiOnigasmSrc =
+    "https://cdn.jsdelivr.net/npm/@vap/shiki@0.10.3/dist/onig.wasm";
 
-// @ts-expect-error
-export const getStegCloak = /* #__PURE__*/ makeLazy(() => import("https://cdn.jsdelivr.net/npm/stegcloak-dist@1.0.0/index.js"));
+export const getStegCloak = /* #__PURE__*/ makeLazy(() =>
+    import("stegcloak").catch(() => {
+        throw new Error("stegcloak module not available");
+    }),
+);

@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { IpcEvents } from "@shared/IpcEvents";
 import { execFile as cpExecFile } from "child_process";
@@ -30,18 +18,21 @@ const execFile = promisify(cpExecFile);
 
 const isFlatpak = process.platform === "linux" && !!process.env.FLATPAK_ID;
 
-if (process.platform === "darwin") process.env.PATH = `/usr/local/bin:${process.env.PATH}`;
+if (process.platform === "darwin")
+    process.env.PATH = `/usr/local/bin:${process.env.PATH}`;
 
 function git(...args: string[]) {
     const opts = { cwd: VENCORD_SRC_DIR };
 
-    if (isFlatpak) return execFile("flatpak-spawn", ["--host", "git", ...args], opts);
+    if (isFlatpak)
+        return execFile("flatpak-spawn", ["--host", "git", ...args], opts);
     else return execFile("git", args, opts);
 }
 
 async function getRepo() {
     const res = await git("remote", "get-url", "origin");
-    return res.stdout.trim()
+    return res.stdout
+        .trim()
         .replace(/git@(.+):/, "https://$1/")
         .replace(/\.git$/, "");
 }
@@ -51,19 +42,27 @@ async function calculateGitChanges() {
 
     const branch = (await git("branch", "--show-current")).stdout.trim();
 
-    const existsOnOrigin = (await git("ls-remote", "origin", branch)).stdout.length > 0;
+    const existsOnOrigin =
+        (await git("ls-remote", "origin", branch)).stdout.length > 0;
     if (!existsOnOrigin) return [];
 
-    const res = await git("log", `HEAD...origin/${branch}`, "--pretty=format:%an/%h/%s");
+    const res = await git(
+        "log",
+        `HEAD...origin/${branch}`,
+        "--pretty=format:%an/%h/%s",
+    );
 
     const commits = res.stdout.trim();
-    return commits ? commits.split("\n").map(line => {
-        const [author, hash, ...rest] = line.split("/");
-        return {
-            hash, author,
-            message: rest.join("/").split("\n")[0]
-        };
-    }) : [];
+    return commits
+        ? commits.split("\n").map(line => {
+              const [author, hash, ...rest] = line.split("/");
+              return {
+                  hash,
+                  author,
+                  message: rest.join("/").split("\n")[0],
+              };
+          })
+        : [];
 }
 
 async function pull() {
@@ -75,7 +74,9 @@ async function build() {
     const opts = { cwd: VENCORD_SRC_DIR };
 
     const command = isFlatpak ? "flatpak-spawn" : "node";
-    const args = isFlatpak ? ["--host", "node", "scripts/build/build.mjs"] : ["scripts/build/build.mjs"];
+    const args = isFlatpak
+        ? ["--host", "node", "scripts/build/build.mjs"]
+        : ["scripts/build/build.mjs"];
 
     if (IS_DEV) args.push("--dev");
 

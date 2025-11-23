@@ -14,7 +14,7 @@ import { Channel, Message, User } from "@vencord/discord-types";
 import { RelationshipStore, StreamerModeStore } from "@webpack/common";
 
 interface UsernameProps {
-    author: { nick: string; authorId: string; };
+    author: { nick: string; authorId: string };
     channel: Channel;
     message: Message;
     withMentionPrefix?: boolean;
@@ -27,7 +27,11 @@ const settings = definePluginSettings({
         type: OptionType.SELECT,
         description: "How to display usernames and nicks",
         options: [
-            { label: "Username then nickname", value: "user-nick", default: true },
+            {
+                label: "Username then nickname",
+                value: "user-nick",
+                default: true,
+            },
             { label: "Nickname then username", value: "nick-user" },
             { label: "Username only", value: "user" },
         ],
@@ -36,15 +40,25 @@ const settings = definePluginSettings({
         type: OptionType.SELECT,
         description: "How to prioritise friend nicknames over server nicknames",
         options: [
-            { label: "Show friend nicknames only in direct messages", value: "dms", default: true },
-            { label: "Prefer friend nicknames over server nicknames", value: "always" },
-            { label: "Prefer server nicknames over friend nicknames", value: "fallback" }
-        ]
+            {
+                label: "Show friend nicknames only in direct messages",
+                value: "dms",
+                default: true,
+            },
+            {
+                label: "Prefer friend nicknames over server nicknames",
+                value: "always",
+            },
+            {
+                label: "Prefer server nicknames over friend nicknames",
+                value: "fallback",
+            },
+        ],
     },
     displayNames: {
         type: OptionType.BOOLEAN,
         description: "Use display names in place of usernames",
-        default: false
+        default: false,
     },
     inReplies: {
         type: OptionType.BOOLEAN,
@@ -63,52 +77,88 @@ export default definePlugin({
             replacement: {
                 // The field is named "userName", but as this is unusual casing, the regex also matches username, in case they change it
                 match: /(?<=onContextMenu:\i,children:)\i\?(?=.{0,100}?user[Nn]ame:)/,
-                replace: "$self.renderUsername(arguments[0]),_oldChildren:$&"
-            }
+                replace: "$self.renderUsername(arguments[0]),_oldChildren:$&",
+            },
         },
     ],
     settings,
 
-    renderUsername: ErrorBoundary.wrap(({ author, channel, message, isRepliedMessage, withMentionPrefix, userOverride }: UsernameProps) => {
-        try {
-            const { mode, friendNicknames, displayNames, inReplies } = settings.store;
+    renderUsername: ErrorBoundary.wrap(
+        ({
+            author,
+            channel,
+            message,
+            isRepliedMessage,
+            withMentionPrefix,
+            userOverride,
+        }: UsernameProps) => {
+            try {
+                const { mode, friendNicknames, displayNames, inReplies } =
+                    settings.store;
 
-            const user = userOverride ?? message.author;
-            let username = StreamerModeStore.enabled
-                ? user.username[0] + "…"
-                : user.username;
+                const user = userOverride ?? message.author;
+                let username = StreamerModeStore.enabled
+                    ? user.username[0] + "…"
+                    : user.username;
 
-            if (displayNames)
-                username = user.globalName || username;
+                if (displayNames) username = user.globalName || username;
 
-            let { nick } = author;
+                let { nick } = author;
 
-            const friendNickname = RelationshipStore.getNickname(author.authorId);
+                const friendNickname = RelationshipStore.getNickname(
+                    author.authorId,
+                );
 
-            if (friendNickname) {
-                const shouldUseFriendNickname =
-                    friendNicknames === "always" ||
-                    (friendNicknames === "dms" && channel.isPrivate()) ||
-                    (friendNicknames === "fallback" && !nick);
+                if (friendNickname) {
+                    const shouldUseFriendNickname =
+                        friendNicknames === "always" ||
+                        (friendNicknames === "dms" && channel.isPrivate()) ||
+                        (friendNicknames === "fallback" && !nick);
 
-                if (shouldUseFriendNickname)
-                    nick = friendNickname;
+                    if (shouldUseFriendNickname) nick = friendNickname;
+                }
+
+                const prefix = withMentionPrefix ? "@" : "";
+
+                if (
+                    (isRepliedMessage && !inReplies) ||
+                    username.toLowerCase() === nick.toLowerCase()
+                )
+                    return (
+                        <>
+                            {prefix}
+                            {nick}
+                        </>
+                    );
+
+                if (mode === "user-nick")
+                    return (
+                        <>
+                            {prefix}
+                            {username}{" "}
+                            <span className="vc-smyn-suffix">{nick}</span>
+                        </>
+                    );
+
+                if (mode === "nick-user")
+                    return (
+                        <>
+                            {prefix}
+                            {nick}{" "}
+                            <span className="vc-smyn-suffix">{username}</span>
+                        </>
+                    );
+
+                return (
+                    <>
+                        {prefix}
+                        {username}
+                    </>
+                );
+            } catch {
+                return <>{author?.nick}</>;
             }
-
-            const prefix = withMentionPrefix ? "@" : "";
-
-            if (isRepliedMessage && !inReplies || username.toLowerCase() === nick.toLowerCase())
-                return <>{prefix}{nick}</>;
-
-            if (mode === "user-nick")
-                return <>{prefix}{username} <span className="vc-smyn-suffix">{nick}</span></>;
-
-            if (mode === "nick-user")
-                return <>{prefix}{nick} <span className="vc-smyn-suffix">{username}</span></>;
-
-            return <>{prefix}{username}</>;
-        } catch {
-            return <>{author?.nick}</>;
-        }
-    }, { noop: true }),
+        },
+        { noop: true },
+    ),
 });

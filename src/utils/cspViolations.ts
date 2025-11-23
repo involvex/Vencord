@@ -8,18 +8,30 @@ import { useLayoutEffect } from "@webpack/common";
 
 import { useForceUpdater } from "./react";
 
-const cssRelevantDirectives = ["style-src", "style-src-elem", "img-src", "font-src"] as const;
+const cssRelevantDirectives = [
+    "style-src",
+    "style-src-elem",
+    "img-src",
+    "font-src",
+] as const;
 
 export const CspBlockedUrls = new Set<string>();
 const CspErrorListeners = new Set<() => void>();
 
-document.addEventListener("securitypolicyviolation", ({ effectiveDirective, blockedURI }) => {
-    if (!blockedURI || !cssRelevantDirectives.includes(effectiveDirective as any)) return;
+document.addEventListener(
+    "securitypolicyviolation",
+    ({ effectiveDirective, blockedURI }) => {
+        if (
+            !blockedURI ||
+            !cssRelevantDirectives.includes(effectiveDirective as any)
+        )
+            return;
 
-    CspBlockedUrls.add(blockedURI);
+        CspBlockedUrls.add(blockedURI);
 
-    CspErrorListeners.forEach(listener => listener());
-});
+        CspErrorListeners.forEach(listener => listener());
+    },
+);
 
 export function useCspErrors() {
     const forceUpdate = useForceUpdater();

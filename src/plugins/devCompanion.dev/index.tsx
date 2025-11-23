@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { showNotification } from "@api/Notifications";
 import { definePluginSettings } from "@api/Settings";
@@ -66,10 +54,11 @@ interface FindData {
 
 const settings = definePluginSettings({
     notifyOnAutoConnect: {
-        description: "Whether to notify when Dev Companion has automatically connected.",
+        description:
+            "Whether to notify when Dev Companion has automatically connected.",
         type: OptionType.BOOLEAN,
-        default: true
-    }
+        default: true,
+    },
 });
 
 function parseNode(node: Node) {
@@ -91,18 +80,19 @@ function parseNode(node: Node) {
 function initWs(isManual = false) {
     let wasConnected = isManual;
     let hasErrored = false;
-    const ws = socket = new WebSocket(`ws://127.0.0.1:${PORT}`);
+    const ws = (socket = new WebSocket(`ws://127.0.0.1:${PORT}`));
 
     ws.addEventListener("open", () => {
         wasConnected = true;
 
         logger.info("Connected to WebSocket");
 
-        (settings.store.notifyOnAutoConnect || isManual) && showNotification({
-            title: "Dev Companion Connected",
-            body: "Connected to WebSocket",
-            noPersist: true
-        });
+        (settings.store.notifyOnAutoConnect || isManual) &&
+            showNotification({
+                title: "Dev Companion Connected",
+                body: "Connected to WebSocket",
+                noPersist: true,
+            });
     });
 
     ws.addEventListener("error", e => {
@@ -157,7 +147,10 @@ function initWs(isManual = false) {
                 const candidates = search(find);
                 const keys = Object.keys(candidates);
                 if (keys.length !== 1)
-                    return reply("Expected exactly one 'find' matches, found " + keys.length);
+                    return reply(
+                        "Expected exactly one 'find' matches, found " +
+                            keys.length,
+                    );
 
                 const mod = candidates[keys[0]];
                 let src = String(mod).replaceAll("\n", "");
@@ -173,9 +166,15 @@ function initWs(isManual = false) {
 
                     try {
                         const matcher = canonicalizeMatch(parseNode(match));
-                        const replacement = canonicalizeReplace(parseNode(replace), 'Vencord.Plugins.plugins["PlaceHolderPluginName"]');
+                        const replacement = canonicalizeReplace(
+                            parseNode(replace),
+                            'Vencord.Plugins.plugins["PlaceHolderPluginName"]',
+                        );
 
-                        const newSource = src.replace(matcher, replacement as string);
+                        const newSource = src.replace(
+                            matcher,
+                            replacement as string,
+                        );
 
                         if (src === newSource) throw "Had no effect";
                         Function(newSource);
@@ -207,7 +206,9 @@ function initWs(isManual = false) {
                             results = findAll(filters.byProps(...parsedArgs));
                             break;
                         case "Store":
-                            results = findAll(filters.byStoreName(parsedArgs[0]));
+                            results = findAll(
+                                filters.byStoreName(parsedArgs[0]),
+                            );
                             break;
                         case "ByCode":
                             results = findAll(filters.byCode(...parsedArgs));
@@ -216,7 +217,9 @@ function initWs(isManual = false) {
                             results = Object.keys(search(parsedArgs[0]));
                             break;
                         case "ComponentByCode":
-                            results = findAll(filters.componentByCode(...parsedArgs));
+                            results = findAll(
+                                filters.componentByCode(...parsedArgs),
+                            );
                             break;
                         default:
                             return reply("Unknown Find Type " + type);
@@ -224,7 +227,8 @@ function initWs(isManual = false) {
 
                     const uniqueResultsCount = new Set(results).size;
                     if (uniqueResultsCount === 0) throw "No results";
-                    if (uniqueResultsCount > 1) throw "Found more than one result! Make this filter more specific";
+                    if (uniqueResultsCount > 1)
+                        throw "Found more than one result! Make this filter more specific";
                 } catch (err) {
                     return reply("Failed to find: " + err);
                 }
@@ -247,10 +251,10 @@ export default definePlugin({
     settings,
 
     toolboxActions: {
-        "Reconnect"() {
+        Reconnect() {
             socket?.close(1000, "Reconnecting");
             initWs(true);
-        }
+        },
     },
 
     start() {
@@ -260,5 +264,5 @@ export default definePlugin({
     stop() {
         socket?.close(1000, "Plugin Stopped");
         socket = void 0;
-    }
+    },
 });

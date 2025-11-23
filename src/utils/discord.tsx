@@ -1,24 +1,37 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { MessageObject } from "@api/MessageEvents";
-import { Channel, CloudUpload, Guild, GuildFeatures, Message, User } from "@vencord/discord-types";
-import { ChannelActionCreators, ChannelStore, ComponentDispatch, Constants, FluxDispatcher, GuildStore, i18n, IconUtils, InviteActions, MessageActions, RestAPI, SelectedChannelStore, SelectedGuildStore, UserProfileActions, UserProfileStore, UserSettingsActionCreators, UserUtils } from "@webpack/common";
+import {
+    Channel,
+    CloudUpload,
+    Guild,
+    GuildFeatures,
+    Message,
+    User,
+} from "@vencord/discord-types";
+import {
+    ChannelActionCreators,
+    ChannelStore,
+    ComponentDispatch,
+    Constants,
+    FluxDispatcher,
+    GuildStore,
+    i18n,
+    IconUtils,
+    InviteActions,
+    MessageActions,
+    RestAPI,
+    SelectedChannelStore,
+    SelectedGuildStore,
+    UserProfileActions,
+    UserProfileStore,
+    UserSettingsActionCreators,
+    UserUtils,
+} from "@webpack/common";
 import { Except } from "type-fest";
 
 import { runtimeHashMessageKey, runtimeHashMessageKeyLegacy } from "./intlHash";
@@ -34,8 +47,14 @@ const IntlManagerLogger = new Logger("IntlManager");
  * @param key The plain message key
  * @param values The values to interpolate, if it's a rich message
  */
-export function getIntlMessage(key: string, values?: Record<PropertyKey, any>): any {
-    return getIntlMessageFromHash(runtimeHashMessageKey(key), values, key) || getIntlMessageFromHash(runtimeHashMessageKeyLegacy(key), values, key);
+export function getIntlMessage(
+    key: string,
+    values?: Record<PropertyKey, any>,
+): any {
+    return (
+        getIntlMessageFromHash(runtimeHashMessageKey(key), values, key) ||
+        getIntlMessageFromHash(runtimeHashMessageKeyLegacy(key), values, key)
+    );
 }
 
 /**
@@ -43,11 +62,20 @@ export function getIntlMessage(key: string, values?: Record<PropertyKey, any>): 
  * @param hashedKey The hashed message key
  * @param values The values to interpolate, if it's a rich message
  */
-export function getIntlMessageFromHash(hashedKey: string, values?: Record<PropertyKey, any>, originalKey?: string): any {
+export function getIntlMessageFromHash(
+    hashedKey: string,
+    values?: Record<PropertyKey, any>,
+    originalKey?: string,
+): any {
     try {
-        return values == null ? i18n.intl.string(i18n.t[hashedKey]) : i18n.intl.format(i18n.t[hashedKey], values);
+        return values == null
+            ? i18n.intl.string(i18n.t[hashedKey])
+            : i18n.intl.format(i18n.t[hashedKey], values);
     } catch (e) {
-        IntlManagerLogger.error(`Failed to get intl message for key: ${originalKey ?? hashedKey}`, e);
+        IntlManagerLogger.error(
+            `Failed to get intl message for key: ${originalKey ?? hashedKey}`,
+            e,
+        );
         return originalKey ?? "";
     }
 }
@@ -65,22 +93,28 @@ export async function openInviteModal(code: string) {
         type: "INVITE_MODAL_OPEN",
         invite,
         code,
-        context: "APP"
+        context: "APP",
     });
 
     return new Promise<boolean>(r => {
         let onClose: () => void, onAccept: () => void;
         let inviteAccepted = false;
 
-        FluxDispatcher.subscribe("INVITE_ACCEPT", onAccept = () => {
-            inviteAccepted = true;
-        });
+        FluxDispatcher.subscribe(
+            "INVITE_ACCEPT",
+            (onAccept = () => {
+                inviteAccepted = true;
+            }),
+        );
 
-        FluxDispatcher.subscribe("INVITE_MODAL_CLOSE", onClose = () => {
-            FluxDispatcher.unsubscribe("INVITE_MODAL_CLOSE", onClose);
-            FluxDispatcher.unsubscribe("INVITE_ACCEPT", onAccept);
-            r(inviteAccepted);
-        });
+        FluxDispatcher.subscribe(
+            "INVITE_MODAL_CLOSE",
+            (onClose = () => {
+                FluxDispatcher.unsubscribe("INVITE_MODAL_CLOSE", onClose);
+                FluxDispatcher.unsubscribe("INVITE_ACCEPT", onAccept);
+                r(inviteAccepted);
+            }),
+        );
     });
 }
 
@@ -98,12 +132,13 @@ export function openPrivateChannel(userId: string) {
 
 export const enum Theme {
     Dark = 1,
-    Light = 2
+    Light = 2,
 }
 
 export function getTheme(): Theme {
     try {
-        return UserSettingsActionCreators.PreloadedUserSettingsActionCreators.getCurrentValue()?.appearance?.theme;
+        return UserSettingsActionCreators.PreloadedUserSettingsActionCreators.getCurrentValue()
+            ?.appearance?.theme;
     } catch {
         return Theme.Dark;
     }
@@ -112,7 +147,7 @@ export function getTheme(): Theme {
 export function insertTextIntoChatInputBox(text: string) {
     ComponentDispatch.dispatchToLastSubscribed("INSERT_TEXT", {
         rawText: text,
-        plainText: text
+        plainText: text,
     });
 }
 
@@ -130,12 +165,12 @@ interface MessageOptions {
             poll_media: {
                 text: string;
                 attachment_ids?: unknown;
-                emoji?: { name: string; id?: string; };
+                emoji?: { name: string; id?: string };
             };
         }>;
         duration: number;
         layout_type: number;
-        question: { text: string; };
+        question: { text: string };
     };
 }
 
@@ -143,30 +178,40 @@ export function sendMessage(
     channelId: string,
     data: Partial<MessageObject>,
     waitForChannelReady = true,
-    options: Partial<MessageOptions> = {}
+    options: Partial<MessageOptions> = {},
 ) {
     const messageData = {
         content: "",
         invalidEmojis: [],
         tts: false,
         validNonShortcutEmojis: [],
-        ...data
+        ...data,
     };
 
-    return MessageActions.sendMessage(channelId, messageData, waitForChannelReady, options);
+    return MessageActions.sendMessage(
+        channelId,
+        messageData,
+        waitForChannelReady,
+        options,
+    );
 }
 
 /**
  * You must specify either height or width in the item
  */
-export function openImageModal(item: Except<MediaModalItem, "type">, mediaModalProps?: Omit<MediaModalProps, "items">) {
+export function openImageModal(
+    item: Except<MediaModalItem, "type">,
+    mediaModalProps?: Omit<MediaModalProps, "items">,
+) {
     return openMediaModal({
-        items: [{
-            type: "IMAGE",
-            original: item.original ?? item.url,
-            ...item,
-        }],
-        ...mediaModalProps
+        items: [
+            {
+                type: "IMAGE",
+                original: item.original ?? item.url,
+                ...item,
+            },
+        ],
+        ...mediaModalProps,
     });
 }
 
@@ -181,8 +226,8 @@ export async function openUserProfile(id: string) {
         channelId: SelectedChannelStore.getChannelId(),
         analyticsLocation: {
             page: guildId ? "Guild Channel" : "DM Channel",
-            section: "Profile Popout"
-        }
+            section: "Profile Popout",
+        },
     });
 }
 
@@ -197,7 +242,10 @@ interface FetchUserProfileOptions {
 /**
  * Fetch a user's profile
  */
-export async function fetchUserProfile(id: string, options?: FetchUserProfileOptions) {
+export async function fetchUserProfile(
+    id: string,
+    options?: FetchUserProfileOptions,
+) {
     const cached = UserProfileStore.getUserProfile(id);
     if (cached) return cached;
 
@@ -208,15 +256,22 @@ export async function fetchUserProfile(id: string, options?: FetchUserProfileOpt
         query: {
             with_mutual_guilds: false,
             with_mutual_friends_count: false,
-            ...options
+            ...options,
         },
         oldFormErrors: true,
     });
 
     FluxDispatcher.dispatch({ type: "USER_UPDATE", user: body.user });
-    await FluxDispatcher.dispatch({ type: "USER_PROFILE_FETCH_SUCCESS", userProfile: body });
+    await FluxDispatcher.dispatch({
+        type: "USER_PROFILE_FETCH_SUCCESS",
+        userProfile: body,
+    });
     if (options?.guild_id && body.guild_member)
-        FluxDispatcher.dispatch({ type: "GUILD_MEMBER_PROFILE_UPDATE", guildId: options.guild_id, guildMember: body.guild_member });
+        FluxDispatcher.dispatch({
+            type: "GUILD_MEMBER_PROFILE_UPDATE",
+            guildId: options.guild_id,
+            guildMember: body.guild_member,
+        });
 
     return UserProfileStore.getUserProfile(id);
 }

@@ -1,36 +1,48 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import * as DataStore from "@api/DataStore";
 import { Settings } from "@api/Settings";
 import { classNameFactory } from "@api/Styles";
 import { Flex } from "@components/Flex";
 import { openNotificationSettingsModal } from "@components/settings/tabs/vencord/NotificationSettings";
-import { closeModal, ModalCloseButton, ModalFooter, ModalHeader, ModalProps, ModalRoot, ModalSize, openModal } from "@utils/modal";
+import {
+    closeModal,
+    ModalCloseButton,
+    ModalFooter,
+    ModalHeader,
+    ModalProps,
+    ModalRoot,
+    ModalSize,
+    openModal,
+} from "@utils/modal";
 import { useAwaiter } from "@utils/react";
-import { Alerts, Button, Forms, ListScrollerThin, React, Text, Timestamp, useEffect, useReducer, useState } from "@webpack/common";
+import {
+    Alerts,
+    Button,
+    Forms,
+    ListScrollerThin,
+    React,
+    Text,
+    Timestamp,
+    useEffect,
+    useReducer,
+    useState,
+} from "@webpack/common";
 import { nanoid } from "nanoid";
 import type { DispatchWithoutAction } from "react";
 
 import NotificationComponent from "./NotificationComponent";
 import type { NotificationData } from "./Notifications";
 
-interface PersistentNotificationData extends Pick<NotificationData, "title" | "body" | "image" | "icon" | "color"> {
+interface PersistentNotificationData
+    extends Pick<
+        NotificationData,
+        "title" | "body" | "image" | "icon" | "color"
+    > {
     timestamp: number;
     id: string;
 }
@@ -38,7 +50,9 @@ interface PersistentNotificationData extends Pick<NotificationData, "title" | "b
 const KEY = "notification-log";
 
 const getLog = async () => {
-    const log = await DataStore.get(KEY) as PersistentNotificationData[] | undefined;
+    const log = (await DataStore.get(KEY)) as
+        | PersistentNotificationData[]
+        | undefined;
     return log ?? [];
 };
 
@@ -51,26 +65,33 @@ export async function persistNotification(notification: NotificationData) {
     const limit = Settings.notifications.logLimit;
     if (limit === 0) return;
 
-    await DataStore.update(KEY, (old: PersistentNotificationData[] | undefined) => {
-        const log = old ?? [];
+    await DataStore.update(
+        KEY,
+        (old: PersistentNotificationData[] | undefined) => {
+            const log = old ?? [];
 
-        // Omit stuff we don't need
-        const {
-            onClick, onClose, richBody, permanent, noPersist, dismissOnClick,
-            ...pureNotification
-        } = notification;
+            // Omit stuff we don't need
+            const {
+                onClick,
+                onClose,
+                richBody,
+                permanent,
+                noPersist,
+                dismissOnClick,
+                ...pureNotification
+            } = notification;
 
-        log.unshift({
-            ...pureNotification,
-            timestamp: Date.now(),
-            id: nanoid()
-        });
+            log.unshift({
+                ...pureNotification,
+                timestamp: Date.now(),
+                id: nanoid(),
+            });
 
-        if (log.length > limit && limit !== 200)
-            log.length = limit;
+            if (log.length > limit && limit !== 200) log.length = limit;
 
-        return log;
-    });
+            return log;
+        },
+    );
 
     signals.forEach(x => x());
 }
@@ -95,13 +116,13 @@ export function useLogs() {
 
     const [log, _, pending] = useAwaiter(getLog, {
         fallbackValue: [],
-        deps: [signal]
+        deps: [signal],
     });
 
     return [log, pending] as const;
 }
 
-function NotificationEntry({ data }: { data: PersistentNotificationData; }) {
+function NotificationEntry({ data }: { data: PersistentNotificationData }) {
     const [removing, setRemoving] = useState(false);
 
     return (
@@ -119,15 +140,24 @@ function NotificationEntry({ data }: { data: PersistentNotificationData; }) {
                 richBody={
                     <div className={cl("body-wrapper")}>
                         <div className={cl("body")}>{data.body}</div>
-                        <Timestamp timestamp={new Date(data.timestamp)} className={cl("timestamp")} />
+                        <Timestamp
+                            timestamp={new Date(data.timestamp)}
+                            className={cl("timestamp")}
+                        />
                     </div>
                 }
             />
-        </div >
+        </div>
     );
 }
 
-export function NotificationLog({ log, pending }: { log: PersistentNotificationData[], pending: boolean; }) {
+export function NotificationLog({
+    log,
+    pending,
+}: {
+    log: PersistentNotificationData[];
+    pending: boolean;
+}) {
     if (!log.length && !pending)
         return (
             <div className={cl("container")}>
@@ -145,18 +175,35 @@ export function NotificationLog({ log, pending }: { log: PersistentNotificationD
             sectionHeight={0}
             rowHeight={120}
             renderSection={() => null}
-            renderRow={item => <NotificationEntry data={log[item.row]} key={log[item.row].id} />}
+            renderRow={item => (
+                <NotificationEntry
+                    data={log[item.row]}
+                    key={log[item.row].id}
+                />
+            )}
         />
     );
 }
 
-function LogModal({ modalProps, close }: { modalProps: ModalProps; close(): void; }) {
+function LogModal({
+    modalProps,
+    close,
+}: {
+    modalProps: ModalProps;
+    close(): void;
+}) {
     const [log, pending] = useLogs();
 
     return (
-        <ModalRoot {...modalProps} size={ModalSize.LARGE} className={cl("modal")}>
+        <ModalRoot
+            {...modalProps}
+            size={ModalSize.LARGE}
+            className={cl("modal")}
+        >
             <ModalHeader>
-                <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }}>Notification Log</Text>
+                <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }}>
+                    Notification Log
+                </Text>
                 <ModalCloseButton onClick={close} />
             </ModalHeader>
 
@@ -183,7 +230,7 @@ function LogModal({ modalProps, close }: { modalProps: ModalProps; close(): void
                                 },
                                 confirmText: "Do it!",
                                 confirmColor: "vc-notification-log-danger-btn",
-                                cancelText: "Nevermind"
+                                cancelText: "Nevermind",
                             });
                         }}
                     >
@@ -197,9 +244,6 @@ function LogModal({ modalProps, close }: { modalProps: ModalProps; close(): void
 
 export function openNotificationLogModal() {
     const key = openModal(modalProps => (
-        <LogModal
-            modalProps={modalProps}
-            close={() => closeModal(key)}
-        />
+        <LogModal modalProps={modalProps} close={() => closeModal(key)} />
     ));
 }

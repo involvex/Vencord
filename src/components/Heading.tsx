@@ -11,9 +11,10 @@ import type { ComponentPropsWithoutRef } from "react";
 
 export type HeadingTag = `h${1 | 2 | 3 | 4 | 5 | 6}`;
 
-export type HeadingProps<Tag extends HeadingTag> = ComponentPropsWithoutRef<Tag> & {
-    tag?: Tag;
-};
+export type HeadingProps<Tag extends HeadingTag> =
+    ComponentPropsWithoutRef<Tag> & {
+        tag?: Tag;
+    };
 
 /**
  * A simple heading component that automatically sizes according to the tag used.
@@ -21,15 +22,17 @@ export type HeadingProps<Tag extends HeadingTag> = ComponentPropsWithoutRef<Tag>
  * If you need more control, use the BaseText component instead.
  */
 export function Heading<T extends HeadingTag>(props: HeadingProps<T>) {
-    const {
-        tag: Tag = "h5",
-        children,
-        className,
-        ...restProps
-    } = props;
+    const { tag: Tag = "h5", children, className, ...restProps } = props;
 
     return (
-        <Tag className={classes(`vc-${Tag}`, !className && `vc-${Tag}-defaultMargin`, className)} {...restProps}>
+        <Tag
+            className={classes(
+                `vc-${Tag}`,
+                !className && `vc-${Tag}-defaultMargin`,
+                className,
+            )}
+            {...restProps}
+        >
             {children}
         </Tag>
     );
@@ -43,7 +46,10 @@ export function HeadingPrimary({ children, ...restProps }: HeadingProps<"h2">) {
     );
 }
 
-export function HeadingSecondary({ children, ...restProps }: HeadingProps<"h3">) {
+export function HeadingSecondary({
+    children,
+    ...restProps
+}: HeadingProps<"h3">) {
     return (
         <Heading tag="h3" {...restProps}>
             {children}
@@ -51,7 +57,10 @@ export function HeadingSecondary({ children, ...restProps }: HeadingProps<"h3">)
     );
 }
 
-export function HeadingTertiary({ children, ...restProps }: HeadingProps<"h4">) {
+export function HeadingTertiary({
+    children,
+    ...restProps
+}: HeadingProps<"h4">) {
     return (
         <Heading tag="h4" {...restProps}>
             {children}

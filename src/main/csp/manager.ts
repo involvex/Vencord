@@ -10,7 +10,12 @@ import { dialog, ipcMain, IpcMainInvokeEvent } from "electron";
 
 import { CspPolicies, ImageAndCssSrc } from ".";
 
-export type CspRequestResult = "invalid" | "cancelled" | "unchecked" | "ok" | "conflict";
+export type CspRequestResult =
+    | "invalid"
+    | "cancelled"
+    | "unchecked"
+    | "ok"
+    | "conflict";
 
 export function registerCspIpcHandlers() {
     ipcMain.handle(IpcEvents.CSP_REMOVE_OVERRIDE, removeCspRule);
@@ -68,7 +73,12 @@ function getMessage(url: string, directives: string[], callerName: string) {
     return { message, detail };
 }
 
-async function addCspRule(_: IpcMainInvokeEvent, url: string, directives: string[], callerName: string): Promise<CspRequestResult> {
+async function addCspRule(
+    _: IpcMainInvokeEvent,
+    url: string,
+    directives: string[],
+    callerName: string,
+): Promise<CspRequestResult> {
     if (!validate(url, directives)) {
         return "invalid";
     }
@@ -111,11 +121,16 @@ function removeCspRule(_: IpcMainInvokeEvent, domain: string) {
     return false;
 }
 
-function isDomainAllowed(_: IpcMainInvokeEvent, url: string, directives: string[]) {
+function isDomainAllowed(
+    _: IpcMainInvokeEvent,
+    url: string,
+    directives: string[],
+) {
     try {
         const domain = new URL(url).host;
 
-        const ruleForDomain = CspPolicies[domain] ?? NativeSettings.store.customCspRules[domain];
+        const ruleForDomain =
+            CspPolicies[domain] ?? NativeSettings.store.customCspRules[domain];
         if (!ruleForDomain) return false;
 
         return directives.every(d => ruleForDomain.includes(d));

@@ -1,28 +1,15 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
-import {
-    MessageObject
-} from "@api/MessageEvents";
+import { MessageObject } from "@api/MessageEvents";
 import { Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
 
-const CLEAR_URLS_JSON_URL = "https://raw.githubusercontent.com/ClearURLs/Rules/master/data.min.json";
+const CLEAR_URLS_JSON_URL =
+    "https://raw.githubusercontent.com/ClearURLs/Rules/master/data.min.json";
 
 interface Provider {
     urlPattern: string;
@@ -71,8 +58,9 @@ export default definePlugin({
     },
 
     async createRules() {
-        const res = await fetch(CLEAR_URLS_JSON_URL)
-            .then(res => res.json()) as ClearUrlsData;
+        const res = (await fetch(CLEAR_URLS_JSON_URL).then(res =>
+            res.json(),
+        )) as ClearUrlsData;
 
         this.rules = [];
 
@@ -80,8 +68,12 @@ export default definePlugin({
             const urlPattern = new RegExp(provider.urlPattern, "i");
 
             const rules = provider.rules?.map(rule => new RegExp(rule, "i"));
-            const rawRules = provider.rawRules?.map(rule => new RegExp(rule, "i"));
-            const exceptions = provider.exceptions?.map(ex => new RegExp(ex, "i"));
+            const rawRules = provider.rawRules?.map(
+                rule => new RegExp(rule, "i"),
+            );
+            const exceptions = provider.exceptions?.map(
+                ex => new RegExp(ex, "i"),
+            );
 
             this.rules.push({
                 name,
@@ -107,7 +99,11 @@ export default definePlugin({
 
         // Check rules for each provider that matches
         this.rules.forEach(({ urlPattern, exceptions, rawRules, rules }) => {
-            if (!urlPattern.test(url.href) || exceptions?.some(ex => ex.test(url.href))) return;
+            if (
+                !urlPattern.test(url.href) ||
+                exceptions?.some(ex => ex.test(url.href))
+            )
+                return;
 
             const toDelete: string[] = [];
 
@@ -139,7 +135,7 @@ export default definePlugin({
         if (/http(s)?:\/\//.test(msg.content)) {
             msg.content = msg.content.replace(
                 /(https?:\/\/[^\s<]+[^<.,:;"'>)|\]\s])/g,
-                match => this.replacer(match)
+                match => this.replacer(match),
             );
         }
     },

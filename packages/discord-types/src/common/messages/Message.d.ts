@@ -1,6 +1,6 @@
-import { CommandOption } from './Commands';
-import { User, UserJSON } from '../User';
-import { Embed, EmbedJSON } from './Embed';
+import { CommandOption } from "./Commands";
+import { User, UserJSON } from "../User";
+import { Embed, EmbedJSON } from "./Embed";
 import { DiscordRecord } from "../Record";
 import { MessageFlags, MessageType, StickerFormatType } from "../../../enums";
 
@@ -38,12 +38,14 @@ export class Message extends DiscordRecord {
     flags: MessageFlags;
     giftCodes: string[];
     id: string;
-    interaction: {
-        id: string;
-        name: string;
-        type: number;
-        user: User;
-    }[] | undefined;
+    interaction:
+        | {
+              id: string;
+              name: string;
+              type: number;
+              user: User;
+          }[]
+        | undefined;
     interactionData: {
         application_command: {
             application_id: string;
@@ -79,11 +81,13 @@ export class Message extends DiscordRecord {
     mentionRoles: string[];
     mentioned: boolean;
     mentions: string[];
-    messageReference: {
-        guild_id?: string;
-        channel_id: string;
-        message_id: string;
-    } | undefined;
+    messageReference:
+        | {
+              guild_id?: string;
+              channel_id: string;
+              message_id: string;
+          }
+        | undefined;
     messageSnapshots: {
         message: Message;
     }[];
@@ -143,27 +147,31 @@ export interface MessageJSON {
     guild_id: string | undefined;
     id: string;
     loggingName: unknown;
-    member: {
-        avatar: string | undefined;
-        communication_disabled_until: string | undefined;
-        deaf: boolean;
-        hoisted_role: string | undefined;
-        is_pending: boolean;
-        joined_at: string;
-        mute: boolean;
-        nick: string | boolean;
-        pending: boolean;
-        premium_since: string | undefined;
-        roles: string[];
-    } | undefined;
+    member:
+        | {
+              avatar: string | undefined;
+              communication_disabled_until: string | undefined;
+              deaf: boolean;
+              hoisted_role: string | undefined;
+              is_pending: boolean;
+              joined_at: string;
+              mute: boolean;
+              nick: string | boolean;
+              pending: boolean;
+              premium_since: string | undefined;
+              roles: string[];
+          }
+        | undefined;
     mention_everyone: boolean;
     mention_roles: string[];
     mentions: UserJSON[];
-    message_reference: {
-        guild_id?: string;
-        channel_id: string;
-        message_id: string;
-    } | undefined;
+    message_reference:
+        | {
+              guild_id?: string;
+              channel_id: string;
+              message_id: string;
+          }
+        | undefined;
     nonce: string | undefined;
     pinned: boolean;
     referenced_message: MessageJSON | undefined;
@@ -199,6 +207,19 @@ export interface MessageReaction {
 
 // Object.keys(findByProps("REPLYABLE")).map(JSON.stringify).join("|")
 export type MessageTypeSets = Record<
-    "UNDELETABLE" | "GUILD_DISCOVERY_STATUS" | "USER_MESSAGE" | "NOTIFIABLE_SYSTEM_MESSAGE" | "REPLYABLE" | "FORWARDABLE" | "REFERENCED_MESSAGE_AVAILABLE" | "AVAILABLE_IN_GUILD_FEED" | "DEADCHAT_PROMPTS" | "NON_COLLAPSIBLE" | "NON_PARSED" | "AUTOMOD_INCIDENT_ACTIONS" | "SELF_MENTIONABLE_SYSTEM" | "SCHEDULABLE",
+    | "UNDELETABLE"
+    | "GUILD_DISCOVERY_STATUS"
+    | "USER_MESSAGE"
+    | "NOTIFIABLE_SYSTEM_MESSAGE"
+    | "REPLYABLE"
+    | "FORWARDABLE"
+    | "REFERENCED_MESSAGE_AVAILABLE"
+    | "AVAILABLE_IN_GUILD_FEED"
+    | "DEADCHAT_PROMPTS"
+    | "NON_COLLAPSIBLE"
+    | "NON_PARSED"
+    | "AUTOMOD_INCIDENT_ACTIONS"
+    | "SELF_MENTIONABLE_SYSTEM"
+    | "SCHEDULABLE",
     Set<MessageType>
 >;

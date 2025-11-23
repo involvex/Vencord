@@ -49,7 +49,10 @@ let defaultGetStoreFunc: UseStore | undefined;
 
 function defaultGetStore() {
     if (!defaultGetStoreFunc) {
-        defaultGetStoreFunc = createStore(!IS_REPORTER ? "VencordData" : "VencordDataReporter", "VencordStore");
+        defaultGetStoreFunc = createStore(
+            !IS_REPORTER ? "VencordData" : "VencordDataReporter",
+            "VencordStore",
+        );
     }
     return defaultGetStoreFunc;
 }
@@ -242,9 +245,9 @@ export function values<T = any>(customStore = defaultGetStore()): Promise<T[]> {
 
         const items: T[] = [];
 
-        return eachCursor(store, cursor => items.push(cursor.value as T)).then(
-            () => items,
-        );
+        return eachCursor(store, cursor =>
+            items.push(cursor.value as T),
+        ).then(() => items);
     });
 }
 

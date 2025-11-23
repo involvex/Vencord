@@ -22,7 +22,10 @@ function getErrorMessage(e: any) {
     return `An error occurred while running \`${cmd}\`:\n${extra}`;
 }
 
-export function runWithDispatch(dispatch: React.Dispatch<React.SetStateAction<boolean>>, action: () => any) {
+export function runWithDispatch(
+    dispatch: React.Dispatch<React.SetStateAction<boolean>>,
+    action: () => any,
+) {
     return async () => {
         dispatch(true);
 
@@ -37,11 +40,11 @@ export function runWithDispatch(dispatch: React.Dispatch<React.SetStateAction<bo
                 title: "Oops!",
                 body: (
                     <ErrorCard>
-                        {err.split("\n").map((line, idx) =>
+                        {err.split("\n").map((line, idx) => (
                             <div key={idx}>{Parser.parse(line)}</div>
-                        )}
+                        ))}
                     </ErrorCard>
-                )
+                ),
             });
         } finally {
             dispatch(false);

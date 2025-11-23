@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import gitHash from "~git-hash";
 
@@ -58,8 +46,10 @@ export async function update() {
 
     if (res) {
         isOutdated = false;
-        if (!await Unwrap(VencordNative.updater.rebuild()))
-            throw new Error("The Build failed. Please try manually building the new update");
+        if (!(await Unwrap(VencordNative.updater.rebuild())))
+            throw new Error(
+                "The Build failed. Please try manually building the new update",
+            );
     }
 
     return res;
@@ -67,7 +57,10 @@ export async function update() {
 
 export const getRepo = () => Unwrap(VencordNative.updater.getRepo());
 
-export async function maybePromptToUpdate(confirmMessage: string, checkForDev = false) {
+export async function maybePromptToUpdate(
+    confirmMessage: string,
+    checkForDev = false,
+) {
     if (IS_WEB || IS_UPDATER_DISABLED) return;
     if (checkForDev && IS_DEV) return;
 
@@ -75,7 +68,10 @@ export async function maybePromptToUpdate(confirmMessage: string, checkForDev = 
         const isOutdated = await checkForUpdates();
         if (isOutdated) {
             const wantsUpdate = confirm(confirmMessage);
-            if (wantsUpdate && isNewer) return alert("Your local copy has more recent commits. Please stash or reset them.");
+            if (wantsUpdate && isNewer)
+                return alert(
+                    "Your local copy has more recent commits. Please stash or reset them.",
+                );
             if (wantsUpdate) {
                 await update();
                 relaunch();
@@ -83,6 +79,8 @@ export async function maybePromptToUpdate(confirmMessage: string, checkForDev = 
         }
     } catch (err) {
         UpdateLogger.error(err);
-        alert("That also failed :( Try updating or re-installing with the installer!");
+        alert(
+            "That also failed :( Try updating or re-installing with the installer!",
+        );
     }
 }

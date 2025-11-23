@@ -8,7 +8,17 @@ import { classNameFactory } from "@api/Styles";
 import { extractAndLoadChunksLazy, findByPropsLazy } from "@webpack";
 
 export const cl = classNameFactory("vc-decor-");
-export const DecorationModalStyles = findByPropsLazy("modalPreview", "modalCloseButton", "spinner", "modal");
+export const DecorationModalStyles = findByPropsLazy(
+    "modalPreview",
+    "modalCloseButton",
+    "spinner",
+    "modal",
+);
 
-export const requireAvatarDecorationModal = extractAndLoadChunksLazy(["initialSelectedDecoration:", /initialSelectedDecoration:\i,.{0,300}Promise\.all/]);
-export const requireCreateStickerModal = extractAndLoadChunksLazy(["stickerInspected]:"]);
+export const requireAvatarDecorationModal = extractAndLoadChunksLazy([
+    "initialSelectedDecoration:",
+    /initialSelectedDecoration:\i,.{0,300}Promise\.all/,
+]);
+export const requireCreateStickerModal = extractAndLoadChunksLazy([
+    "stickerInspected]:",
+]);

@@ -15,7 +15,9 @@ export function VibrancySettings() {
 
     return (
         <>
-            <Forms.FormTitle tag="h5">Window vibrancy style (requires restart)</Forms.FormTitle>
+            <Forms.FormTitle tag="h5">
+                Window vibrancy style (requires restart)
+            </Forms.FormTitle>
             <ErrorBoundary noop>
                 <Select
                     className={Margins.bottom20}
@@ -23,58 +25,59 @@ export function VibrancySettings() {
                     options={[
                         // Sorted from most opaque to most transparent
                         {
-                            label: "No vibrancy", value: undefined
+                            label: "No vibrancy",
+                            value: undefined,
                         },
                         {
                             label: "Under Page (window tinting)",
-                            value: "under-page"
+                            value: "under-page",
                         },
                         {
                             label: "Content",
-                            value: "content"
+                            value: "content",
                         },
                         {
                             label: "Window",
-                            value: "window"
+                            value: "window",
                         },
                         {
                             label: "Selection",
-                            value: "selection"
+                            value: "selection",
                         },
                         {
                             label: "Titlebar",
-                            value: "titlebar"
+                            value: "titlebar",
                         },
                         {
                             label: "Header",
-                            value: "header"
+                            value: "header",
                         },
                         {
                             label: "Sidebar",
-                            value: "sidebar"
+                            value: "sidebar",
                         },
                         {
                             label: "Tooltip",
-                            value: "tooltip"
+                            value: "tooltip",
                         },
                         {
                             label: "Menu",
-                            value: "menu"
+                            value: "menu",
                         },
                         {
                             label: "Popover",
-                            value: "popover"
+                            value: "popover",
                         },
                         {
                             label: "Fullscreen UI (transparent but slightly muted)",
-                            value: "fullscreen-ui"
+                            value: "fullscreen-ui",
                         },
                         {
                             label: "HUD (Most transparent)",
-                            value: "hud"
+                            value: "hud",
                         },
                     ]}
-                    select={v => settings.macosVibrancyStyle = v}
+                    select={v => (settings.macosVibrancyStyle = v)}
                     isSelected={v => settings.macosVibrancyStyle === v}
                     serialize={identity}
                 />

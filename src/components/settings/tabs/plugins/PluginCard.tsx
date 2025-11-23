@@ -17,7 +17,8 @@ import { cl, logger } from ".";
 import { openPluginModal } from "./PluginModal";
 
 // Avoid circular dependency
-const { startDependenciesRecursive, startPlugin, stopPlugin, isPluginEnabled } = proxyLazy(() => require("plugins") as typeof import("plugins"));
+const { startDependenciesRecursive, startPlugin, stopPlugin, isPluginEnabled } =
+    proxyLazy(() => require("plugins") as typeof import("plugins"));
 
 interface PluginCardProps extends React.HTMLProps<HTMLDivElement> {
     plugin: Plugin;
@@ -26,7 +27,14 @@ interface PluginCardProps extends React.HTMLProps<HTMLDivElement> {
     isNew?: boolean;
 }
 
-export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, onMouseLeave, isNew }: PluginCardProps) {
+export function PluginCard({
+    plugin,
+    disabled,
+    onRestartNeeded,
+    onMouseEnter,
+    onMouseLeave,
+    isNew,
+}: PluginCardProps) {
     const settings = Settings.plugins[plugin.name];
 
     const isEnabled = () => isPluginEnabled(plugin.name);
@@ -36,11 +44,18 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
 
         // If we're enabling a plugin, make sure all deps are enabled recursively.
         if (!wasEnabled) {
-            const { restartNeeded, failures } = startDependenciesRecursive(plugin);
+            const { restartNeeded, failures } =
+                startDependenciesRecursive(plugin);
 
             if (failures.length) {
-                logger.error(`Failed to start dependencies for ${plugin.name}: ${failures.join(", ")}`);
-                showNotice("Failed to start dependencies: " + failures.join(", "), "Close", () => null);
+                logger.error(
+                    `Failed to start dependencies for ${plugin.name}: ${failures.join(", ")}`,
+                );
+                showNotice(
+                    "Failed to start dependencies: " + failures.join(", "),
+                    "Close",
+                    () => null,
+                );
                 return;
             }
 
@@ -97,11 +112,13 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
                     onClick={() => openPluginModal(plugin, onRestartNeeded)}
                     className={cl("info-button")}
                 >
-                    {plugin.options && !isObjectEmpty(plugin.options)
-                        ? <CogWheel className={cl("info-icon")} />
-                        : <InfoIcon className={cl("info-icon")} />
-                    }
+                    {plugin.options && !isObjectEmpty(plugin.options) ? (
+                        <CogWheel className={cl("info-icon")} />
+                    ) : (
+                        <InfoIcon className={cl("info-icon")} />
+                    )}
                 </button>
-            } />
+            }
+        />
     );
 }

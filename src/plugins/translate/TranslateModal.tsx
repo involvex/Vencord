@@ -1,44 +1,48 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { Divider } from "@components/Divider";
 import { FormSwitch } from "@components/FormSwitch";
 import { Margins } from "@utils/margins";
-import { ModalCloseButton, ModalContent, ModalHeader, ModalProps, ModalRoot } from "@utils/modal";
+import {
+    ModalCloseButton,
+    ModalContent,
+    ModalHeader,
+    ModalProps,
+    ModalRoot,
+} from "@utils/modal";
 import { Forms, SearchableSelect, useMemo } from "@webpack/common";
 
 import { settings } from "./settings";
 import { cl, getLanguages } from "./utils";
 
-const LanguageSettingKeys = ["receivedInput", "receivedOutput", "sentInput", "sentOutput"] as const;
+const LanguageSettingKeys = [
+    "receivedInput",
+    "receivedOutput",
+    "sentInput",
+    "sentOutput",
+] as const;
 
-function LanguageSelect({ settingsKey, includeAuto }: { settingsKey: typeof LanguageSettingKeys[number]; includeAuto: boolean; }) {
+function LanguageSelect({
+    settingsKey,
+    includeAuto,
+}: {
+    settingsKey: (typeof LanguageSettingKeys)[number];
+    includeAuto: boolean;
+}) {
     const currentValue = settings.use([settingsKey])[settingsKey];
 
-    const options = useMemo(
-        () => {
-            const options = Object.entries(getLanguages()).map(([value, label]) => ({ value, label }));
-            if (!includeAuto)
-                options.shift();
+    const options = useMemo(() => {
+        const options = Object.entries(getLanguages()).map(
+            ([value, label]) => ({ value, label }),
+        );
+        if (!includeAuto) options.shift();
 
-            return options;
-        }, []
-    );
+        return options;
+    }, []);
 
     return (
         <section className={Margins.bottom16}>
@@ -52,7 +56,7 @@ function LanguageSelect({ settingsKey, includeAuto }: { settingsKey: typeof Lang
                 placeholder={"Select a language"}
                 maxVisibleItems={5}
                 closeOnSelect={true}
-                onChange={v => settings.store[settingsKey] = v}
+                onChange={v => (settings.store[settingsKey] = v)}
             />
         </section>
     );
@@ -66,14 +70,13 @@ function AutoTranslateToggle() {
             title="Auto Translate"
             description={settings.def.autoTranslate.description}
             value={value}
-            onChange={v => settings.store.autoTranslate = v}
+            onChange={v => (settings.store.autoTranslate = v)}
             hideBorder
         />
     );
 }
 
-
-export function TranslateModal({ rootProps }: { rootProps: ModalProps; }) {
+export function TranslateModal({ rootProps }: { rootProps: ModalProps }) {
     return (
         <ModalRoot {...rootProps}>
             <ModalHeader className={cl("modal-header")}>

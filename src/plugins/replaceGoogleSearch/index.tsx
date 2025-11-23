@@ -4,7 +4,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { findGroupChildrenByChildId, NavContextMenuPatchCallback } from "@api/ContextMenu";
+import {
+    findGroupChildrenByChildId,
+    NavContextMenuPatchCallback,
+} from "@api/ContextMenu";
 import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
@@ -31,22 +34,26 @@ const settings = definePluginSettings({
     customEngineName: {
         description: "Name of the custom search engine",
         type: OptionType.STRING,
-        placeholder: "Google"
+        placeholder: "Google",
     },
     customEngineURL: {
         description: "The URL of your Engine",
         type: OptionType.STRING,
-        placeholder: "https://google.com/search?q="
+        placeholder: "https://google.com/search?q=",
     },
     replacementEngine: {
-        description: "Replace with a specific search engine instead of adding a menu",
+        description:
+            "Replace with a specific search engine instead of adding a menu",
         type: OptionType.SELECT,
         options: [
             { label: "Off", value: ReplacementEngineValue.OFF, default: true },
             { label: "Custom Engine", value: ReplacementEngineValue.CUSTOM },
-            ...Object.keys(DefaultEngines).map(engine => ({ label: engine, value: engine }))
-        ]
-    }
+            ...Object.keys(DefaultEngines).map(engine => ({
+                label: engine,
+                value: engine,
+            })),
+        ],
+    },
 });
 
 function search(src: string, engine: string) {
@@ -54,10 +61,16 @@ function search(src: string, engine: string) {
 }
 
 function makeSearchItem(src: string) {
-    const { customEngineName, customEngineURL, replacementEngine } = settings.store;
+    const { customEngineName, customEngineURL, replacementEngine } =
+        settings.store;
 
     const hasCustomEngine = Boolean(customEngineName && customEngineURL);
-    const hasValidReplacementEngine = replacementEngine !== ReplacementEngineValue.OFF && !(replacementEngine === ReplacementEngineValue.CUSTOM && !hasCustomEngine);
+    const hasValidReplacementEngine =
+        replacementEngine !== ReplacementEngineValue.OFF &&
+        !(
+            replacementEngine === ReplacementEngineValue.CUSTOM &&
+            !hasCustomEngine
+        );
 
     const Engines = { ...DefaultEngines };
 
@@ -66,9 +79,11 @@ function makeSearchItem(src: string) {
     }
 
     if (hasValidReplacementEngine) {
-        const name = replacementEngine === ReplacementEngineValue.CUSTOM && hasCustomEngine
-            ? customEngineName
-            : replacementEngine;
+        const name =
+            replacementEngine === ReplacementEngineValue.CUSTOM &&
+            hasCustomEngine
+                ? customEngineName
+                : replacementEngine;
 
         return (
             <Menu.MenuItem
@@ -93,10 +108,12 @@ function makeSearchItem(src: string) {
                         key={key}
                         id={key}
                         label={
-                            <Flex style={{ alignItems: "center", gap: "0.5em" }}>
+                            <Flex
+                                style={{ alignItems: "center", gap: "0.5em" }}
+                            >
                                 <img
                                     style={{
-                                        borderRadius: "50%"
+                                        borderRadius: "50%",
                                     }}
                                     aria-hidden="true"
                                     height={16}
@@ -114,7 +131,10 @@ function makeSearchItem(src: string) {
     );
 }
 
-const messageContextMenuPatch: NavContextMenuPatchCallback = (children, _props) => {
+const messageContextMenuPatch: NavContextMenuPatchCallback = (
+    children,
+    _props,
+) => {
     const selection = document.getSelection()?.toString();
     if (!selection) return;
 
@@ -133,6 +153,6 @@ export default definePlugin({
     settings,
 
     contextMenus: {
-        "message": messageContextMenuPatch
-    }
+        message: messageContextMenuPatch,
+    },
 });

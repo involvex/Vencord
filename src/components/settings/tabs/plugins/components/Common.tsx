@@ -25,7 +25,9 @@ interface SettingBaseProps<T> {
 }
 
 export type SettingProps<T extends PluginOptionBase> = SettingBaseProps<T>;
-export type ComponentSettingProps<T extends Omit<PluginOptionBase, "description" | "placeholder">> = SettingBaseProps<T>;
+export type ComponentSettingProps<
+    T extends Omit<PluginOptionBase, "description" | "placeholder">,
+> = SettingBaseProps<T>;
 
 export function resolveError(isValidResult: boolean | string) {
     if (typeof isValidResult === "string") return isValidResult;
@@ -41,17 +43,44 @@ interface SettingsSectionProps extends PropsWithChildren {
     tag?: "label" | "div";
 }
 
-export function SettingsSection({ tag: Tag = "div", name, description, error, inlineSetting, children }: SettingsSectionProps) {
+export function SettingsSection({
+    tag: Tag = "div",
+    name,
+    description,
+    error,
+    inlineSetting,
+    children,
+}: SettingsSectionProps) {
     return (
         <Tag className={cl("section")}>
-            <div className={classes(cl("content"), inlineSetting && cl("inline"))}>
+            <div
+                className={classes(
+                    cl("content"),
+                    inlineSetting && cl("inline"),
+                )}
+            >
                 <div className={cl("label")}>
-                    {name && <Text className={cl("title")} variant="text-md/medium">{wordsToTitle(wordsFromCamel(name))}</Text>}
-                    {description && <Text className={cl("description")} variant="text-sm/normal">{description}</Text>}
+                    {name && (
+                        <Text className={cl("title")} variant="text-md/medium">
+                            {wordsToTitle(wordsFromCamel(name))}
+                        </Text>
+                    )}
+                    {description && (
+                        <Text
+                            className={cl("description")}
+                            variant="text-sm/normal"
+                        >
+                            {description}
+                        </Text>
+                    )}
                 </div>
                 {children}
             </div>
-            {error && <Text className={cl("error")} variant="text-sm/normal">{error}</Text>}
+            {error && (
+                <Text className={cl("error")} variant="text-sm/normal">
+                    {error}
+                </Text>
+            )}
         </Tag>
     );
 }

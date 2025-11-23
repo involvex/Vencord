@@ -10,7 +10,13 @@ import { openModal } from "@utils/modal";
 import { SessionInfo } from "../types";
 import { RenameModal } from "./RenameModal";
 
-export function RenameButton({ session, state }: { session: SessionInfo["session"], state: [string, React.Dispatch<React.SetStateAction<string>>]; }) {
+export function RenameButton({
+    session,
+    state,
+}: {
+    session: SessionInfo["session"];
+    state: [string, React.Dispatch<React.SetStateAction<string>>];
+}) {
     return (
         <Button
             variant="secondary"

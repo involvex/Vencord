@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import "./PluginModal.css";
 
@@ -28,11 +16,31 @@ import { gitRemote } from "@shared/vencordUserAgent";
 import { proxyLazy } from "@utils/lazy";
 import { Margins } from "@utils/margins";
 import { classes, isObjectEmpty } from "@utils/misc";
-import { ModalCloseButton, ModalContent, ModalHeader, ModalProps, ModalRoot, ModalSize, openModal } from "@utils/modal";
+import {
+    ModalCloseButton,
+    ModalContent,
+    ModalHeader,
+    ModalProps,
+    ModalRoot,
+    ModalSize,
+    openModal,
+} from "@utils/modal";
 import { OptionType, Plugin } from "@utils/types";
 import { User } from "@vencord/discord-types";
 import { findByPropsLazy } from "@webpack";
-import { Clickable, FluxDispatcher, Forms, React, Text, Tooltip, useEffect, UserStore, UserSummaryItem, UserUtils, useState } from "@webpack/common";
+import {
+    Clickable,
+    FluxDispatcher,
+    Forms,
+    React,
+    Text,
+    Tooltip,
+    useEffect,
+    UserStore,
+    UserSummaryItem,
+    UserUtils,
+    useState,
+} from "@webpack/common";
 import { Constructor } from "type-fest";
 
 import { PluginMeta } from "~plugins";
@@ -43,15 +51,26 @@ import { GithubButton, WebsiteButton } from "./LinkIconButton";
 
 const cl = classNameFactory("vc-plugin-modal-");
 
-const AvatarStyles = findByPropsLazy("moreUsers", "emptyUser", "avatarContainer", "clickableAvatar");
-const UserRecord: Constructor<Partial<User>> = proxyLazy(() => UserStore.getCurrentUser().constructor) as any;
+const AvatarStyles = findByPropsLazy(
+    "moreUsers",
+    "emptyUser",
+    "avatarContainer",
+    "clickableAvatar",
+);
+const UserRecord: Constructor<Partial<User>> = proxyLazy(
+    () => UserStore.getCurrentUser().constructor,
+) as any;
 
 interface PluginModalProps extends ModalProps {
     plugin: Plugin;
     onRestartNeeded(key: string): void;
 }
 
-function makeDummyUser(user: { username: string; id?: string; avatar?: string; }) {
+function makeDummyUser(user: {
+    username: string;
+    id?: string;
+    avatar?: string;
+}) {
     const newUser = new UserRecord({
         username: user.username,
         id: user.id ?? generateId(),
@@ -68,9 +87,16 @@ function makeDummyUser(user: { username: string; id?: string; avatar?: string; }
     return newUser;
 }
 
-export default function PluginModal({ plugin, onRestartNeeded, onClose, transitionState }: PluginModalProps) {
+export default function PluginModal({
+    plugin,
+    onRestartNeeded,
+    onClose,
+    transitionState,
+}: PluginModalProps) {
     const pluginSettings = useSettings().plugins[plugin.name];
-    const hasSettings = Boolean(pluginSettings && plugin.options && !isObjectEmpty(plugin.options));
+    const hasSettings = Boolean(
+        pluginSettings && plugin.options && !isObjectEmpty(plugin.options),
+    );
 
     const [authors, setAuthors] = useState<Partial<User>[]>([]);
 
@@ -79,8 +105,9 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
             for (const user of plugin.authors.slice(0, 6)) {
                 try {
                     const author = user.id
-                        ? await UserUtils.getUser(String(user.id))
-                            .catch(() => makeDummyUser({ username: user.name }))
+                        ? await UserUtils.getUser(String(user.id)).catch(() =>
+                              makeDummyUser({ username: user.name }),
+                          )
                         : makeDummyUser({ username: user.name });
 
                     setAuthors(a => [...a, author]);
@@ -93,10 +120,15 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
 
     function renderSettings() {
         if (!hasSettings || !plugin.options)
-            return <Forms.FormText>There are no settings for this plugin.</Forms.FormText>;
+            return (
+                <Forms.FormText>
+                    There are no settings for this plugin.
+                </Forms.FormText>
+            );
 
         const options = Object.entries(plugin.options).map(([key, setting]) => {
-            if (setting.type === OptionType.CUSTOM || setting.hidden) return null;
+            if (setting.type === OptionType.CUSTOM || setting.hidden)
+                return null;
 
             function onChange(newValue: any) {
                 const option = plugin.options?.[key];
@@ -121,11 +153,7 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
             );
         });
 
-        return (
-            <div className="vc-plugins-settings">
-                {options}
-            </div>
-        );
+        return <div className="vc-plugins-settings">{options}</div>;
     }
 
     function renderMoreUsers(_label: string, count: number) {
@@ -134,7 +162,12 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
         const sliceEnd = sliceStart + plugin.authors.length - count;
 
         return (
-            <Tooltip text={plugin.authors.slice(sliceStart, sliceEnd).map(u => u.name).join(", ")}>
+            <Tooltip
+                text={plugin.authors
+                    .slice(sliceStart, sliceEnd)
+                    .map(u => u.name)
+                    .join(", ")}
+            >
                 {({ onMouseEnter, onMouseLeave }) => (
                     <div
                         className={AvatarStyles.moreUsers}
@@ -153,14 +186,18 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
     return (
         <ModalRoot transitionState={transitionState} size={ModalSize.MEDIUM}>
             <ModalHeader separator={false} className={Margins.bottom8}>
-                <Text variant="heading-xl/bold" style={{ flexGrow: 1 }}>{plugin.name}</Text>
+                <Text variant="heading-xl/bold" style={{ flexGrow: 1 }}>
+                    {plugin.name}
+                </Text>
                 <ModalCloseButton onClick={onClose} />
             </ModalHeader>
 
             <ModalContent className={Margins.bottom16}>
                 <section>
                     <Flex className={cl("info")}>
-                        <Forms.FormText className={cl("description")}>{plugin.description}</Forms.FormText>
+                        <Forms.FormText className={cl("description")}>
+                            {plugin.description}
+                        </Forms.FormText>
                         {!pluginMeta.userPlugin && (
                             <div className="vc-settings-modal-links">
                                 <WebsiteButton
@@ -174,7 +211,12 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
                             </div>
                         )}
                     </Flex>
-                    <Text variant="heading-lg/semibold" className={classes(Margins.top8, Margins.bottom8)}>Authors</Text>
+                    <Text
+                        variant="heading-lg/semibold"
+                        className={classes(Margins.top8, Margins.bottom8)}
+                    >
+                        Authors
+                    </Text>
                     <div style={{ width: "fit-content" }}>
                         <ErrorBoundary noop>
                             <UserSummaryItem
@@ -187,11 +229,17 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
                                 renderUser={(user: User) => (
                                     <Clickable
                                         className={AvatarStyles.clickableAvatar}
-                                        onClick={() => openContributorModal(user)}
+                                        onClick={() =>
+                                            openContributorModal(user)
+                                        }
                                     >
                                         <img
                                             className={AvatarStyles.avatar}
-                                            src={user.getAvatarURL(void 0, 80, true)}
+                                            src={user.getAvatarURL(
+                                                void 0,
+                                                80,
+                                                true,
+                                            )}
                                             alt={user.username}
                                             title={user.username}
                                         />
@@ -213,7 +261,12 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
                 )}
 
                 <section>
-                    <Text variant="heading-lg/semibold" className={classes(Margins.top16, Margins.bottom8)}>Settings</Text>
+                    <Text
+                        variant="heading-lg/semibold"
+                        className={classes(Margins.top16, Margins.bottom8)}
+                    >
+                        Settings
+                    </Text>
                     {renderSettings()}
                 </section>
             </ModalContent>
@@ -221,12 +274,17 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
     );
 }
 
-export function openPluginModal(plugin: Plugin, onRestartNeeded?: (pluginName: string, key: string) => void) {
+export function openPluginModal(
+    plugin: Plugin,
+    onRestartNeeded?: (pluginName: string, key: string) => void,
+) {
     openModal(modalProps => (
         <PluginModal
             {...modalProps}
             plugin={plugin}
-            onRestartNeeded={(key: string) => onRestartNeeded?.(plugin.name, key)}
+            onRestartNeeded={(key: string) =>
+                onRestartNeeded?.(plugin.name, key)
+            }
         />
     ));
 }

@@ -1,27 +1,24 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { Logger } from "@utils/Logger";
 import { makeCodeblock } from "@utils/text";
-import { CommandArgument, CommandContext, CommandOption } from "@vencord/discord-types";
+import {
+    CommandArgument,
+    CommandContext,
+    CommandOption,
+} from "@vencord/discord-types";
 
 import { sendBotMessage } from "./commandHelpers";
-import { ApplicationCommandInputType, ApplicationCommandOptionType, ApplicationCommandType, VencordCommand } from "./types";
+import {
+    ApplicationCommandInputType,
+    ApplicationCommandOptionType,
+    ApplicationCommandType,
+    VencordCommand,
+} from "./types";
 
 export * from "./commandHelpers";
 export * from "./types";
@@ -53,30 +50,46 @@ let commandIdOffset: number;
 export const _init = function (cmds: VencordCommand[]) {
     try {
         BUILT_IN = cmds;
-        OptionalMessageOption = cmds.find(c => (c.untranslatedName || c.displayName) === "shrug")!.options![0];
-        RequiredMessageOption = cmds.find(c => (c.untranslatedName || c.displayName) === "me")!.options![0];
-        commandIdOffset = Math.abs(BUILT_IN.map(x => Number(x.id)).sort((x, y) => x - y)[0]) - BUILT_IN.length;
+        OptionalMessageOption = cmds.find(
+            c => (c.untranslatedName || c.displayName) === "shrug",
+        )!.options![0];
+        RequiredMessageOption = cmds.find(
+            c => (c.untranslatedName || c.displayName) === "me",
+        )!.options![0];
+        commandIdOffset =
+            Math.abs(
+                BUILT_IN.map(x => Number(x.id)).sort((x, y) => x - y)[0],
+            ) - BUILT_IN.length;
     } catch (e) {
-        new Logger("CommandsAPI").error("Failed to load CommandsApi", e, " - cmds is", cmds);
+        new Logger("CommandsAPI").error(
+            "Failed to load CommandsApi",
+            e,
+            " - cmds is",
+            cmds,
+        );
     }
     return cmds;
 } as never;
 
-export const _handleCommand = function (cmd: VencordCommand, args: CommandArgument[], ctx: CommandContext) {
-    if (!cmd.isVencordCommand)
-        return cmd.execute(args, ctx);
+export const _handleCommand = function (
+    cmd: VencordCommand,
+    args: CommandArgument[],
+    ctx: CommandContext,
+) {
+    if (!cmd.isVencordCommand) return cmd.execute(args, ctx);
 
     const handleError = (err: any) => {
         // TODO: cancel send if cmd.inputType === BUILT_IN_TEXT
         const msg = `An Error occurred while executing command "${cmd.name}"`;
-        const reason = err instanceof Error ? err.stack || err.message : String(err);
+        const reason =
+            err instanceof Error ? err.stack || err.message : String(err);
 
         console.error(msg, err);
         sendBotMessage(ctx.channel.id, {
             content: `${msg}:\n${makeCodeblock(reason)}`,
             author: {
-                username: "Vencord"
-            }
+                username: "Vencord",
+            },
         });
     };
 
@@ -88,19 +101,20 @@ export const _handleCommand = function (cmd: VencordCommand, args: CommandArgume
     }
 } as never;
 
-
 /**
  * Prepare a Command Option for Discord by filling missing fields
  * @param opt
  */
-export function prepareOption<O extends CommandOption | VencordCommand>(opt: O): O {
+export function prepareOption<O extends CommandOption | VencordCommand>(
+    opt: O,
+): O {
     opt.displayName ||= opt.name;
     opt.displayDescription ||= opt.description;
     opt.options?.forEach((opt, i, opts) => {
         // See comment above Placeholders
         if (opt === OptPlaceholder) opts[i] = OptionalMessageOption;
         else if (opt === ReqPlaceholder) opts[i] = RequiredMessageOption;
-        opt.choices?.forEach(x => x.displayName ||= x.name);
+        opt.choices?.forEach(x => (x.displayName ||= x.name));
 
         prepareOption(opts[i]);
     });
@@ -113,7 +127,9 @@ export function prepareOption<O extends CommandOption | VencordCommand>(opt: O):
 function registerSubCommands(cmd: VencordCommand, plugin: string) {
     cmd.options?.forEach(o => {
         if (o.type !== ApplicationCommandOptionType.SUB_COMMAND)
-            throw new Error("When specifying sub-command options, all options must be sub-commands.");
+            throw new Error(
+                "When specifying sub-command options, all options must be sub-commands.",
+            );
         const subCmd = {
             ...cmd,
             ...o,
@@ -122,23 +138,28 @@ function registerSubCommands(cmd: VencordCommand, plugin: string) {
             name: `${cmd.name} ${o.name}`,
             id: `${o.name}-${cmd.id}`,
             displayName: `${cmd.name} ${o.name}`,
-            subCommandPath: [{
-                name: o.name,
-                type: o.type,
-                displayName: o.name
-            }],
-            rootCommand: cmd
+            subCommandPath: [
+                {
+                    name: o.name,
+                    type: o.type,
+                    displayName: o.name,
+                },
+            ],
+            rootCommand: cmd,
         };
         registerCommand(subCmd as any, plugin);
     });
 }
 
-export function registerCommand<C extends VencordCommand>(command: C, plugin: string) {
+export function registerCommand<C extends VencordCommand>(
+    command: C,
+    plugin: string,
+) {
     if (!BUILT_IN) {
         console.warn(
             "[CommandsAPI]",
             `Not registering ${command.name} as the CommandsAPI hasn't been initialised.`,
-            "Please restart to use commands"
+            "Please restart to use commands",
         );
         return;
     }
@@ -157,7 +178,9 @@ export function registerCommand<C extends VencordCommand>(command: C, plugin: st
 
     prepareOption(command);
 
-    if (command.options?.[0]?.type === ApplicationCommandOptionType.SUB_COMMAND) {
+    if (
+        command.options?.[0]?.type === ApplicationCommandOptionType.SUB_COMMAND
+    ) {
         registerSubCommands(command, plugin);
         return;
     }
@@ -168,8 +191,7 @@ export function registerCommand<C extends VencordCommand>(command: C, plugin: st
 
 export function unregisterCommand(name: string) {
     const idx = BUILT_IN.findIndex(c => c.name === name);
-    if (idx === -1)
-        return false;
+    if (idx === -1) return false;
 
     BUILT_IN.splice(idx, 1);
     delete commands[name];

@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import "./styles.css";
 
@@ -32,22 +20,30 @@ import OpenInAppPlugin from "plugins/openInApp";
 
 import { VerifiedIcon } from "./VerifiedIcon";
 
-const useLegacyPlatformType: (platform: string) => string = findByCodeLazy(".TWITTER_LEGACY:");
-const platforms: { get(type: string): ConnectionPlatform; } = findByPropsLazy("isSupported", "getByUrl");
-const getProfileThemeProps = findByCodeLazy(".getPreviewThemeColors", "primaryColor:");
+const useLegacyPlatformType: (platform: string) => string =
+    findByCodeLazy(".TWITTER_LEGACY:");
+const platforms: { get(type: string): ConnectionPlatform } = findByPropsLazy(
+    "isSupported",
+    "getByUrl",
+);
+const getProfileThemeProps = findByCodeLazy(
+    ".getPreviewThemeColors",
+    "primaryColor:",
+);
 
 const enum Spacing {
     COMPACT,
     COZY,
-    ROOMY
+    ROOMY,
 }
-const getSpacingPx = (spacing: Spacing | undefined) => (spacing ?? Spacing.COMPACT) * 2 + 4;
+const getSpacingPx = (spacing: Spacing | undefined) =>
+    (spacing ?? Spacing.COMPACT) * 2 + 4;
 
 const settings = definePluginSettings({
     iconSize: {
         type: OptionType.NUMBER,
         description: "Icon size (px)",
-        default: 32
+        default: 32,
     },
     iconSpacing: {
         type: OptionType.SELECT,
@@ -56,57 +52,73 @@ const settings = definePluginSettings({
         options: [
             { label: "Compact", value: Spacing.COMPACT },
             { label: "Cozy", value: Spacing.COZY }, // US Spelling :/
-            { label: "Roomy", value: Spacing.ROOMY }
-        ]
-    }
+            { label: "Roomy", value: Spacing.ROOMY },
+        ],
+    },
 });
 
 interface ConnectionPlatform {
     getPlatformUserUrl(connection: ConnectedAccount): string;
-    icon: { lightSVG: string, darkSVG: string; };
+    icon: { lightSVG: string; darkSVG: string };
 }
 
 const profilePopoutComponent = ErrorBoundary.wrap(
-    (props: { user: User; displayProfile?: any; }) => (
+    (props: { user: User; displayProfile?: any }) => (
         <ConnectionsComponent
             {...props}
             id={props.user.id}
             theme={getProfileThemeProps(props).theme}
         />
     ),
-    { noop: true }
+    { noop: true },
 );
 
-function ConnectionsComponent({ id, theme }: { id: string, theme: string; }) {
+function ConnectionsComponent({ id, theme }: { id: string; theme: string }) {
     const profile = UserProfileStore.getUserProfile(id);
-    if (!profile)
-        return null;
+    if (!profile) return null;
 
     const connections = profile.connectedAccounts;
-    if (!connections?.length)
-        return null;
+    if (!connections?.length) return null;
 
     return (
-        <Flex style={{
-            gap: getSpacingPx(settings.store.iconSpacing),
-            flexWrap: "wrap"
-        }}>
-            {connections.map(connection => <CompactConnectionComponent connection={connection} theme={theme} key={connection.id} />)}
+        <Flex
+            style={{
+                gap: getSpacingPx(settings.store.iconSpacing),
+                flexWrap: "wrap",
+            }}
+        >
+            {connections.map(connection => (
+                <CompactConnectionComponent
+                    connection={connection}
+                    theme={theme}
+                    key={connection.id}
+                />
+            ))}
         </Flex>
     );
 }
 
-function CompactConnectionComponent({ connection, theme }: { connection: ConnectedAccount, theme: string; }) {
+function CompactConnectionComponent({
+    connection,
+    theme,
+}: {
+    connection: ConnectedAccount;
+    theme: string;
+}) {
     const platform = platforms.get(useLegacyPlatformType(connection.type));
     const url = platform.getPlatformUserUrl?.(connection);
 
     const img = (
         <img
             aria-label={connection.name}
-            src={theme === "light" ? platform.icon.lightSVG : platform.icon.darkSVG}
+            src={
+                theme === "light"
+                    ? platform.icon.lightSVG
+                    : platform.icon.darkSVG
+            }
             style={{
                 width: settings.store.iconSize,
-                height: settings.store.iconSize
+                height: settings.store.iconSize,
             }}
         />
     );
@@ -117,16 +129,22 @@ function CompactConnectionComponent({ connection, theme }: { connection: Connect
         <Tooltip
             text={
                 <span className="vc-sc-tooltip">
-                    <span className="vc-sc-connection-name">{connection.name}</span>
+                    <span className="vc-sc-connection-name">
+                        {connection.name}
+                    </span>
                     {connection.verified && <VerifiedIcon />}
-                    <TooltipIcon height={16} width={16} className="vc-sc-tooltip-icon" />
+                    <TooltipIcon
+                        height={16}
+                        width={16}
+                        className="vc-sc-tooltip-icon"
+                    />
                 </span>
             }
             key={connection.id}
         >
             {tooltipProps =>
-                url
-                    ? <a
+                url ? (
+                    <a
                         {...tooltipProps}
                         className="vc-user-connection"
                         href={url}
@@ -141,14 +159,15 @@ function CompactConnectionComponent({ connection, theme }: { connection: Connect
                     >
                         {img}
                     </a>
-                    : <button
+                ) : (
+                    <button
                         {...tooltipProps}
                         className="vc-user-connection"
                         onClick={() => copyWithToast(connection.name)}
                     >
                         {img}
                     </button>
-
+                )
             }
         </Tooltip>
     );
@@ -165,9 +184,10 @@ export default definePlugin({
             find: ".hasAvatarForGuild(null==",
             replacement: {
                 match: /currentUser:\i,guild:\i}\)(?<=user:(\i),bio:null==(\i)\?.+?)/,
-                replace: "$&,$self.profilePopoutComponent({ user: $1, displayProfile: $2 })"
-            }
-        }
+                replace:
+                    "$&,$self.profilePopoutComponent({ user: $1, displayProfile: $2 })",
+            },
+        },
     ],
 
     profilePopoutComponent,

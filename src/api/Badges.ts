@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import ErrorBoundary from "@components/ErrorBoundary";
 import BadgeAPIPlugin from "plugins/_api/badges";
@@ -22,7 +10,7 @@ import { ComponentType, HTMLProps } from "react";
 
 export const enum BadgePosition {
     START,
-    END
+    END,
 }
 
 export interface ProfileBadge {
@@ -34,9 +22,15 @@ export interface ProfileBadge {
     iconSrc?: string;
     link?: string;
     /** Action to perform when you click the badge */
-    onClick?(event: React.MouseEvent, props: ProfileBadge & BadgeUserArgs): void;
+    onClick?(
+        event: React.MouseEvent,
+        props: ProfileBadge & BadgeUserArgs,
+    ): void;
     /** Action to perform when you right click the badge */
-    onContextMenu?(event: React.MouseEvent, props: BadgeUserArgs & BadgeUserArgs): void;
+    onContextMenu?(
+        event: React.MouseEvent,
+        props: BadgeUserArgs & BadgeUserArgs,
+    ): void;
     /** Should the user display this badge? */
     shouldShow?(userInfo: BadgeUserArgs): boolean;
     /** Optional props (e.g. style) for the badge, ignored for component badges */
@@ -84,10 +78,12 @@ export function _getBadges(args: BadgeUserArgs) {
 
         const b = badge.getBadges
             ? badge.getBadges(args).map(badge => ({
-                ...args,
-                ...badge,
-                component: badge.component && ErrorBoundary.wrap(badge.component, { noop: true })
-            }))
+                  ...args,
+                  ...badge,
+                  component:
+                      badge.component &&
+                      ErrorBoundary.wrap(badge.component, { noop: true }),
+              }))
             : [{ ...args, ...badge }];
 
         if (badge.position === BadgePosition.START) {
@@ -103,7 +99,7 @@ export function _getBadges(args: BadgeUserArgs) {
             ...donorBadges.map(badge => ({
                 ...args,
                 ...badge,
-            }))
+            })),
         );
     }
 

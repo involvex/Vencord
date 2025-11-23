@@ -14,9 +14,7 @@ function getRedirect(url: string) {
     return new Promise<string>((resolve, reject) => {
         const req = request(new URL(url), { method: "HEAD" }, res => {
             resolve(
-                res.headers.location
-                    ? getRedirect(res.headers.location)
-                    : url
+                res.headers.location ? getRedirect(res.headers.location) : url,
             );
         });
         req.on("error", reject);

@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import "./style.css";
 
@@ -26,7 +14,13 @@ import { classes } from "@utils/misc";
 import definePlugin from "@utils/types";
 import { Guild, User } from "@vencord/discord-types";
 import { findByPropsLazy } from "@webpack";
-import { Alerts, Clickable, Menu, Parser, TooltipContainer } from "@webpack/common";
+import {
+    Alerts,
+    Clickable,
+    Menu,
+    Parser,
+    TooltipContainer,
+} from "@webpack/common";
 
 import { Auth, initAuth, updateAuth } from "./auth";
 import { openReviewsModal } from "./components/ReviewModal";
@@ -37,27 +31,37 @@ import { showToast } from "./utils";
 
 const BannerButtonClasses = findByPropsLazy("bannerButton");
 
-const guildPopoutPatch: NavContextMenuPatchCallback = (children, { guild }: { guild: Guild, onClose(): void; }) => {
+const guildPopoutPatch: NavContextMenuPatchCallback = (
+    children,
+    { guild }: { guild: Guild; onClose(): void },
+) => {
     if (!guild) return;
     children.push(
         <Menu.MenuItem
             label="View Reviews"
             id="vc-rdb-server-reviews"
             icon={OpenExternalIcon}
-            action={() => openReviewsModal(guild.id, guild.name, ReviewType.Server)}
-        />
+            action={() =>
+                openReviewsModal(guild.id, guild.name, ReviewType.Server)
+            }
+        />,
     );
 };
 
-const userContextPatch: NavContextMenuPatchCallback = (children, { user }: { user?: User, onClose(): void; }) => {
+const userContextPatch: NavContextMenuPatchCallback = (
+    children,
+    { user }: { user?: User; onClose(): void },
+) => {
     if (!user) return;
     children.push(
         <Menu.MenuItem
             label="View Reviews"
             id="vc-rdb-user-reviews"
             icon={OpenExternalIcon}
-            action={() => openReviewsModal(user.id, user.username, ReviewType.User)}
-        />
+            action={() =>
+                openReviewsModal(user.id, user.username, ReviewType.User)
+            }
+        />,
     );
 };
 
@@ -72,7 +76,7 @@ export default definePlugin({
         "guild-context": guildPopoutPatch,
         "user-context": userContextPatch,
         "user-profile-actions": userContextPatch,
-        "user-profile-overflow-menu": userContextPatch
+        "user-profile-overflow-menu": userContextPatch,
     },
 
     patches: [
@@ -80,16 +84,18 @@ export default definePlugin({
             find: ".POPOUT,user:",
             replacement: {
                 match: /children:\[(?=[^[]+?shouldShowTooltip:)/,
-                replace: "$&$self.BiteSizeReviewsButton({user:arguments[0].user}),"
-            }
+                replace:
+                    "$&$self.BiteSizeReviewsButton({user:arguments[0].user}),",
+            },
         },
         {
             find: ".SIDEBAR,disableToolbar:",
             replacement: {
                 match: /children:\[(?=[^[]+?\.SIDEBAR}\),\i\.bot)/,
-                replace: "$&$self.BiteSizeReviewsButton({user:arguments[0].user}),"
-            }
-        }
+                replace:
+                    "$&$self.BiteSizeReviewsButton({user:arguments[0].user}),",
+            },
+        },
     ],
 
     flux: {
@@ -117,28 +123,26 @@ export default definePlugin({
             }
 
             if (user.notification) {
-                const props = user.notification.type === NotificationType.Ban ? {
-                    cancelText: "Appeal",
-                    confirmText: "Ok",
-                    onCancel: async () =>
-                        VencordNative.native.openExternal(
-                            "https://reviewdb.mantikafasi.dev/api/redirect?"
-                            + new URLSearchParams({
-                                token: Auth.token!,
-                                page: "dashboard/appeal"
-                            })
-                        )
-                } : {};
+                const props =
+                    user.notification.type === NotificationType.Ban
+                        ? {
+                              cancelText: "Appeal",
+                              confirmText: "Ok",
+                              onCancel: async () =>
+                                  VencordNative.native.openExternal(
+                                      "https://reviewdb.mantikafasi.dev/api/redirect?" +
+                                          new URLSearchParams({
+                                              token: Auth.token!,
+                                              page: "dashboard/appeal",
+                                          }),
+                                  ),
+                          }
+                        : {};
 
                 Alerts.show({
                     title: user.notification.title,
-                    body: (
-                        Parser.parse(
-                            user.notification.content,
-                            false
-                        )
-                    ),
-                    ...props
+                    body: Parser.parse(user.notification.content, false),
+                    ...props,
                 });
 
                 readNotification(user.notification.id);
@@ -146,16 +150,25 @@ export default definePlugin({
         }, 4000);
     },
 
-    BiteSizeReviewsButton: ErrorBoundary.wrap(({ user }: { user: User; }) => {
-        return (
-            <TooltipContainer text="View Reviews">
-                <Clickable
-                    onClick={() => openReviewsModal(user.id, user.username, ReviewType.User)}
-                    className={classes(BannerButtonClasses.bannerButton)}
-                >
-                    <NotesIcon height={16} width={16} />
-                </Clickable>
-            </TooltipContainer>
-        );
-    }, { noop: true })
+    BiteSizeReviewsButton: ErrorBoundary.wrap(
+        ({ user }: { user: User }) => {
+            return (
+                <TooltipContainer text="View Reviews">
+                    <Clickable
+                        onClick={() =>
+                            openReviewsModal(
+                                user.id,
+                                user.username,
+                                ReviewType.User,
+                            )
+                        }
+                        className={classes(BannerButtonClasses.bannerButton)}
+                    >
+                        <NotesIcon height={16} width={16} />
+                    </Clickable>
+                </TooltipContainer>
+            );
+        },
+        { noop: true },
+    ),
 });

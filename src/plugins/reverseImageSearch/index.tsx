@@ -1,22 +1,13 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
-import { findGroupChildrenByChildId, NavContextMenuPatchCallback } from "@api/ContextMenu";
+import {
+    findGroupChildrenByChildId,
+    NavContextMenuPatchCallback,
+} from "@api/ContextMenu";
 import { Flex } from "@components/Flex";
 import { OpenExternalIcon } from "@components/Icons";
 import { Devs } from "@utils/constants";
@@ -30,7 +21,7 @@ const Engines = {
     IQDB: "https://iqdb.org/?url=",
     Bing: "https://www.bing.com/images/search?view=detailv2&iss=sbi&q=imgurl:",
     TinEye: "https://www.tineye.com/search?url=",
-    ImgOps: "https://imgops.com/start?url="
+    ImgOps: "https://imgops.com/start?url=",
 } as const;
 
 function search(src: string, engine: string) {
@@ -51,7 +42,9 @@ function makeSearchItem(src: string) {
                         key={key}
                         id={key}
                         label={
-                            <Flex style={{ alignItems: "center", gap: "0.5em" }}>
+                            <Flex
+                                style={{ alignItems: "center", gap: "0.5em" }}
+                            >
                                 <img
                                     style={{
                                         borderRadius: "50%",
@@ -77,13 +70,18 @@ function makeSearchItem(src: string) {
                         All
                     </Flex>
                 }
-                action={() => Object.values(Engines).forEach(e => search(src, e))}
+                action={() =>
+                    Object.values(Engines).forEach(e => search(src, e))
+                }
             />
         </Menu.MenuItem>
     );
 }
 
-const messageContextMenuPatch: NavContextMenuPatchCallback = (children, props) => {
+const messageContextMenuPatch: NavContextMenuPatchCallback = (
+    children,
+    props,
+) => {
     if (props?.reverseImageSearchType !== "img") return;
 
     const src = props.itemHref ?? props.itemSrc;
@@ -92,10 +90,14 @@ const messageContextMenuPatch: NavContextMenuPatchCallback = (children, props) =
     group?.push(makeSearchItem(src));
 };
 
-const imageContextMenuPatch: NavContextMenuPatchCallback = (children, props) => {
+const imageContextMenuPatch: NavContextMenuPatchCallback = (
+    children,
+    props,
+) => {
     if (!props?.src) return;
 
-    const group = findGroupChildrenByChildId("copy-native-link", children) ?? children;
+    const group =
+        findGroupChildrenByChildId("copy-native-link", children) ?? children;
     group.push(makeSearchItem(props.src));
 };
 
@@ -110,12 +112,13 @@ export default definePlugin({
             find: "#{intl::MESSAGE_ACTIONS_MENU_LABEL}),shouldHideMediaOptions:",
             replacement: {
                 match: /favoriteableType:\i,(?<=(\i)\.getAttribute\("data-type"\).+?)/,
-                replace: (m, target) => `${m}reverseImageSearchType:${target}.getAttribute("data-role"),`
-            }
-        }
+                replace: (m, target) =>
+                    `${m}reverseImageSearchType:${target}.getAttribute("data-role"),`,
+            },
+        },
     ],
     contextMenus: {
-        "message": messageContextMenuPatch,
-        "image-context": imageContextMenuPatch
-    }
+        message: messageContextMenuPatch,
+        "image-context": imageContextMenuPatch,
+    },
 });

@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { definePluginSettings } from "@api/Settings";
 import { getUserSettingLazy } from "@api/UserSettings";
@@ -31,17 +19,32 @@ import definePlugin, { OptionType } from "@utils/types";
 import { Activity } from "@vencord/discord-types";
 import { ActivityType } from "@vencord/discord-types/enums";
 import { findByCodeLazy, findComponentByCodeLazy } from "@webpack";
-import { ApplicationAssetUtils, Button, FluxDispatcher, Forms, React, UserStore } from "@webpack/common";
+import {
+    ApplicationAssetUtils,
+    Button,
+    FluxDispatcher,
+    Forms,
+    React,
+    UserStore,
+} from "@webpack/common";
 
 import { RPCSettings } from "./RpcSettings";
 
-const useProfileThemeStyle = findByCodeLazy("profileThemeStyle:", "--profile-gradient-primary-color");
+const useProfileThemeStyle = findByCodeLazy(
+    "profileThemeStyle:",
+    "--profile-gradient-primary-color",
+);
 const ActivityView = findComponentByCodeLazy(".party?(0", ".card");
 
-const ShowCurrentGame = getUserSettingLazy<boolean>("status", "showCurrentGame")!;
+const ShowCurrentGame = getUserSettingLazy<boolean>(
+    "status",
+    "showCurrentGame",
+)!;
 
 async function getApplicationAsset(key: string): Promise<string> {
-    return (await ApplicationAssetUtils.fetchAssetIds(settings.store.appID!, [key]))[0];
+    return (
+        await ApplicationAssetUtils.fetchAssetIds(settings.store.appID!, [key])
+    )[0];
 }
 
 export const enum TimestampMode {
@@ -54,7 +57,7 @@ export const enum TimestampMode {
 export const settings = definePluginSettings({
     config: {
         type: OptionType.COMPONENT,
-        component: RPCSettings
+        component: RPCSettings,
     },
 }).withPrivateSettings<{
     appID?: string;
@@ -106,7 +109,7 @@ async function createActivity(): Promise<Activity | undefined> {
         buttonTwoURL,
         partyMaxSize,
         partySize,
-        timestampMode
+        timestampMode,
     } = settings.store;
 
     if (!appName) return;
@@ -125,12 +128,17 @@ async function createActivity(): Promise<Activity | undefined> {
     switch (timestampMode) {
         case TimestampMode.NOW:
             activity.timestamps = {
-                start: Date.now()
+                start: Date.now(),
             };
             break;
         case TimestampMode.TIME:
             activity.timestamps = {
-                start: Date.now() - (new Date().getHours() * 3600 + new Date().getMinutes() * 60 + new Date().getSeconds()) * 1000
+                start:
+                    Date.now() -
+                    (new Date().getHours() * 3600 +
+                        new Date().getMinutes() * 60 +
+                        new Date().getSeconds()) *
+                        1000,
             };
             break;
         case TimestampMode.CUSTOM:
@@ -154,16 +162,10 @@ async function createActivity(): Promise<Activity | undefined> {
     }
 
     if (buttonOneText) {
-        activity.buttons = [
-            buttonOneText,
-            buttonTwoText
-        ].filter(isTruthy);
+        activity.buttons = [buttonOneText, buttonTwoText].filter(isTruthy);
 
         activity.metadata = {
-            button_urls: [
-                buttonOneURL,
-                buttonTwoURL
-            ].filter(isTruthy)
+            button_urls: [buttonOneURL, buttonTwoURL].filter(isTruthy),
         };
     }
 
@@ -171,7 +173,7 @@ async function createActivity(): Promise<Activity | undefined> {
         activity.assets = {
             large_image: await getApplicationAsset(imageBig),
             large_text: imageBigTooltip || undefined,
-            large_url: imageBigURL || undefined
+            large_url: imageBigURL || undefined,
         };
     }
 
@@ -180,21 +182,20 @@ async function createActivity(): Promise<Activity | undefined> {
             ...activity.assets,
             small_image: await getApplicationAsset(imageSmall),
             small_text: imageSmallTooltip || undefined,
-            small_url: imageSmallURL || undefined
+            small_url: imageSmallURL || undefined,
         };
     }
 
     if (partyMaxSize && partySize) {
         activity.party = {
-            size: [partySize, partyMaxSize]
+            size: [partySize, partyMaxSize],
         };
     }
 
     for (const k in activity) {
         if (k === "type") continue;
         const v = activity[k];
-        if (!v || v.length === 0)
-            delete activity[k];
+        if (!v || v.length === 0) delete activity[k];
     }
 
     return activity;
@@ -212,7 +213,8 @@ export async function setRpc(disable?: boolean) {
 
 export default definePlugin({
     name: "CustomRPC",
-    description: "Add a fully customisable Rich Presence (Game status) to your Discord profile",
+    description:
+        "Add a fully customisable Rich Presence (Game status) to your Discord profile",
     authors: [Devs.captain, Devs.AutumnVN, Devs.nin0dev],
     dependencies: ["UserSettingsAPI"],
     start: setRpc,
@@ -225,13 +227,16 @@ export default definePlugin({
             all: true,
             replacement: {
                 match: /\i\.id===\i\.id\?null:/,
-                replace: ""
-            }
-        }
+                replace: "",
+            },
+        },
     ],
 
     settingsAboutComponent: () => {
-        const [activity] = useAwaiter(createActivity, { fallbackValue: undefined, deps: Object.values(settings.store) });
+        const [activity] = useAwaiter(createActivity, {
+            fallbackValue: undefined,
+            deps: Object.values(settings.store),
+        });
         const gameActivityEnabled = ShowCurrentGame.useSetting();
         const { profileThemeStyle } = useProfileThemeStyle({});
 
@@ -243,7 +248,10 @@ export default definePlugin({
                         style={{ padding: "1em" }}
                     >
                         <Forms.FormTitle>Notice</Forms.FormTitle>
-                        <Forms.FormText>Activity Sharing isn't enabled, people won't be able to see your custom rich presence!</Forms.FormText>
+                        <Forms.FormText>
+                            Activity Sharing isn't enabled, people won't be able
+                            to see your custom rich presence!
+                        </Forms.FormText>
 
                         <Button
                             color={Button.Colors.TRANSPARENT}
@@ -255,35 +263,60 @@ export default definePlugin({
                     </ErrorCard>
                 )}
 
-                <Flex flexDirection="column" style={{ gap: ".5em" }} className={Margins.top16}>
+                <Flex
+                    flexDirection="column"
+                    style={{ gap: ".5em" }}
+                    className={Margins.top16}
+                >
                     <Forms.FormText>
-                        Go to the <Link href="https://discord.com/developers/applications">Discord Developer Portal</Link> to create an application and
-                        get the application ID.
+                        Go to the{" "}
+                        <Link href="https://discord.com/developers/applications">
+                            Discord Developer Portal
+                        </Link>{" "}
+                        to create an application and get the application ID.
                     </Forms.FormText>
                     <Forms.FormText>
-                        Upload images in the Rich Presence tab to get the image keys.
+                        Upload images in the Rich Presence tab to get the image
+                        keys.
                     </Forms.FormText>
                     <Forms.FormText>
-                        If you want to use an image link, download your image and reupload the image to <Link href="https://imgur.com">Imgur</Link> and get the image link by right-clicking the image and selecting "Copy image address".
+                        If you want to use an image link, download your image
+                        and reupload the image to{" "}
+                        <Link href="https://imgur.com">Imgur</Link> and get the
+                        image link by right-clicking the image and selecting
+                        "Copy image address".
                     </Forms.FormText>
                     <Forms.FormText>
-                        You can't see your own buttons on your profile, but everyone else can see it fine.
+                        You can't see your own buttons on your profile, but
+                        everyone else can see it fine.
                     </Forms.FormText>
                     <Forms.FormText>
-                        Some weird unicode text ("fonts" 𝖑𝖎𝖐𝖊 𝖙𝖍𝖎𝖘) may cause the rich presence to not show up, try using normal letters instead.
+                        Some weird unicode text ("fonts" 𝖑𝖎𝖐𝖊 𝖙𝖍𝖎𝖘) may cause
+                        the rich presence to not show up, try using normal
+                        letters instead.
                     </Forms.FormText>
                 </Flex>
 
                 <Divider className={Margins.top8} />
 
-                <div style={{ width: "284px", ...profileThemeStyle, marginTop: 8, borderRadius: 8, background: "var(--background-mod-faint)" }}>
-                    {activity && <ActivityView
-                        activity={activity}
-                        user={UserStore.getCurrentUser()}
-                        currentUser={UserStore.getCurrentUser()}
-                    />}
+                <div
+                    style={{
+                        width: "284px",
+                        ...profileThemeStyle,
+                        marginTop: 8,
+                        borderRadius: 8,
+                        background: "var(--background-mod-faint)",
+                    }}
+                >
+                    {activity && (
+                        <ActivityView
+                            activity={activity}
+                            user={UserStore.getCurrentUser()}
+                            currentUser={UserStore.getCurrentUser()}
+                        />
+                    )}
                 </div>
             </>
         );
-    }
+    },
 });

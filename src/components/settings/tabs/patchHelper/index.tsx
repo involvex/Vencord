@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { CodeBlock } from "@components/CodeBlock";
 import { Divider } from "@components/Divider";
@@ -38,12 +26,9 @@ const findCandidates = debounce(function ({ find, setModule, setError }) {
     const keys = Object.keys(candidates);
     const len = keys.length;
 
-    if (len === 0)
-        setError("No match. Perhaps that module is lazy loaded?");
-    else if (len !== 1)
-        setError("Multiple matches. Please refine your filter");
-    else
-        setModule([keys[0], candidates[keys[0]]]);
+    if (len === 0) setError("No match. Perhaps that module is lazy loaded?");
+    else if (len !== 1) setError("Multiple matches. Please refine your filter");
+    else setModule([keys[0], candidates[keys[0]]]);
 });
 
 function PatchHelper() {
@@ -60,8 +45,14 @@ function PatchHelper() {
     const [module, setModule] = useState<[number, Function]>();
 
     const code = useMemo(() => {
-        const find = parsedFind instanceof RegExp ? parsedFind.toString() : JSON.stringify(parsedFind);
-        const replace = typeof replacement === "function" ? replacement.toString() : JSON.stringify(replacement);
+        const find =
+            parsedFind instanceof RegExp
+                ? parsedFind.toString()
+                : JSON.stringify(parsedFind);
+        const replace =
+            typeof replacement === "function"
+                ? replacement.toString()
+                : JSON.stringify(replacement);
 
         return stripIndent`
             {
@@ -85,7 +76,11 @@ function PatchHelper() {
             setParsedFind(parsedFind);
 
             if (v.length) {
-                findCandidates({ find: parsedFind, setModule, setError: setFindError });
+                findCandidates({
+                    find: parsedFind,
+                    setModule,
+                    setError: setFindError,
+                });
             }
         } catch (e: any) {
             setFindError((e as Error).message);
@@ -148,13 +143,19 @@ function PatchHelper() {
 
             {!!(find && match && replacement) && (
                 <>
-                    <HeadingTertiary className={Margins.top20}>Code</HeadingTertiary>
+                    <HeadingTertiary className={Margins.top20}>
+                        Code
+                    </HeadingTertiary>
                     <CodeBlock lang="js" content={code} />
                     <Flex className={Margins.top16}>
                         <Button onClick={() => copyWithToast(code)}>
                             Copy to Clipboard
                         </Button>
-                        <Button onClick={() => copyWithToast("```ts\n" + code + "\n```")}>
+                        <Button
+                            onClick={() =>
+                                copyWithToast("```ts\n" + code + "\n```")
+                            }
+                        >
                             Copy as Codeblock
                         </Button>
                     </Flex>

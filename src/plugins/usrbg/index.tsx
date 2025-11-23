@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { definePluginSettings } from "@api/Settings";
 import { Link } from "@components/Link";
@@ -32,24 +20,26 @@ interface UsrbgApiReturn {
 
 const settings = definePluginSettings({
     nitroFirst: {
-        description: "Banner to use if both Nitro and USRBG banners are present",
+        description:
+            "Banner to use if both Nitro and USRBG banners are present",
         type: OptionType.SELECT,
         options: [
             { label: "Nitro banner", value: true, default: true },
             { label: "USRBG banner", value: false },
-        ]
+        ],
     },
     voiceBackground: {
         description: "Use USRBG banners as voice chat backgrounds",
         type: OptionType.BOOLEAN,
         default: true,
-        restartNeeded: true
-    }
+        restartNeeded: true,
+    },
 });
 
 export default definePlugin({
     name: "USRBG",
-    description: "Displays user banners from USRBG, allowing anyone to get a banner without Nitro",
+    description:
+        "Displays user banners from USRBG, allowing anyone to get a banner without Nitro",
     authors: [Devs.AutumnVN, Devs.katlyn, Devs.pylix, Devs.TheKodeToad],
     settings,
     patches: [
@@ -57,27 +47,28 @@ export default definePlugin({
             find: '.banner)==null?"COMPLETE"',
             replacement: {
                 match: /(?<=void 0:)\i.getPreviewBanner\(\i,\i,\i\)/,
-                replace: "$self.patchBannerUrl(arguments[0])||$&"
-
-            }
+                replace: "$self.patchBannerUrl(arguments[0])||$&",
+            },
         },
         {
-            find: "\"data-selenium-video-tile\":",
+            find: '"data-selenium-video-tile":',
             predicate: () => settings.store.voiceBackground,
             replacement: [
                 {
                     match: /(?<=function\((\i),\i\)\{)(?=let.{20,40},style:)/,
-                    replace: "$1.style=$self.getVoiceBackgroundStyles($1);"
-                }
-            ]
-        }
+                    replace: "$1.style=$self.getVoiceBackgroundStyles($1);",
+                },
+            ],
+        },
     ],
 
     data: null as UsrbgApiReturn | null,
 
     settingsAboutComponent: () => {
         return (
-            <Link href="https://github.com/AutumnVN/usrbg#how-to-request-your-own-usrbg-banner">CLICK HERE TO GET YOUR OWN BANNER</Link>
+            <Link href="https://github.com/AutumnVN/usrbg#how-to-request-your-own-usrbg-banner">
+                CLICK HERE TO GET YOUR OWN BANNER
+            </Link>
         );
     },
 
@@ -88,7 +79,7 @@ export default definePlugin({
                     backgroundImage: `url(${this.getImageUrl(participantUserId)})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat"
+                    backgroundRepeat: "no-repeat",
                 };
             }
         }
@@ -96,7 +87,8 @@ export default definePlugin({
 
     patchBannerUrl({ displayProfile }: any) {
         if (displayProfile?.banner && settings.store.nitroFirst) return;
-        if (this.userHasBackground(displayProfile?.userId)) return this.getImageUrl(displayProfile?.userId);
+        if (this.userHasBackground(displayProfile?.userId))
+            return this.getImageUrl(displayProfile?.userId);
     },
 
     userHasBackground(userId: string) {
@@ -107,7 +99,12 @@ export default definePlugin({
         if (!this.userHasBackground(userId)) return null;
 
         // We can assert that data exists because userHasBackground returned true
-        const { endpoint, bucket, prefix, users: { [userId]: etag } } = this.data!;
+        const {
+            endpoint,
+            bucket,
+            prefix,
+            users: { [userId]: etag },
+        } = this.data!;
         return `${endpoint}/${bucket}/${prefix}${userId}?${etag}`;
     },
 
@@ -116,5 +113,5 @@ export default definePlugin({
         if (res.ok) {
             this.data = await res.json();
         }
-    }
+    },
 });

@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 export function makeLazy<T>(factory: () => T, attempts = 5): () => T {
     let tries = 0;
@@ -50,10 +38,10 @@ for (const method of [
     "ownKeys",
     "preventExtensions",
     "set",
-    "setPrototypeOf"
+    "setPrototypeOf",
 ]) {
-    handler[method] =
-        (target: any, ...args: any[]) => Reflect[method](target[SYM_LAZY_GET](), ...args);
+    handler[method] = (target: any, ...args: any[]) =>
+        Reflect[method](target[SYM_LAZY_GET](), ...args);
 }
 
 handler.ownKeys = target => {
@@ -69,7 +57,10 @@ handler.getOwnPropertyDescriptor = (target, p) => {
     if (typeof p === "string" && unconfigurable.includes(p))
         return Reflect.getOwnPropertyDescriptor(target, p);
 
-    const descriptor = Reflect.getOwnPropertyDescriptor(target[SYM_LAZY_GET](), p);
+    const descriptor = Reflect.getOwnPropertyDescriptor(
+        target[SYM_LAZY_GET](),
+        p,
+    );
 
     if (descriptor) Object.defineProperty(target, p, descriptor);
     return descriptor;
@@ -85,13 +76,16 @@ handler.getOwnPropertyDescriptor = (target, p) => {
  * Note that the example below exists already as an api, see {@link findByPropsLazy}
  * @example const mod = proxyLazy(() => findByProps("blah")); console.log(mod.blah);
  */
-export function proxyLazy<T>(factory: () => T, attempts = 5, isChild = false): T {
+export function proxyLazy<T>(
+    factory: () => T,
+    attempts = 5,
+    isChild = false,
+): T {
     let isSameTick = true;
-    if (!isChild)
-        setTimeout(() => isSameTick = false, 0);
+    if (!isChild) setTimeout(() => (isSameTick = false), 0);
 
     let tries = 0;
-    const proxyDummy = Object.assign(function () { }, {
+    const proxyDummy = Object.assign(function () {}, {
         [SYM_LAZY_CACHED]: void 0 as T | undefined,
         [SYM_LAZY_GET]() {
             if (!proxyDummy[SYM_LAZY_CACHED] && attempts > tries++) {
@@ -100,7 +94,7 @@ export function proxyLazy<T>(factory: () => T, attempts = 5, isChild = false): T
                     console.error("Lazy factory failed:", factory);
             }
             return proxyDummy[SYM_LAZY_CACHED];
-        }
+        },
     });
 
     return new Proxy(proxyDummy, {
@@ -117,13 +111,16 @@ export function proxyLazy<T>(factory: () => T, attempts = 5, isChild = false): T
                 return proxyLazy(
                     () => Reflect.get(target[SYM_LAZY_GET](), p, receiver),
                     attempts,
-                    true
+                    true,
                 );
             const lazyTarget = target[SYM_LAZY_GET]();
-            if (typeof lazyTarget === "object" || typeof lazyTarget === "function") {
+            if (
+                typeof lazyTarget === "object" ||
+                typeof lazyTarget === "function"
+            ) {
                 return Reflect.get(lazyTarget, p, receiver);
             }
             throw new Error("proxyLazy called on a primitive value");
-        }
+        },
     }) as any;
 }

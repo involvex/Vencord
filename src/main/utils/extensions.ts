@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { session } from "electron";
 import { unzip } from "fflate";
@@ -33,25 +21,28 @@ async function extract(data: Buffer, outDir: string) {
     return new Promise<void>((resolve, reject) => {
         unzip(data, (err, files) => {
             if (err) return void reject(err);
-            Promise.all(Object.keys(files).map(async f => {
-                // Signature stuff
-                // 'Cannot load extension with file or directory name
-                // _metadata. Filenames starting with "_" are reserved for use by the system.';
-                if (f.startsWith("_metadata/")) return;
+            Promise.all(
+                Object.keys(files).map(async f => {
+                    // Signature stuff
+                    // 'Cannot load extension with file or directory name
+                    // _metadata. Filenames starting with "_" are reserved for use by the system.';
+                    if (f.startsWith("_metadata/")) return;
 
-                if (f.endsWith("/")) return void mkdir(join(outDir, f), { recursive: true });
+                    if (f.endsWith("/"))
+                        return void mkdir(join(outDir, f), { recursive: true });
 
-                const pathElements = f.split("/");
-                const name = pathElements.pop()!;
-                const directories = pathElements.join("/");
-                const dir = join(outDir, directories);
+                    const pathElements = f.split("/");
+                    const name = pathElements.pop()!;
+                    const directories = pathElements.join("/");
+                    const dir = join(outDir, directories);
 
-                if (directories) {
-                    await mkdir(dir, { recursive: true });
-                }
+                    if (directories) {
+                        await mkdir(dir, { recursive: true });
+                    }
 
-                await writeFile(join(dir, name), files[f]);
-            }))
+                    await writeFile(join(dir, name), files[f]);
+                }),
+            )
                 .then(() => resolve())
                 .catch(err => {
                     rm(outDir, { recursive: true, force: true });
@@ -71,12 +62,13 @@ export async function installExt(id: string) {
 
         const buf = await fetchBuffer(url, {
             headers: {
-                "User-Agent": `Electron ${process.versions.electron} ~ Vencord (https://github.com/Vendicated/Vencord)`
-            }
+                "User-Agent": `Electron ${process.versions.electron} ~ Vencord (https://github.com/Vendicated/Vencord)`,
+            },
         });
 
-        await extract(crxToZip(buf), extDir)
-            .catch(err => console.error(`Failed to extract extension ${id}`, err));
+        await extract(crxToZip(buf), extDir).catch(err =>
+            console.error(`Failed to extract extension ${id}`, err),
+        );
     }
 
     session.defaultSession.loadExtension(extDir);

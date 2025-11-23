@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { Switch } from "@components/Switch";
 import { PluginOptionBoolean } from "@utils/types";
@@ -22,7 +10,13 @@ import { React, useState } from "@webpack/common";
 
 import { resolveError, SettingProps, SettingsSection } from "./Common";
 
-export function BooleanSetting({ option, pluginSettings, definedSettings, id, onChange }: SettingProps<PluginOptionBoolean>) {
+export function BooleanSetting({
+    option,
+    pluginSettings,
+    definedSettings,
+    id,
+    onChange,
+}: SettingProps<PluginOptionBoolean>) {
     const def = pluginSettings[id] ?? option.default;
 
     const [state, setState] = useState(def ?? false);
@@ -40,9 +34,14 @@ export function BooleanSetting({ option, pluginSettings, definedSettings, id, on
     }
 
     return (
-        <SettingsSection tag="label" name={id} description={option.description} error={error} inlineSetting>
+        <SettingsSection
+            tag="label"
+            name={id}
+            description={option.description}
+            error={error}
+            inlineSetting
+        >
             <Switch checked={state} onChange={handleChange} />
         </SettingsSection>
     );
 }
-

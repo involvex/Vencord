@@ -1,0 +1,14 @@
+- [x] Examine the Settings.ts file to understand the Settings structure
+- [x] Look for existing UseSettings type definition in the codebase
+- [x] Implement UseSettings type with nested path support and export it
+- [x] Fix the test-type-fix.ts file with the correct import
+- [x] Fix CSS linting errors for custom property names
+- [x] Fix CSS files (Button.css and Switch.css)
+- [x] Fix plugin list generation error for AiFun plugin
+- [x] Examine the AiFun plugin and generatePluginList script to understand the issue
+- [x] Fix the authors array validation issue
+- [x] Check if Involvex is defined in constants.ts and fix the authors format
+- [x] Add Involvex to Devs object and fix AiFun plugin format
+- [x] Fix AiFun plugin to use existing developer from Devs list
+- [x] Import Devs constant in AiFun plugin
+- [x] Verify all tests pass

@@ -1,33 +1,23 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2024 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { IShikiTheme } from "@vap/shiki";
 
 export const SHIKI_REPO = "shikijs/textmate-grammars-themes";
 export const SHIKI_REPO_COMMIT = "2d87559c7601a928b9f7e0f0dda243d2fb6d4499";
-export const shikiRepoTheme = (name: string) => `https://raw.githubusercontent.com/${SHIKI_REPO}/${SHIKI_REPO_COMMIT}/packages/tm-themes/themes/${name}.json`;
+export const shikiRepoTheme = (name: string) =>
+    `https://raw.githubusercontent.com/${SHIKI_REPO}/${SHIKI_REPO_COMMIT}/packages/tm-themes/themes/${name}.json`;
 
 export const themes = {
     // Default
     DarkPlus: shikiRepoTheme("dark-plus"),
 
     // Dev Choices
-    MaterialCandy: "https://raw.githubusercontent.com/millsp/material-candy/master/material-candy.json",
+    MaterialCandy:
+        "https://raw.githubusercontent.com/millsp/material-candy/master/material-candy.json",
 
     // More from Shiki repo
     Andromeeda: shikiRepoTheme("andromeeda"),

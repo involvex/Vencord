@@ -37,25 +37,27 @@ function getEmojiMarkdown(target: Target, copyUnicode: boolean): string {
     const hasParam = url.searchParams.get("animated") === "true";
     const isGif = url.pathname.endsWith(".gif");
 
-    return `<${(hasParam || isGif) ? "a" : ""}:${emojiName.replace(/~\d+$/, "")}:${emojiId}>`;
+    return `<${hasParam || isGif ? "a" : ""}:${emojiName.replace(/~\d+$/, "")}:${emojiId}>`;
 }
 
 const settings = definePluginSettings({
     copyUnicode: {
         type: OptionType.BOOLEAN,
-        description: "Copy the raw unicode character instead of :name: for default emojis (👽)",
+        description:
+            "Copy the raw unicode character instead of :name: for default emojis (👽)",
         default: true,
     },
 });
 
 export default definePlugin({
     name: "CopyEmojiMarkdown",
-    description: "Allows you to copy emojis as formatted string (<:blobcatcozy:1026533070955872337>)",
+    description:
+        "Allows you to copy emojis as formatted string (<:blobcatcozy:1026533070955872337>)",
     authors: [Devs.HappyEnderman, Devs.Vishnya],
     settings,
 
     contextMenus: {
-        "expression-picker"(children, { target }: { target: Target; }) {
+        "expression-picker"(children, { target }: { target: Target }) {
             if (target.dataset.type !== "emoji") return;
 
             children.push(
@@ -64,11 +66,14 @@ export default definePlugin({
                     label="Copy Emoji Markdown"
                     action={() => {
                         copyWithToast(
-                            getEmojiMarkdown(target, settings.store.copyUnicode),
-                            "Success! Copied emoji markdown."
+                            getEmojiMarkdown(
+                                target,
+                                settings.store.copyUnicode,
+                            ),
+                            "Success! Copied emoji markdown.",
                         );
                     }}
-                />
+                />,
             );
         },
     },

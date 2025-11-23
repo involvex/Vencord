@@ -1,4 +1,8 @@
-import { ActivityFlags, ActivityStatusDisplayType, ActivityType } from "../../enums";
+import {
+    ActivityFlags,
+    ActivityStatusDisplayType,
+    ActivityType,
+} from "../../enums";
 
 export interface ActivityAssets {
     large_image?: string;
@@ -39,4 +43,3 @@ export interface Activity {
         size?: [number, number];
     };
 }
-

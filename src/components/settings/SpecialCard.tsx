@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import "./SpecialCard.css";
 
@@ -36,7 +24,17 @@ interface StyledCardProps {
     buttonOnClick?: () => void;
 }
 
-export function SpecialCard({ title, subtitle, description, cardImage, backgroundImage, backgroundColor, buttonTitle, buttonOnClick: onClick, children }: PropsWithChildren<StyledCardProps>) {
+export function SpecialCard({
+    title,
+    subtitle,
+    description,
+    cardImage,
+    backgroundImage,
+    backgroundColor,
+    buttonTitle,
+    buttonOnClick: onClick,
+    children,
+}: PropsWithChildren<StyledCardProps>) {
     const cardStyle: React.CSSProperties = {
         backgroundColor: backgroundColor || "#9c85ef",
         backgroundImage: `url(${backgroundImage || ""})`,
@@ -46,9 +44,15 @@ export function SpecialCard({ title, subtitle, description, cardImage, backgroun
         <Card className={cl("card", "card-special")} style={cardStyle}>
             <div className={cl("card-flex")}>
                 <div className={cl("card-flex-main")}>
-                    <Forms.FormTitle className={cl("title")} tag="h5">{title}</Forms.FormTitle>
-                    <Forms.FormText className={cl("subtitle")}>{subtitle}</Forms.FormText>
-                    <Forms.FormText className={cl("text")}>{description}</Forms.FormText>
+                    <Forms.FormTitle className={cl("title")} tag="h5">
+                        {title}
+                    </Forms.FormTitle>
+                    <Forms.FormText className={cl("subtitle")}>
+                        {subtitle}
+                    </Forms.FormText>
+                    <Forms.FormText className={cl("text")}>
+                        {description}
+                    </Forms.FormText>
 
                     {children}
                 </div>

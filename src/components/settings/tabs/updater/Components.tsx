@@ -11,7 +11,15 @@ import { Margins } from "@utils/margins";
 import { classes } from "@utils/misc";
 import { relaunch } from "@utils/native";
 import { changes, checkForUpdates, update, updateError } from "@utils/updater";
-import { Alerts, Button, Card, Forms, React, Toasts, useState } from "@webpack/common";
+import {
+    Alerts,
+    Button,
+    Card,
+    Forms,
+    React,
+    Toasts,
+    useState,
+} from "@webpack/common";
 
 import { runWithDispatch } from "./runWithDispatch";
 
@@ -20,7 +28,15 @@ export interface CommonProps {
     repoPending: boolean;
 }
 
-export function HashLink({ repo, hash, disabled = false }: { repo: string, hash: string, disabled?: boolean; }) {
+export function HashLink({
+    repo,
+    hash,
+    disabled = false,
+}: {
+    repo: string;
+    hash: string;
+    disabled?: boolean;
+}) {
     return (
         <Link href={`${repo}/commit/${hash}`} disabled={disabled}>
             {hash}
@@ -28,7 +44,11 @@ export function HashLink({ repo, hash, disabled = false }: { repo: string, hash:
     );
 }
 
-export function Changes({ updates, repo, repoPending }: CommonProps & { updates: typeof changes; }) {
+export function Changes({
+    updates,
+    repo,
+    repoPending,
+}: CommonProps & { updates: typeof changes }) {
     return (
         <Card style={{ padding: "0 0.5em" }}>
             {updates.map(({ hash, author, message }) => (
@@ -36,17 +56,19 @@ export function Changes({ updates, repo, repoPending }: CommonProps & { updates:
                     key={hash}
                     style={{
                         marginTop: "0.5em",
-                        marginBottom: "0.5em"
+                        marginBottom: "0.5em",
                     }}
                 >
                     <code>
                         <HashLink {...{ repo, hash }} disabled={repoPending} />
                     </code>
 
-                    <span style={{
-                        marginLeft: "0.5em",
-                        color: "var(--text-default)"
-                    }}>
+                    <span
+                        style={{
+                            marginLeft: "0.5em",
+                            color: "var(--text-default)",
+                        }}
+                    >
                         {message} - {author}
                     </span>
                 </div>
@@ -59,7 +81,8 @@ export function Newer(props: CommonProps) {
     return (
         <>
             <Forms.FormText className={Margins.bottom8}>
-                Your local copy has more recent commits. Please stash or reset them.
+                Your local copy has more recent commits. Please stash or reset
+                them.
             </Forms.FormText>
             <Changes {...props} updates={changes} />
         </>
@@ -77,14 +100,24 @@ export function Updatable(props: CommonProps) {
         <>
             {!updates && updateError ? (
                 <>
-                    <Forms.FormText>Failed to check updates. Check the console for more info</Forms.FormText>
+                    <Forms.FormText>
+                        Failed to check updates. Check the console for more info
+                    </Forms.FormText>
                     <ErrorCard style={{ padding: "1em" }}>
-                        <p>{updateError.stderr || updateError.stdout || "An unknown error occurred"}</p>
+                        <p>
+                            {updateError.stderr ||
+                                updateError.stdout ||
+                                "An unknown error occurred"}
+                        </p>
                     </ErrorCard>
                 </>
             ) : (
                 <Forms.FormText className={Margins.bottom8}>
-                    {isOutdated ? (updates.length === 1 ? "There is 1 Update" : `There are ${updates.length} Updates`) : "Up to Date!"}
+                    {isOutdated
+                        ? updates.length === 1
+                            ? "There is 1 Update"
+                            : `There are ${updates.length} Updates`
+                        : "Up to Date!"}
                 </Forms.FormText>
             )}
 
@@ -109,7 +142,7 @@ export function Updatable(props: CommonProps) {
                                             relaunch();
                                             r();
                                         },
-                                        onCancel: r
+                                        onCancel: r,
                                     });
                                 });
                             }
@@ -134,8 +167,8 @@ export function Updatable(props: CommonProps) {
                                 id: Toasts.genId(),
                                 type: Toasts.Type.MESSAGE,
                                 options: {
-                                    position: Toasts.Position.BOTTOM
-                                }
+                                    position: Toasts.Position.BOTTOM,
+                                },
                             });
                         }
                     })}

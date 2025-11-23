@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { filters, findByCodeLazy, mapMangledModuleLazy } from "@webpack";
 import type { ComponentType, PropsWithChildren, ReactNode, Ref } from "react";
@@ -43,55 +31,63 @@ export interface ModalProps {
 
 export interface ModalOptions {
     modalKey?: string;
-    onCloseRequest?: (() => void);
-    onCloseCallback?: (() => void);
+    onCloseRequest?: () => void;
+    onCloseCallback?: () => void;
 }
 
 type RenderFunction = (props: ModalProps) => ReactNode | Promise<ReactNode>;
 
 interface Modals {
-    ModalRoot: ComponentType<PropsWithChildren<{
-        transitionState: ModalTransitionState;
-        size?: ModalSize;
-        role?: "alertdialog" | "dialog";
-        className?: string;
-        fullscreenOnMobile?: boolean;
-        "aria-label"?: string;
-        "aria-labelledby"?: string;
-        onAnimationEnd?(): string;
-    }>>;
-    ModalHeader: ComponentType<PropsWithChildren<{
-        /** Flex.Justify.START */
-        justify?: string;
-        /** Flex.Direction.HORIZONTAL */
-        direction?: string;
-        /** Flex.Align.CENTER */
-        align?: string;
-        /** Flex.Wrap.NO_WRAP */
-        wrap?: string;
-        separator?: boolean;
+    ModalRoot: ComponentType<
+        PropsWithChildren<{
+            transitionState: ModalTransitionState;
+            size?: ModalSize;
+            role?: "alertdialog" | "dialog";
+            className?: string;
+            fullscreenOnMobile?: boolean;
+            "aria-label"?: string;
+            "aria-labelledby"?: string;
+            onAnimationEnd?(): string;
+        }>
+    >;
+    ModalHeader: ComponentType<
+        PropsWithChildren<{
+            /** Flex.Justify.START */
+            justify?: string;
+            /** Flex.Direction.HORIZONTAL */
+            direction?: string;
+            /** Flex.Align.CENTER */
+            align?: string;
+            /** Flex.Wrap.NO_WRAP */
+            wrap?: string;
+            separator?: boolean;
 
-        className?: string;
-    }>>;
+            className?: string;
+        }>
+    >;
     /** This also accepts Scroller props but good luck with that */
-    ModalContent: ComponentType<PropsWithChildren<{
-        className?: string;
-        scrollerRef?: Ref<HTMLElement>;
-        [prop: string]: any;
-    }>>;
-    ModalFooter: ComponentType<PropsWithChildren<{
-        /** Flex.Justify.START */
-        justify?: string;
-        /** Flex.Direction.HORIZONTAL_REVERSE */
-        direction?: string;
-        /** Flex.Align.STRETCH */
-        align?: string;
-        /** Flex.Wrap.NO_WRAP */
-        wrap?: string;
-        separator?: boolean;
+    ModalContent: ComponentType<
+        PropsWithChildren<{
+            className?: string;
+            scrollerRef?: Ref<HTMLElement>;
+            [prop: string]: any;
+        }>
+    >;
+    ModalFooter: ComponentType<
+        PropsWithChildren<{
+            /** Flex.Justify.START */
+            justify?: string;
+            /** Flex.Direction.HORIZONTAL_REVERSE */
+            direction?: string;
+            /** Flex.Align.STRETCH */
+            align?: string;
+            /** Flex.Wrap.NO_WRAP */
+            wrap?: string;
+            separator?: boolean;
 
-        className?: string;
-    }>>;
+            className?: string;
+        }>
+    >;
     ModalCloseButton: ComponentType<{
         focusProps?: any;
         onClick(): void;
@@ -106,7 +102,7 @@ export const Modals: Modals = mapMangledModuleLazy(':"thin")', {
     ModalHeader: filters.componentByCode(",id:"),
     ModalContent: filters.componentByCode(".content,"),
     ModalFooter: filters.componentByCode(".footer,"),
-    ModalCloseButton: filters.componentByCode(".close]:")
+    ModalCloseButton: filters.componentByCode(".close]:"),
 });
 
 export const ModalRoot = LazyComponent(() => Modals.ModalRoot);
@@ -141,7 +137,10 @@ export type MediaModalProps = {
 };
 
 // Modal key: "Media Viewer Modal"
-export const openMediaModal: (props: MediaModalProps) => void = findByCodeLazy("hasMediaOptions", "shouldHideMediaOptions");
+export const openMediaModal: (props: MediaModalProps) => void = findByCodeLazy(
+    "hasMediaOptions",
+    "shouldHideMediaOptions",
+);
 
 interface ModalAPI {
     /**
@@ -149,12 +148,19 @@ interface ModalAPI {
      * This is equivalent to render().then(openModal)
      * You should use the Modal components exported by this file
      */
-    openModalLazy: (render: () => Promise<RenderFunction>, options?: ModalOptions & { contextKey?: string; }) => Promise<string>;
+    openModalLazy: (
+        render: () => Promise<RenderFunction>,
+        options?: ModalOptions & { contextKey?: string },
+    ) => Promise<string>;
     /**
      * Open a Modal with the given render function.
      * You should use the Modal components exported by this file
      */
-    openModal: (render: RenderFunction, options?: ModalOptions, contextKey?: string) => string;
+    openModal: (
+        render: RenderFunction,
+        options?: ModalOptions,
+        contextKey?: string,
+    ) => string;
     /**
      * Close a modal by its key
      */
@@ -169,7 +175,8 @@ export const ModalAPI: ModalAPI = mapMangledModuleLazy(".modalKey?", {
     openModalLazy: filters.byCode(".modalKey?"),
     openModal: filters.byCode(",instant:"),
     closeModal: filters.byCode(".onCloseCallback()"),
-    closeAllModals: filters.byCode(".getState();for")
+    closeAllModals: filters.byCode(".getState();for"),
 });
 
-export const { openModalLazy, openModal, closeModal, closeAllModals } = ModalAPI;
+export const { openModalLazy, openModal, closeModal, closeAllModals } =
+    ModalAPI;

@@ -11,7 +11,7 @@ import { Devs } from "@utils/constants";
 import definePlugin, { defineDefault, OptionType, StartAt } from "@utils/types";
 import { Checkbox, Text } from "@webpack/common";
 
-const Noop = () => { };
+const Noop = () => {};
 const NoopLogger = {
     logDangerously: Noop,
     log: Noop,
@@ -22,7 +22,7 @@ const NoopLogger = {
     error: Noop,
     trace: Noop,
     time: Noop,
-    fileOnly: Noop
+    fileOnly: Noop,
 };
 
 const logAllow = new Set();
@@ -47,20 +47,30 @@ function AllowLevelSetting({ settingKey }: AllowLevelSettingProps) {
     return (
         <Checkbox
             value={value}
-            onChange={(_, newValue) => settings.store.allowLevel[settingKey] = newValue}
+            onChange={(_, newValue) =>
+                (settings.store.allowLevel[settingKey] = newValue)
+            }
             size={20}
         >
-            <Text variant="text-sm/normal">{settingKey[0].toUpperCase() + settingKey.slice(1)}</Text>
+            <Text variant="text-sm/normal">
+                {settingKey[0].toUpperCase() + settingKey.slice(1)}
+            </Text>
         </Checkbox>
     );
 }
 
 const AllowLevelSettings = ErrorBoundary.wrap(() => {
     return (
-        <SettingsSection name="Filter List" description="Always allow loggers of these types">
+        <SettingsSection
+            name="Filter List"
+            description="Always allow loggers of these types"
+        >
             <div style={{ display: "flex", flexDirection: "row" }}>
                 {Object.keys(settings.store.allowLevel).map(key => (
-                    <AllowLevelSetting key={key} settingKey={key as keyof AllowLevels} />
+                    <AllowLevelSetting
+                        key={key}
+                        settingKey={key as keyof AllowLevels}
+                    />
                 ))}
             </div>
         </SettingsSection>
@@ -72,22 +82,27 @@ const settings = definePluginSettings({
         type: OptionType.BOOLEAN,
         description: "Disables Discords loggers",
         default: false,
-        restartNeeded: true
+        restartNeeded: true,
     },
     disableSpotifyLogger: {
         type: OptionType.BOOLEAN,
-        description: "Disable the Spotify logger, which leaks account information and access token",
+        description:
+            "Disable the Spotify logger, which leaks account information and access token",
         default: true,
-        restartNeeded: true
+        restartNeeded: true,
     },
     whitelistedLoggers: {
         type: OptionType.STRING,
-        description: "Semi colon separated list of loggers to allow even if others are hidden",
+        description:
+            "Semi colon separated list of loggers to allow even if others are hidden",
         default: "GatewaySocket; Routing/Utils",
         onChange(newVal: string) {
             logAllow.clear();
-            newVal.split(";").map(x => x.trim()).forEach(logAllow.add.bind(logAllow));
-        }
+            newVal
+                .split(";")
+                .map(x => x.trim())
+                .forEach(logAllow.add.bind(logAllow));
+        },
     },
     allowLevel: {
         type: OptionType.COMPONENT,
@@ -98,9 +113,9 @@ const settings = definePluginSettings({
             trace: false,
             log: false,
             info: false,
-            debug: false
-        })
-    }
+            debug: false,
+        }),
+    },
 });
 
 export default definePlugin({
@@ -112,14 +127,19 @@ export default definePlugin({
     startAt: StartAt.Init,
     start() {
         logAllow.clear();
-        this.settings.store.whitelistedLoggers?.split(";").map(x => x.trim()).forEach(logAllow.add.bind(logAllow));
+        this.settings.store.whitelistedLoggers
+            ?.split(";")
+            .map(x => x.trim())
+            .forEach(logAllow.add.bind(logAllow));
     },
 
     Noop,
     NoopLogger: () => NoopLogger,
 
     shouldLog(logger: string, level: keyof AllowLevels) {
-        return logAllow.has(logger) || settings.store.allowLevel[level] === true;
+        return (
+            logAllow.has(logger) || settings.store.allowLevel[level] === true
+        );
     },
 
     patches: [
@@ -127,71 +147,71 @@ export default definePlugin({
             find: "https://github.com/highlightjs/highlight.js/issues/2277",
             replacement: {
                 match: /\(console.log\(`Deprecated.+?`\),/,
-                replace: "("
-            }
+                replace: "(",
+            },
         },
         {
             find: 'The "interpolate" function is deprecated in v10 (use "to" instead)',
             replacement: {
                 match: /,console.warn\(\i\+'The "interpolate" function is deprecated in v10 \(use "to" instead\)'\)/,
-                replace: ""
-            }
+                replace: "",
+            },
         },
         {
             find: 'console.warn("Window state not initialized"',
             replacement: {
                 match: /console\.warn\("Window state not initialized",\i\),/,
-                replace: ""
-            }
+                replace: "",
+            },
         },
         {
             find: "is not a valid locale.",
             replacement: {
                 match: /\i\.error(?=\(""\.concat\(\i," is not a valid locale."\)\))/,
-                replace: "$self.Noop"
-            }
+                replace: "$self.Noop",
+            },
         },
         {
             find: '"AppCrashedFatalReport: getLastCrash not supported."',
             replacement: {
                 match: /console\.log(?=\("AppCrashedFatalReport: getLastCrash not supported\."\))/,
-                replace: "$self.Noop"
-            }
+                replace: "$self.Noop",
+            },
         },
         {
             find: "RPCServer:WSS",
             replacement: {
                 match: /\i\.error\("Error: "\.concat\((\i)\.message/,
-                replace: '!$1.message.includes("EADDRINUSE")&&$&'
-            }
+                replace: '!$1.message.includes("EADDRINUSE")&&$&',
+            },
         },
         {
             find: "Tried getting Dispatch instance before instantiated",
             replacement: {
                 match: /null==\i&&\i\.warn\("Tried getting Dispatch instance before instantiated"\),/,
-                replace: ""
-            }
+                replace: "",
+            },
         },
         {
             find: "Unable to determine render window for element",
             replacement: {
                 match: /console\.warn\("Unable to determine render window for element",\i\),/,
-                replace: ""
-            }
+                replace: "",
+            },
         },
         {
             find: "failed to send analytics events",
             replacement: {
                 match: /console\.error\("\[analytics\] failed to send analytics events query: "\.concat\(\i\)\)/,
-                replace: ""
-            }
+                replace: "",
+            },
         },
         {
             find: "Slow dispatch on",
             replacement: {
                 match: /\i\.totalTime>\i&&\i\.verbose\("Slow dispatch on ".+?\)\);/,
-                replace: ""
-            }
+                replace: "",
+            },
         },
         // Patches Discord generic logger function
         {
@@ -199,16 +219,16 @@ export default definePlugin({
             predicate: () => settings.store.disableLoggers,
             replacement: {
                 match: /(?<=&&)(?=console)/,
-                replace: "$self.shouldLog(arguments[0],arguments[1])&&"
-            }
+                replace: "$self.shouldLog(arguments[0],arguments[1])&&",
+            },
         },
         {
             find: '("Spotify")',
             predicate: () => settings.store.disableSpotifyLogger,
             replacement: {
                 match: /new \i\.\i\("Spotify"\)/,
-                replace: "$self.NoopLogger()"
-            }
-        }
-    ]
+                replace: "$self.NoopLogger()",
+            },
+        },
+    ],
 });

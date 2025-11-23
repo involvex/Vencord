@@ -17,6 +17,7 @@ Pull requests can be made either to the `main` or the `dev` branch. However, unl
 Writing a plugin is the primary way to contribute.
 
 Before starting your plugin:
+
 - Check existing pull requests to see if someone is already working on a similar plugin
 - Check our [plugin requests tracker](https://github.com/Vencord/plugin-requests/issues) to see if there is an existing request, or if the same idea has been rejected
 - If there isn't an existing request, [open one](https://github.com/Vencord/plugin-requests/issues/new?assignees=&labels=&projects=&template=request.yml) yourself

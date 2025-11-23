@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { migratePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
@@ -31,15 +19,15 @@ export default definePlugin({
             replacement: [
                 {
                     match: /(roles:\i(?=.+?(\i)\(!0\)[,;]\i\({action:"EXPAND_ROLES"}\)).+?\[\i,\2\]=\i\.useState\()!1\)/,
-                    replace: (_, rest, setExpandedRoles) => `${rest}!0)`
+                    replace: (_, rest, setExpandedRoles) => `${rest}!0)`,
                 },
                 {
                     // Fix not calculating non-expanded roles because the above patch makes the default "expanded",
                     // which makes the collapse button never show up and calculation never occur
                     match: /(?<=useLayoutEffect\(\(\)=>{if\()\i/,
-                    replace: isExpanded => "false"
-                }
-            ]
-        }
-    ]
+                    replace: isExpanded => "false",
+                },
+            ],
+        },
+    ],
 });

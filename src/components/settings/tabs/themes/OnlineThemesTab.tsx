@@ -16,28 +16,37 @@ export function OnlineThemesTab() {
 
     // When the user leaves the online theme textbox, update the settings
     function onBlur() {
-        settings.themeLinks = [...new Set(
-            themeText
-                .trim()
-                .split(/\n+/)
-                .map(s => s.trim())
-                .filter(Boolean)
-        )];
+        settings.themeLinks = [
+            ...new Set(
+                themeText
+                    .trim()
+                    .split(/\n+/)
+                    .map(s => s.trim())
+                    .filter(Boolean),
+            ),
+        ];
     }
 
     return (
         <>
             <Card className={classes("vc-warning-card", Margins.bottom16)}>
                 <Forms.FormText size="md">
-                    This section is for advanced users. If you are having difficulties using it, use the
-                    Local Themes tab instead.
+                    This section is for advanced users. If you are having
+                    difficulties using it, use the Local Themes tab instead.
                 </Forms.FormText>
             </Card>
             <Card className="vc-settings-card">
-                <Forms.FormTitle tag="h5">Paste links to css files here</Forms.FormTitle>
+                <Forms.FormTitle tag="h5">
+                    Paste links to css files here
+                </Forms.FormTitle>
                 <Forms.FormText>One link per line</Forms.FormText>
-                <Forms.FormText>You can prefix lines with @light or @dark to toggle them based on your Discord theme</Forms.FormText>
-                <Forms.FormText>Make sure to use direct links to files (raw or github.io)!</Forms.FormText>
+                <Forms.FormText>
+                    You can prefix lines with @light or @dark to toggle them
+                    based on your Discord theme
+                </Forms.FormText>
+                <Forms.FormText>
+                    Make sure to use direct links to files (raw or github.io)!
+                </Forms.FormText>
             </Card>
 
             <section>

@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { NavContextMenuPatchCallback } from "@api/ContextMenu";
 import { definePluginSettings } from "@api/Settings";
@@ -79,14 +67,19 @@ export const settings = definePluginSettings({
     },
 });
 
-
-const imageContextMenuPatch: NavContextMenuPatchCallback = (children, props) => {
+const imageContextMenuPatch: NavContextMenuPatchCallback = (
+    children,
+    props,
+) => {
     // Discord re-uses the image context menu for links to for the copy and open buttons
     if ("href" in props) return;
     // emojis in user statuses
     if (props.target?.classList?.contains("emoji")) return;
 
-    const { square, nearestNeighbour } = settings.use(["square", "nearestNeighbour"]);
+    const { square, nearestNeighbour } = settings.use([
+        "square",
+        "nearestNeighbour",
+    ]);
 
     children.push(
         <Menu.MenuGroup id="image-zoom">
@@ -116,7 +109,10 @@ const imageContextMenuPatch: NavContextMenuPatchCallback = (children, props) => 
                         minValue={1}
                         maxValue={50}
                         value={settings.store.zoom}
-                        onChange={debounce((value: number) => settings.store.zoom = value, 100)}
+                        onChange={debounce(
+                            (value: number) => (settings.store.zoom = value),
+                            100,
+                        )}
                     />
                 )}
             />
@@ -130,7 +126,10 @@ const imageContextMenuPatch: NavContextMenuPatchCallback = (children, props) => 
                         minValue={50}
                         maxValue={1000}
                         value={settings.store.size}
-                        onChange={debounce((value: number) => settings.store.size = value, 100)}
+                        onChange={debounce(
+                            (value: number) => (settings.store.size = value),
+                            100,
+                        )}
                     />
                 )}
             />
@@ -144,18 +143,23 @@ const imageContextMenuPatch: NavContextMenuPatchCallback = (children, props) => 
                         minValue={0.1}
                         maxValue={5}
                         value={settings.store.zoomSpeed}
-                        onChange={debounce((value: number) => settings.store.zoomSpeed = value, 100)}
+                        onChange={debounce(
+                            (value: number) =>
+                                (settings.store.zoomSpeed = value),
+                            100,
+                        )}
                         renderValue={(value: number) => `${value.toFixed(3)}x`}
                     />
                 )}
             />
-        </Menu.MenuGroup>
+        </Menu.MenuGroup>,
     );
 };
 
 export default definePlugin({
     name: "ImageZoom",
-    description: "Lets you zoom in to images and gifs. Use scroll wheel to zoom in and shift + scroll wheel to increase lens radius / size",
+    description:
+        "Lets you zoom in to images and gifs. Use scroll wheel to zoom in and shift + scroll wheel to increase lens radius / size",
     authors: [Devs.Aria],
     tags: ["ImageUtilities"],
 
@@ -167,21 +171,22 @@ export default definePlugin({
             replacement: [
                 {
                     match: /className:\i\.media,/,
-                    replace: `id:"${ELEMENT_ID}",$&`
+                    replace: `id:"${ELEMENT_ID}",$&`,
                 },
                 {
                     match: /(?<=null!=(\i)\?.{0,20})\i\.\i,{children:\1/,
-                    replace: "'div',{onClick:e=>e.stopPropagation(),children:$1"
-                }
-            ]
+                    replace:
+                        "'div',{onClick:e=>e.stopPropagation(),children:$1",
+                },
+            ],
         },
         // Make media viewer options not hide when zoomed in with the default Discord feature
         {
             find: '="FOCUS_SENSITIVE",',
             replacement: {
                 match: /(?<=\.hidden]:)\i/,
-                replace: "false"
-            }
+                replace: "false",
+            },
         },
 
         {
@@ -189,7 +194,7 @@ export default definePlugin({
             replacement: [
                 {
                     match: /placeholderVersion:\i,(?=.{0,50}children:)/,
-                    replace: "...$self.makeProps(this),$&"
+                    replace: "...$self.makeProps(this),$&",
                 },
 
                 {
@@ -199,24 +204,26 @@ export default definePlugin({
 
                 {
                     match: /componentWillUnmount\(\){/,
-                    replace: "$&$self.unMountMagnifier();"
+                    replace: "$&$self.unMountMagnifier();",
                 },
 
                 {
                     match: /componentDidUpdate\(\i\){/,
-                    replace: "$&$self.updateMagnifier(this);"
-                }
-            ]
-        }
+                    replace: "$&$self.updateMagnifier(this);",
+                },
+            ],
+        },
     ],
 
     settings,
     contextMenus: {
-        "image-context": imageContextMenuPatch
+        "image-context": imageContextMenuPatch,
     },
 
     // to stop from rendering twice /shrug
-    currentMagnifierElement: null as React.FunctionComponentElement<MagnifierProps & JSX.IntrinsicAttributes> | null,
+    currentMagnifierElement: null as React.FunctionComponentElement<
+        MagnifierProps & JSX.IntrinsicAttributes
+    > | null,
     element: null as HTMLDivElement | null,
 
     Magnifier,
@@ -235,7 +242,13 @@ export default definePlugin({
         try {
             if (instance.props.id === ELEMENT_ID) {
                 if (!this.currentMagnifierElement) {
-                    this.currentMagnifierElement = <Magnifier size={settings.store.size} zoom={settings.store.zoom} instance={instance} />;
+                    this.currentMagnifierElement = (
+                        <Magnifier
+                            size={settings.store.size}
+                            zoom={settings.store.zoom}
+                            instance={instance}
+                        />
+                    );
                     this.root = createRoot(this.element!);
                     this.root.render(this.currentMagnifierElement);
                 }
@@ -280,5 +293,5 @@ export default definePlugin({
         // so componenetWillUnMount gets called if Magnifier component is still alive
         this.root && this.root.unmount();
         this.element?.remove();
-    }
+    },
 });

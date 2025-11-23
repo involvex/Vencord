@@ -1,31 +1,29 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import "./style.css";
 
-import { addServerListElement, removeServerListElement, ServerListRenderPosition } from "@api/ServerList";
+import {
+    addServerListElement,
+    removeServerListElement,
+    ServerListRenderPosition,
+} from "@api/ServerList";
 import { TextButton } from "@components/Button";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
 import { Channel } from "@vencord/discord-types";
 import { findStoreLazy } from "@webpack";
-import { FluxDispatcher, GuildChannelStore, GuildStore, React, ReadStateStore } from "@webpack/common";
+import {
+    FluxDispatcher,
+    GuildChannelStore,
+    GuildStore,
+    React,
+    ReadStateStore,
+} from "@webpack/common";
 
 interface ThreadJoined {
     channel: Channel;
@@ -39,25 +37,31 @@ interface ActiveJoinedThreadsStore {
     getActiveJoinedThreadsForGuild(guildId: string): ThreadsJoinedByParent;
 }
 
-const ActiveJoinedThreadsStore: ActiveJoinedThreadsStore = findStoreLazy("ActiveJoinedThreadsStore");
+const ActiveJoinedThreadsStore: ActiveJoinedThreadsStore = findStoreLazy(
+    "ActiveJoinedThreadsStore",
+);
 
 function onClick() {
     const channels: Array<any> = [];
 
     Object.values(GuildStore.getGuilds()).forEach(guild => {
-        GuildChannelStore.getChannels(guild.id).SELECTABLE // Array<{ channel, comparator }>
+        GuildChannelStore.getChannels(guild.id)
+            .SELECTABLE // Array<{ channel, comparator }>
             .concat(GuildChannelStore.getChannels(guild.id).VOCAL) // Array<{ channel, comparator }>
             .concat(
-                Object.values(ActiveJoinedThreadsStore.getActiveJoinedThreadsForGuild(guild.id))
-                    .flatMap(threadChannels => Object.values(threadChannels))
+                Object.values(
+                    ActiveJoinedThreadsStore.getActiveJoinedThreadsForGuild(
+                        guild.id,
+                    ),
+                ).flatMap(threadChannels => Object.values(threadChannels)),
             )
-            .forEach((c: { channel: { id: string; }; }) => {
+            .forEach((c: { channel: { id: string } }) => {
                 if (!ReadStateStore.hasUnread(c.channel.id)) return;
 
                 channels.push({
                     channelId: c.channel.id,
                     messageId: ReadStateStore.lastMessageId(c.channel.id),
-                    readStateType: 0
+                    readStateType: 0,
                 });
             });
     });
@@ -65,7 +69,7 @@ function onClick() {
     FluxDispatcher.dispatch({
         type: "BULK_ACK",
         context: "APP",
-        channels: channels
+        channels: channels,
     });
 }
 
@@ -88,10 +92,16 @@ export default definePlugin({
     renderReadAllButton: ErrorBoundary.wrap(ReadAllButton, { noop: true }),
 
     start() {
-        addServerListElement(ServerListRenderPosition.Above, this.renderReadAllButton);
+        addServerListElement(
+            ServerListRenderPosition.Above,
+            this.renderReadAllButton,
+        );
     },
 
     stop() {
-        removeServerListElement(ServerListRenderPosition.Above, this.renderReadAllButton);
-    }
+        removeServerListElement(
+            ServerListRenderPosition.Above,
+            this.renderReadAllButton,
+        );
+    },
 });

@@ -13,7 +13,8 @@ const GifHostRegex = /^(.+?\.)?(tenor|giphy|imgur)\.com$/i;
 
 const settings = definePluginSettings({
     showFullUrl: {
-        description: "Show the full URL of the image instead of just the file name. Always enabled for GIFs because they usually have no meaningful file name",
+        description:
+            "Show the full URL of the image instead of just the file name. Always enabled for GIFs because they usually have no meaningful file name",
         type: OptionType.BOOLEAN,
         default: false,
     },
@@ -22,7 +23,8 @@ const settings = definePluginSettings({
 export default definePlugin({
     name: "ImageFilename",
     authors: [Devs.Ven],
-    description: "Display the file name of images & GIFs as a tooltip when hovering over them",
+    description:
+        "Display the file name of images & GIFs as a tooltip when hovering over them",
     settings,
 
     patches: [
@@ -30,8 +32,8 @@ export default definePlugin({
             find: ".clickableWrapper",
             replacement: {
                 match: /\.originalLink,href:(\i)/,
-                replace: "$&,title:$self.getTitle($1)"
-            }
+                replace: "$&,title:$self.getTitle($1)",
+            },
         },
     ],
 
@@ -39,7 +41,8 @@ export default definePlugin({
         try {
             const url = new URL(src);
             const isGif = GifHostRegex.test(url.hostname);
-            if (!isGif && !ImageExtensionRe.test(url.pathname)) return undefined;
+            if (!isGif && !ImageExtensionRe.test(url.pathname))
+                return undefined;
 
             return isGif || settings.store.showFullUrl
                 ? src
@@ -47,5 +50,5 @@ export default definePlugin({
         } catch {
             return undefined;
         }
-    }
+    },
 });

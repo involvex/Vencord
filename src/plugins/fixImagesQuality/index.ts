@@ -16,8 +16,8 @@ export default definePlugin({
             find: ".handleImageLoad)",
             replacement: {
                 match: /(?<=\i=)"webp"/,
-                replace: '"png"'
-            }
-        }
-    ]
+                replace: '"png"',
+            },
+        },
+    ],
 });

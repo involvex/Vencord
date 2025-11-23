@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { definePluginSettings } from "@api/Settings";
 import { copyToClipboard } from "@utils/clipboard";
@@ -26,7 +14,7 @@ import { ComponentDispatch } from "@webpack/common";
 
 const ctxMenuCallbacks = mapMangledModuleLazy('.tagName)==="TEXTAREA"||', {
     contextMenuCallbackWeb: filters.byCode('.tagName)==="INPUT"||'),
-    contextMenuCallbackNative: filters.byCode('.tagName)==="TEXTAREA"||')
+    contextMenuCallbackNative: filters.byCode('.tagName)==="TEXTAREA"||'),
 });
 
 async function fetchImage(url: string) {
@@ -36,19 +24,19 @@ async function fetchImage(url: string) {
     return await res.blob();
 }
 
-
 const settings = definePluginSettings({
     // This needs to be all in one setting because to enable any of these, we need to make Discord use their desktop context
     // menu handler instead of the web one, which breaks the other menus that aren't enabled
     addBack: {
         type: OptionType.BOOLEAN,
-        description: "Add back the Discord context menus for images, links and the chat input bar",
+        description:
+            "Add back the Discord context menus for images, links and the chat input bar",
         default: false,
         restartNeeded: true,
         // Web slate menu has proper spellcheck suggestions and image context menu is also pretty good,
         // so disable this by default. Vesktop just doesn't, so we force enable it there
         hidden: IS_VESKTOP,
-    }
+    },
 });
 
 const shouldAddBackMenus = () => IS_VESKTOP || settings.store.addBack;
@@ -77,7 +65,8 @@ function fixImageUrl(urlString: string) {
 
 export default definePlugin({
     name: "WebContextMenus",
-    description: "Re-adds context menus missing in the web version of Discord: Links & Images (Copy/Open Link/Image), Text Area (Copy, Cut, Paste, SpellCheck)",
+    description:
+        "Re-adds context menus missing in the web version of Discord: Links & Images (Copy/Open Link/Image), Text Area (Copy, Cut, Paste, SpellCheck)",
     authors: [Devs.Ven],
     enabledByDefault: true,
     required: IS_VESKTOP,
@@ -86,16 +75,28 @@ export default definePlugin({
 
     start() {
         if (shouldAddBackMenus()) {
-            window.removeEventListener("contextmenu", ctxMenuCallbacks.contextMenuCallbackWeb);
-            window.addEventListener("contextmenu", ctxMenuCallbacks.contextMenuCallbackNative);
+            window.removeEventListener(
+                "contextmenu",
+                ctxMenuCallbacks.contextMenuCallbackWeb,
+            );
+            window.addEventListener(
+                "contextmenu",
+                ctxMenuCallbacks.contextMenuCallbackNative,
+            );
             this.changedListeners = true;
         }
     },
 
     stop() {
         if (this.changedListeners) {
-            window.removeEventListener("contextmenu", ctxMenuCallbacks.contextMenuCallbackNative);
-            window.addEventListener("contextmenu", ctxMenuCallbacks.contextMenuCallbackWeb);
+            window.removeEventListener(
+                "contextmenu",
+                ctxMenuCallbacks.contextMenuCallbackNative,
+            );
+            window.addEventListener(
+                "contextmenu",
+                ctxMenuCallbacks.contextMenuCallbackWeb,
+            );
         }
     },
 
@@ -110,14 +111,14 @@ export default definePlugin({
                 {
                     // if (IS_DESKTOP || null == ...)
                     match: /if\(!\i\.\i\|\|null==/,
-                    replace: "if(null=="
+                    replace: "if(null==",
                 },
                 // Fix silly Discord calling the non web support copy
                 {
                     match: /\i\.\i\.copy/,
-                    replace: "Vencord.Util.copyToClipboard"
-                }
-            ]
+                    replace: "Vencord.Util.copyToClipboard",
+                },
+            ],
         },
 
         {
@@ -125,13 +126,13 @@ export default definePlugin({
             replacement: [
                 {
                     match: /(?<=(?:canSaveImage|canCopyImage)\(.{0,120}?)!\i\.isPlatformEmbedded/g,
-                    replace: "false"
+                    replace: "false",
                 },
                 {
                     match: /(?<=canCopyImage\(.+?)typeof \i\.clipboard\.copyImage/,
-                    replace: '"function"'
-                }
-            ]
+                    replace: '"function"',
+                },
+            ],
         },
         // Add back Copy & Save Image
         {
@@ -140,17 +141,19 @@ export default definePlugin({
                 {
                     // if (!IS_WEB || null ==
                     match: /!\i\.isPlatformEmbedded/,
-                    replace: "false"
+                    replace: "false",
                 },
                 {
                     match: /(?<=#{intl::COPY_IMAGE_MENU_ITEM}\),)action:/,
-                    replace: "action:()=>$self.copyImage(arguments[0]),oldAction:"
+                    replace:
+                        "action:()=>$self.copyImage(arguments[0]),oldAction:",
                 },
                 {
                     match: /(?<=#{intl::SAVE_IMAGE_MENU_ITEM}\),)action:/,
-                    replace: "action:()=>$self.saveImage(arguments[0]),oldAction:"
+                    replace:
+                        "action:()=>$self.saveImage(arguments[0]),oldAction:",
                 },
-            ]
+            ],
         },
 
         // Add back image context menu
@@ -161,8 +164,8 @@ export default definePlugin({
             replacement: {
                 // return IS_DESKTOP ? React.createElement(Menu, ...)
                 match: /return \i\.\i(?=\?|&&)/,
-                replace: "return true"
-            }
+                replace: "return true",
+            },
         },
 
         // Add back link context menu
@@ -171,8 +174,8 @@ export default definePlugin({
             predicate: shouldAddBackMenus,
             replacement: {
                 match: /if\((?="A"===\i\.tagName&&""!==\i\.textContent)/,
-                replace: "if(false&&"
-            }
+                replace: "if(false&&",
+            },
         },
 
         // Add back slate / text input context menu
@@ -181,8 +184,8 @@ export default definePlugin({
             predicate: shouldAddBackMenus,
             replacement: {
                 match: /(?<=handleContextMenu\(\i\)\{.{0,200}isPlatformEmbedded)\)/,
-                replace: "||true)"
-            }
+                replace: "||true)",
+            },
         },
         {
             find: ".SLASH_COMMAND_SUGGESTIONS_TOGGLED,{",
@@ -191,22 +194,22 @@ export default definePlugin({
                 {
                     // if (!IS_DESKTOP) return null;
                     match: /if\(!\i\.\i\)return null;/,
-                    replace: ""
+                    replace: "",
                 },
                 {
                     // Change calls to DiscordNative.clipboard to us instead
                     match: /\b\i\.\i\.(copy|cut|paste)/g,
-                    replace: "$self.$1"
-                }
-            ]
+                    replace: "$self.$1",
+                },
+            ],
         },
         {
             find: '"add-to-dictionary"',
             predicate: shouldAddBackMenus,
             replacement: {
                 match: /let\{text:\i=""/,
-                replace: "return [null,null];$&"
-            }
+                replace: "return [null,null];$&",
+            },
         },
 
         // Add back "Show My Camera" context menu
@@ -214,40 +217,39 @@ export default definePlugin({
             find: '"MediaEngineWebRTC");',
             replacement: {
                 match: /supports\(\i\)\{switch\(\i\)\{(case (\i).\i)/,
-                replace: "$&.DISABLE_VIDEO:return true;$1"
-            }
+                replace: "$&.DISABLE_VIDEO:return true;$1",
+            },
         },
         {
             find: "#{intl::SEARCH_WITH_GOOGLE}",
             replacement: {
                 match: /\i\.isPlatformEmbedded/,
-                replace: "true"
-            }
+                replace: "true",
+            },
         },
         {
             find: "#{intl::COPY}),hint:",
             replacement: [
                 {
                     match: /\i\.isPlatformEmbedded/,
-                    replace: "true"
+                    replace: "true",
                 },
                 {
                     match: /\i\.\i\.copy(?=\(\i)/,
-                    replace: "Vencord.Util.copyToClipboard"
-                }
+                    replace: "Vencord.Util.copyToClipboard",
+                },
             ],
             all: true,
-            noWarn: true
+            noWarn: true,
         },
         // Automod add filter words
         {
             find: '("interactionUsernameProfile',
-            replacement:
-            {
+            replacement: {
                 match: /\i\.isPlatformEmbedded(?=.{0,50}\.tagName)/,
-                replace: "true"
+                replace: "true",
             },
-        }
+        },
     ],
 
     async copyImage(url: string) {
@@ -271,13 +273,16 @@ export default definePlugin({
         }
 
         if (IS_VESKTOP && VesktopNative.clipboard) {
-            VesktopNative.clipboard.copyImage(await imageData.arrayBuffer(), url);
+            VesktopNative.clipboard.copyImage(
+                await imageData.arrayBuffer(),
+                url,
+            );
             return;
         } else {
             navigator.clipboard.write([
                 new ClipboardItem({
-                    "image/png": imageData
-                })
+                    "image/png": imageData,
+                }),
             ]);
         }
     },
@@ -313,7 +318,11 @@ export default definePlugin({
         const data = new DataTransfer();
         for (const type of clip.types) {
             if (type === "image/png") {
-                const file = new File([await clip.getType(type)], "unknown.png", { type });
+                const file = new File(
+                    [await clip.getType(type)],
+                    "unknown.png",
+                    { type },
+                );
                 data.items.add(file);
             } else if (type === "text/plain") {
                 const blob = await clip.getType(type);
@@ -323,8 +332,8 @@ export default definePlugin({
 
         document.dispatchEvent(
             new ClipboardEvent("paste", {
-                clipboardData: data
-            })
+                clipboardData: data,
+            }),
         );
-    }
+    },
 });

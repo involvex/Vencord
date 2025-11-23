@@ -7,7 +7,12 @@
 import { DataStore } from "@api/index";
 import { Logger } from "@utils/Logger";
 import { openModal } from "@utils/modal";
-import { OAuth2AuthorizeModal, showToast, Toasts, UserStore } from "@webpack/common";
+import {
+    OAuth2AuthorizeModal,
+    showToast,
+    Toasts,
+    UserStore,
+} from "@webpack/common";
 
 import { ReviewDBAuth } from "./entities";
 
@@ -16,7 +21,7 @@ const DATA_STORE_KEY = "rdb-auth";
 export let Auth: ReviewDBAuth = {};
 
 export async function initAuth() {
-    Auth = await getAuth() ?? {};
+    Auth = (await getAuth()) ?? {};
 }
 
 export async function getAuth(): Promise<ReviewDBAuth | undefined> {
@@ -42,7 +47,7 @@ export async function updateAuth(newAuth: ReviewDBAuth) {
 }
 
 export function authorize(callback?: any) {
-    openModal(props =>
+    openModal(props => (
         <OAuth2AuthorizeModal
             {...props}
             scopes={["identify"]}
@@ -56,12 +61,15 @@ export function authorize(callback?: any) {
                     const url = new URL(response.location);
                     url.searchParams.append("clientMod", "vencord");
                     const res = await fetch(url, {
-                        headers: { Accept: "application/json" }
+                        headers: { Accept: "application/json" },
                     });
 
                     if (!res.ok) {
                         const { message } = await res.json();
-                        showToast(message || "An error occured while authorizing", Toasts.Type.FAILURE);
+                        showToast(
+                            message || "An error occured while authorizing",
+                            Toasts.Type.FAILURE,
+                        );
                         return;
                     }
 
@@ -74,5 +82,5 @@ export function authorize(callback?: any) {
                 }
             }}
         />
-    );
+    ));
 }

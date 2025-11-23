@@ -1,6 +1,9 @@
 #vc-spotify-player {
     padding: 12px;
-    background: var(--bg-overlay-floating, var(--background-base-low, var(--background-base-lower-alt)));
+    background: var(
+        --bg-overlay-floating,
+        var(--background-base-low, var(--background-base-lower-alt))
+    );
     margin: 0;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -8,8 +11,16 @@
 
     /* so custom themes can easily change it */
     --vc-spotify-green: var(--spotify, #1db954);
-    --vc-spotify-green-90: color-mix(in hsl, var(--vc-spotify-green), transparent 90%);
-    --vc-spotify-green-80: color-mix(in hsl, var(--vc-spotify-green), transparent 80%);
+    --vc-spotify-green-90: color-mix(
+        in hsl,
+        var(--vc-spotify-green),
+        transparent 90%
+    );
+    --vc-spotify-green-80: color-mix(
+        in hsl,
+        var(--vc-spotify-green),
+        transparent 80%
+    );
 }
 
 .theme-light #vc-spotify-player {
@@ -190,7 +201,7 @@
     /* these importants are necessary, it applies a width and height through inline styles */
     height: 16px !important;
     width: 16px !important;
-    margin-top: calc(17px/-2 + var(--bar-offset)/2);
+    margin-top: calc(17px / -2 + var(--bar-offset) / 2);
     margin-left: -0.5px;
     background-color: var(--interactive-active);
     border-color: var(--interactive-normal);

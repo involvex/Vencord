@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { definePluginSettings } from "@api/Settings";
 import { OptionType } from "@utils/types";
@@ -28,10 +16,8 @@ export const settings = definePluginSettings({
     authorize: {
         type: OptionType.COMPONENT,
         component: () => (
-            <Button onClick={() => authorize()}>
-                Authorize with ReviewDB
-            </Button>
-        )
+            <Button onClick={() => authorize()}>Authorize with ReviewDB</Button>
+        ),
     },
     notifyReviews: {
         type: OptionType.BOOLEAN,
@@ -40,7 +26,8 @@ export const settings = definePluginSettings({
     },
     showWarning: {
         type: OptionType.BOOLEAN,
-        description: "Display warning to be respectful at the top of the reviews list",
+        description:
+            "Display warning to be respectful at the top of the reviews list",
         default: true,
     },
     hideTimestamps: {
@@ -56,38 +43,47 @@ export const settings = definePluginSettings({
     buttons: {
         type: OptionType.COMPONENT,
         component: () => (
-            <div className={cl("button-grid")} >
+            <div className={cl("button-grid")}>
                 <Button onClick={openBlockModal}>Manage Blocked Users</Button>
 
                 <Button
                     color={Button.Colors.GREEN}
                     onClick={() => {
-                        VencordNative.native.openExternal("https://github.com/sponsors/mantikafasi");
+                        VencordNative.native.openExternal(
+                            "https://github.com/sponsors/mantikafasi",
+                        );
                     }}
                 >
                     Support ReviewDB development
                 </Button>
 
-                <Button onClick={async () => {
-                    let url = "https://reviewdb.mantikafasi.dev";
-                    const token = await getToken();
-                    if (token)
-                        url += "/api/redirect?token=" + encodeURIComponent(token);
+                <Button
+                    onClick={async () => {
+                        let url = "https://reviewdb.mantikafasi.dev";
+                        const token = await getToken();
+                        if (token)
+                            url +=
+                                "/api/redirect?token=" +
+                                encodeURIComponent(token);
 
-                    VencordNative.native.openExternal(url);
-                }}>
+                        VencordNative.native.openExternal(url);
+                    }}
+                >
                     ReviewDB website
                 </Button>
 
-
-                <Button onClick={() => {
-                    VencordNative.native.openExternal("https://discord.gg/eWPBSbvznt");
-                }}>
+                <Button
+                    onClick={() => {
+                        VencordNative.native.openExternal(
+                            "https://discord.gg/eWPBSbvznt",
+                        );
+                    }}
+                >
                     ReviewDB Support Server
                 </Button>
-            </div >
-        )
-    }
+            </div>
+        ),
+    },
 }).withPrivateSettings<{
     lastReviewId?: number;
     reviewsDropdownState?: boolean;

@@ -19,7 +19,12 @@ interface ThemeCardProps {
     onDelete: () => void;
 }
 
-export function ThemeCard({ theme, enabled, onChange, onDelete }: ThemeCardProps) {
+export function ThemeCard({
+    theme,
+    enabled,
+    onChange,
+    onDelete,
+}: ThemeCardProps) {
     return (
         <AddonCard
             name={theme.name}
@@ -29,21 +34,32 @@ export function ThemeCard({ theme, enabled, onChange, onDelete }: ThemeCardProps
             setEnabled={onChange}
             infoButton={
                 IS_WEB && (
-                    <div style={{ cursor: "pointer", color: "var(--status-danger" }} onClick={onDelete}>
+                    <div
+                        style={{
+                            cursor: "pointer",
+                            color: "var(--status-danger",
+                        }}
+                        onClick={onDelete}
+                    >
                         <DeleteIcon />
                     </div>
                 )
             }
             footer={
                 <Flex flexDirection="row" style={{ gap: "0.2em" }}>
-                    {!!theme.website && <Link href={theme.website}>Website</Link>}
+                    {!!theme.website && (
+                        <Link href={theme.website}>Website</Link>
+                    )}
                     {!!(theme.website && theme.invite) && " • "}
                     {!!theme.invite && (
                         <Link
                             href={`https://discord.gg/${theme.invite}`}
                             onClick={async e => {
                                 e.preventDefault();
-                                theme.invite != null && openInviteModal(theme.invite).catch(() => showToast("Invalid or expired invite"));
+                                theme.invite != null &&
+                                    openInviteModal(theme.invite).catch(() =>
+                                        showToast("Invalid or expired invite"),
+                                    );
                             }}
                         >
                             Discord Server

@@ -36,7 +36,9 @@ export default definePlugin({
                     const nameAssignments = [] as string[];
 
                     // if (t.type === m.MenuItem)
-                    const typeCheckRe = canonicalizeMatch(/\(\i\.type===(\i\.\i)\)/g);
+                    const typeCheckRe = canonicalizeMatch(
+                        /\(\i\.type===(\i\.\i)\)/g,
+                    );
                     // push({type:"item"})
                     const pushTypeRe = /type:"(\w+)"/g;
 
@@ -52,11 +54,16 @@ export default definePlugin({
                         const type = pushTypeRe.exec(m)?.[1];
                         if (type && type in nameMap) {
                             const name = nameMap[type];
-                            nameAssignments.push(`Object.defineProperty(${item},"name",{value:"${name}"})`);
+                            nameAssignments.push(
+                                `Object.defineProperty(${item},"name",{value:"${name}"})`,
+                            );
                         }
                     }
                     if (nameAssignments.length < 6) {
-                        console.warn("[MenuItemDemanglerAPI] Expected to at least remap 6 items, only remapped", nameAssignments.length);
+                        console.warn(
+                            "[MenuItemDemanglerAPI] Expected to at least remap 6 items, only remapped",
+                            nameAssignments.length,
+                        );
                     }
 
                     // Merge all our redefines with the actual module

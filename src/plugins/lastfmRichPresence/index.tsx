@@ -1,28 +1,28 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Sofia Lima
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
 import { Logger } from "@utils/Logger";
 import definePlugin, { OptionType } from "@utils/types";
-import { Activity, ActivityAssets, ActivityButton } from "@vencord/discord-types";
-import { ActivityFlags, ActivityStatusDisplayType, ActivityType } from "@vencord/discord-types/enums";
-import { ApplicationAssetUtils, FluxDispatcher, PresenceStore } from "@webpack/common";
+import {
+    Activity,
+    ActivityAssets,
+    ActivityButton,
+} from "@vencord/discord-types";
+import {
+    ActivityFlags,
+    ActivityStatusDisplayType,
+    ActivityType,
+} from "@vencord/discord-types/enums";
+import {
+    ApplicationAssetUtils,
+    FluxDispatcher,
+    PresenceStore,
+} from "@webpack/common";
 
 interface TrackData {
     name: string;
@@ -38,7 +38,7 @@ const enum NameFormat {
     SongFirst = "song-first",
     ArtistOnly = "artist",
     SongOnly = "song",
-    AlbumName = "album"
+    AlbumName = "album",
 }
 
 // Last.fm API keys are essentially public information and have no access to your account, so including one here is fine.
@@ -49,7 +49,9 @@ const LASTFM_PLACEHOLDER_IMAGE_HASH = "2a96cbd8b46e442fc41c2b86b821562f";
 const logger = new Logger("LastFMRichPresence");
 
 async function getApplicationAsset(key: string): Promise<string> {
-    return (await ApplicationAssetUtils.fetchAssetIds(DISCORD_APP_ID, [key]))[0];
+    return (
+        await ApplicationAssetUtils.fetchAssetIds(DISCORD_APP_ID, [key])
+    )[0];
 }
 
 function setActivity(activity: Activity | null) {
@@ -96,18 +98,18 @@ const settings = definePluginSettings({
         options: [
             {
                 label: "Don't show (shows generic listening message)",
-                value: "off"
+                value: "off",
             },
             {
                 label: "Show artist name",
                 value: "artist",
-                default: true
+                default: true,
             },
             {
                 label: "Show track name",
-                value: "track"
-            }
-        ]
+                value: "track",
+            },
+        ],
     },
     nameFormat: {
         description: "Show name of song and artist in status name",
@@ -116,28 +118,28 @@ const settings = definePluginSettings({
             {
                 label: "Use custom status name",
                 value: NameFormat.StatusName,
-                default: true
+                default: true,
             },
             {
                 label: "Use format 'artist - song'",
-                value: NameFormat.ArtistFirst
+                value: NameFormat.ArtistFirst,
             },
             {
                 label: "Use format 'song - artist'",
-                value: NameFormat.SongFirst
+                value: NameFormat.SongFirst,
             },
             {
                 label: "Use artist name only",
-                value: NameFormat.ArtistOnly
+                value: NameFormat.ArtistOnly,
             },
             {
                 label: "Use song name only",
-                value: NameFormat.SongOnly
+                value: NameFormat.SongOnly,
             },
             {
                 label: "Use album name (falls back to custom status text if song has no album)",
-                value: NameFormat.AlbumName
-            }
+                value: NameFormat.AlbumName,
+            },
         ],
     },
     useListeningStatus: {
@@ -152,12 +154,12 @@ const settings = definePluginSettings({
             {
                 label: "Use large Last.fm logo",
                 value: "lastfmLogo",
-                default: true
+                default: true,
             },
             {
                 label: "Use generic placeholder",
-                value: "placeholder"
-            }
+                value: "placeholder",
+            },
         ],
     },
     showLastFmLogo: {
@@ -180,7 +182,9 @@ export default definePlugin({
 
     start() {
         this.updatePresence();
-        this.updateInterval = setInterval(() => { this.updatePresence(); }, 16000);
+        this.updateInterval = setInterval(() => {
+            this.updatePresence();
+        }, 16000);
     },
 
     stop() {
@@ -188,8 +192,7 @@ export default definePlugin({
     },
 
     async fetchTrackData(): Promise<TrackData | null> {
-        if (!settings.store.username)
-            return null;
+        if (!settings.store.username) return null;
 
         try {
             const params = new URLSearchParams({
@@ -197,22 +200,26 @@ export default definePlugin({
                 api_key: settings.store.apiKey || API_KEY,
                 user: settings.store.username,
                 limit: "1",
-                format: "json"
+                format: "json",
             });
 
-            const res = await fetch(`https://ws.audioscrobbler.com/2.0/?${params}`);
+            const res = await fetch(
+                `https://ws.audioscrobbler.com/2.0/?${params}`,
+            );
             if (!res.ok) throw `${res.status} ${res.statusText}`;
 
             const json = await res.json();
             if (json.error) {
-                logger.error("Error from Last.fm API", `${json.error}: ${json.message}`);
+                logger.error(
+                    "Error from Last.fm API",
+                    `${json.error}: ${json.message}`,
+                );
                 return null;
             }
 
             const trackData = json.recenttracks?.track[0];
 
-            if (!trackData?.["@attr"]?.nowplaying)
-                return null;
+            if (!trackData?.["@attr"]?.nowplaying) return null;
 
             // why does the json api have xml structure
             return {
@@ -220,7 +227,9 @@ export default definePlugin({
                 album: trackData.album["#text"],
                 artist: trackData.artist["#text"] || "Unknown",
                 url: trackData.url,
-                imageUrl: trackData.image?.find((x: any) => x.size === "large")?.["#text"]
+                imageUrl: trackData.image?.find(
+                    (x: any) => x.size === "large",
+                )?.["#text"],
             };
         } catch (e) {
             logger.error("Failed to query Last.fm API", e);
@@ -234,22 +243,34 @@ export default definePlugin({
     },
 
     getLargeImage(track: TrackData): string | undefined {
-        if (track.imageUrl && !track.imageUrl.includes(LASTFM_PLACEHOLDER_IMAGE_HASH))
+        if (
+            track.imageUrl &&
+            !track.imageUrl.includes(LASTFM_PLACEHOLDER_IMAGE_HASH)
+        )
             return track.imageUrl;
 
-        if (settings.store.missingArt === "placeholder")
-            return "placeholder";
+        if (settings.store.missingArt === "placeholder") return "placeholder";
     },
 
     async getActivity(): Promise<Activity | null> {
         if (settings.store.hideWithActivity) {
-            if (PresenceStore.getActivities().some(a => a.application_id !== DISCORD_APP_ID)) {
+            if (
+                PresenceStore.getActivities().some(
+                    a => a.application_id !== DISCORD_APP_ID,
+                )
+            ) {
                 return null;
             }
         }
 
         if (settings.store.hideWithSpotify) {
-            if (PresenceStore.getActivities().some(a => a.type === ActivityType.LISTENING && a.application_id !== DISCORD_APP_ID)) {
+            if (
+                PresenceStore.getActivities().some(
+                    a =>
+                        a.type === ActivityType.LISTENING &&
+                        a.application_id !== DISCORD_APP_ID,
+                )
+            ) {
                 // there is already music status because of Spotify or richerCider (probably more)
                 return null;
             }
@@ -259,18 +280,19 @@ export default definePlugin({
         if (!trackData) return null;
 
         const largeImage = this.getLargeImage(trackData);
-        const assets: ActivityAssets = largeImage ?
-            {
-                large_image: await getApplicationAsset(largeImage),
-                large_text: trackData.album || undefined,
-                ...(settings.store.showLastFmLogo && {
-                    small_image: await getApplicationAsset("lastfm-small"),
-                    small_text: "Last.fm"
-                }),
-            } : {
-                large_image: await getApplicationAsset("lastfm-large"),
-                large_text: trackData.album || undefined,
-            };
+        const assets: ActivityAssets = largeImage
+            ? {
+                  large_image: await getApplicationAsset(largeImage),
+                  large_text: trackData.album || undefined,
+                  ...(settings.store.showLastFmLogo && {
+                      small_image: await getApplicationAsset("lastfm-small"),
+                      small_text: "Last.fm",
+                  }),
+              }
+            : {
+                  large_image: await getApplicationAsset("lastfm-large"),
+                  large_text: trackData.album || undefined,
+              };
 
         const buttons: ActivityButton[] = [];
 
@@ -304,9 +326,9 @@ export default definePlugin({
             details: trackData.name,
             state: trackData.artist,
             status_display_type: {
-                "off": ActivityStatusDisplayType.NAME,
-                "artist": ActivityStatusDisplayType.STATE,
-                "track": ActivityStatusDisplayType.DETAILS
+                off: ActivityStatusDisplayType.NAME,
+                artist: ActivityStatusDisplayType.STATE,
+                track: ActivityStatusDisplayType.DETAILS,
             }[settings.store.statusDisplayType],
 
             assets,
@@ -316,7 +338,9 @@ export default definePlugin({
                 button_urls: buttons.map(v => v.url),
             },
 
-            type: settings.store.useListeningStatus ? ActivityType.LISTENING : ActivityType.PLAYING,
+            type: settings.store.useListeningStatus
+                ? ActivityType.LISTENING
+                : ActivityType.PLAYING,
             flags: ActivityFlags.INSTANCE,
         };
 
@@ -330,5 +354,5 @@ export default definePlugin({
         }
 
         return activity;
-    }
+    },
 });

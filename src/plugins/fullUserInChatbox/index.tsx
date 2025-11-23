@@ -22,7 +22,8 @@ interface UserMentionComponentProps {
 
 export default definePlugin({
     name: "FullUserInChatbox",
-    description: "Makes the user mention in the chatbox have more functionalities, like left/right clicking",
+    description:
+        "Makes the user mention in the chatbox have more functionalities, like left/right clicking",
     authors: [Devs.sadan],
 
     patches: [
@@ -30,24 +31,33 @@ export default definePlugin({
             find: ':"text":',
             replacement: {
                 match: /(hidePersonalInformation\).+?)(if\(null!=\i\){.+?return \i)(?=})/,
-                replace: "$1return $self.UserMentionComponent({...arguments[0],originalComponent:()=>{$2}});"
-            }
-        }
+                replace:
+                    "$1return $self.UserMentionComponent({...arguments[0],originalComponent:()=>{$2}});",
+            },
+        },
     ],
 
-    UserMentionComponent: ErrorBoundary.wrap((props: UserMentionComponentProps) => {
-        const user = useStateFromStores([UserStore], () => UserStore.getUser(props.id));
-        if (user == null) {
-            return props.originalComponent();
-        }
+    UserMentionComponent: ErrorBoundary.wrap(
+        (props: UserMentionComponentProps) => {
+            const user = useStateFromStores([UserStore], () =>
+                UserStore.getUser(props.id),
+            );
+            if (user == null) {
+                return props.originalComponent();
+            }
 
-        return <UserMentionComponent
-            // This seems to be constant
-            className="mention"
-            userId={props.id}
-            channelId={props.channelId}
-        />;
-    }, {
-        fallback: ({ wrappedProps: { originalComponent } }) => originalComponent()
-    })
+            return (
+                <UserMentionComponent
+                    // This seems to be constant
+                    className="mention"
+                    userId={props.id}
+                    channelId={props.channelId}
+                />
+            );
+        },
+        {
+            fallback: ({ wrappedProps: { originalComponent } }) =>
+                originalComponent(),
+        },
+    ),
 });

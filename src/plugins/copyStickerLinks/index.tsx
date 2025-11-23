@@ -1,22 +1,13 @@
 /*
- * Vencord, a modification for Discord's desktop app
+ * Vencord, a Discord client mod
  * Copyright (c) 2025 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
-import { findGroupChildrenByChildId, NavContextMenuPatchCallback } from "@api/ContextMenu";
+import {
+    findGroupChildrenByChildId,
+    NavContextMenuPatchCallback,
+} from "@api/ContextMenu";
 import { Devs } from "@utils/constants";
 import { copyWithToast } from "@utils/misc";
 import definePlugin from "@utils/types";
@@ -43,14 +34,18 @@ function buildMenuItem(sticker: PartialSticker, addBottomSeparator: boolean) {
                     id="vc-copy-sticker-link"
                     key="vc-copy-sticker-link"
                     label="Copy Link"
-                    action={() => copyWithToast(getUrl(sticker), "Link copied!")}
+                    action={() =>
+                        copyWithToast(getUrl(sticker), "Link copied!")
+                    }
                 />
 
                 <Menu.MenuItem
                     id="vc-open-sticker-link"
                     key="vc-open-sticker-link"
                     label="Open Link"
-                    action={() => VencordNative.native.openExternal(getUrl(sticker))}
+                    action={() =>
+                        VencordNative.native.openExternal(getUrl(sticker))
+                    }
                 />
             </Menu.MenuGroup>
             {addBottomSeparator && <Menu.MenuSeparator />}
@@ -60,26 +55,42 @@ function buildMenuItem(sticker: PartialSticker, addBottomSeparator: boolean) {
 
 const messageContextMenuPatch: NavContextMenuPatchCallback = (
     children,
-    { favoriteableId, favoriteableType, message }: { favoriteableId: string; favoriteableType: string; message: Message; }
+    {
+        favoriteableId,
+        favoriteableType,
+        message,
+    }: { favoriteableId: string; favoriteableType: string; message: Message },
 ) => {
     if (!favoriteableId || favoriteableType !== "sticker") return;
 
     const sticker = message.stickerItems.find(s => s.id === favoriteableId);
     if (!sticker?.format_type) return;
 
-    const idx = children.findIndex(c => Array.isArray(c) && findGroupChildrenByChildId("vc-copy-sticker-url", c) != null);
+    const idx = children.findIndex(
+        c =>
+            Array.isArray(c) &&
+            findGroupChildrenByChildId("vc-copy-sticker-url", c) != null,
+    );
 
     children.splice(idx, 0, buildMenuItem(sticker, idx !== -1));
 };
 
-const expressionPickerPatch: NavContextMenuPatchCallback = (children, props: { target: HTMLElement; }) => {
+const expressionPickerPatch: NavContextMenuPatchCallback = (
+    children,
+    props: { target: HTMLElement },
+) => {
     const id = props?.target?.dataset?.id;
     if (!id) return;
     if (props.target.className?.includes("lottieCanvas")) return;
 
     const sticker = StickersStore.getStickerById(id);
     if (sticker) {
-        children.push(buildMenuItem(sticker, Vencord.Plugins.isPluginEnabled(ExpressionClonerPlugin.name)));
+        children.push(
+            buildMenuItem(
+                sticker,
+                Vencord.Plugins.isPluginEnabled(ExpressionClonerPlugin.name),
+            ),
+        );
     }
 };
 
@@ -88,7 +99,7 @@ export default definePlugin({
     description: "Adds the ability to copy & open Sticker links",
     authors: [Devs.Ven, Devs.Byeoon],
     contextMenus: {
-        "message": messageContextMenuPatch,
-        "expression-picker": expressionPickerPatch
-    }
+        message: messageContextMenuPatch,
+        "expression-picker": expressionPickerPatch,
+    },
 });

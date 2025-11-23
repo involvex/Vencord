@@ -10,13 +10,19 @@ import { getCurrentVoice, settings } from "./settings";
 
 // TODO: replace by [Object.groupBy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/groupBy) once it has more maturity
 
-function groupBy<T extends object, K extends PropertyKey>(arr: T[], fn: (obj: T) => K) {
-    return arr.reduce((acc, obj) => {
-        const value = fn(obj);
-        acc[value] ??= [];
-        acc[value].push(obj);
-        return acc;
-    }, {} as Record<K, T[]>);
+function groupBy<T extends object, K extends PropertyKey>(
+    arr: T[],
+    fn: (obj: T) => K,
+) {
+    return arr.reduce(
+        (acc, obj) => {
+            const value = fn(obj);
+            acc[value] ??= [];
+            acc[value].push(obj);
+            return acc;
+        },
+        {} as Record<K, T[]>,
+    );
 }
 
 interface PickerProps {
@@ -37,7 +43,7 @@ function SimplePicker({ voice, voices }: PickerProps) {
             maxVisibleItems={5}
             options={options}
             value={options.find(o => o.value === voice)}
-            onChange={v => settings.store.voice = v}
+            onChange={v => (settings.store.voice = v)}
             closeOnSelect
         />
     );
@@ -46,7 +52,10 @@ function SimplePicker({ voice, voices }: PickerProps) {
 const languageNames = new Intl.DisplayNames(["en"], { type: "language" });
 
 function ComplexPicker({ voice, voices }: PickerProps) {
-    const groupedVoices = useMemo(() => groupBy(voices, voice => voice.lang), [voices]);
+    const groupedVoices = useMemo(
+        () => groupBy(voices, voice => voice.lang),
+        [voices],
+    );
 
     const languageNameMapping = useMemo(() => {
         const list = [] as Record<"name" | "friendlyName", string>[];
@@ -57,13 +66,15 @@ function ComplexPicker({ voice, voices }: PickerProps) {
                 if (friendlyName) {
                     list.push({ name, friendlyName });
                 }
-            } catch { }
+            } catch {}
         }
 
         return list;
     }, [groupedVoices]);
 
-    const [selectedLanguage, setSelectedLanguage] = useState(() => getCurrentVoice()?.lang ?? languageNameMapping[0].name);
+    const [selectedLanguage, setSelectedLanguage] = useState(
+        () => getCurrentVoice()?.lang ?? languageNameMapping[0].name,
+    );
 
     if (languageNameMapping.length === 1) {
         return (
@@ -78,7 +89,7 @@ function ComplexPicker({ voice, voices }: PickerProps) {
 
     const languageOptions = languageNameMapping.map(l => ({
         label: l.friendlyName,
-        value: l.name
+        value: l.name,
     }));
 
     return (
@@ -87,20 +98,18 @@ function ComplexPicker({ voice, voices }: PickerProps) {
             <SearchableSelect
                 placeholder="Select a language"
                 options={languageOptions}
-                value={languageOptions.find(l => l.value === selectedLanguage)}
+                value={languageOptions.find(
+                    l => l.value === selectedLanguage,
+                )}
                 onChange={v => setSelectedLanguage(v)}
                 maxVisibleItems={5}
                 closeOnSelect
             />
             <Forms.FormTitle>Voice</Forms.FormTitle>
-            <SimplePicker
-                voice={voice}
-                voices={voicesForLanguage}
-            />
+            <SimplePicker voice={voice} voices={voicesForLanguage} />
         </>
     );
 }
-
 
 function VoiceSetting() {
     const voices = useMemo(() => window.speechSynthesis?.getVoices() ?? [], []);

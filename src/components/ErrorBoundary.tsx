@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { LazyComponent, LazyComponentWrapper } from "@utils/lazyReact";
 import { Logger } from "@utils/Logger";
@@ -27,9 +15,20 @@ interface Props<T = any> {
     /** Render nothing if an error occurs */
     noop?: boolean;
     /** Fallback component to render if an error occurs */
-    fallback?: React.ComponentType<React.PropsWithChildren<{ error: any; message: string; stack: string; wrappedProps: T; }>>;
+    fallback?: React.ComponentType<
+        React.PropsWithChildren<{
+            error: any;
+            message: string;
+            stack: string;
+            wrappedProps: T;
+        }>
+    >;
     /** called when an error occurs. The props property is only available if using .wrap */
-    onError?(data: { error: Error, errorInfo: React.ErrorInfo, props: T; }): void;
+    onError?(data: {
+        error: Error;
+        errorInfo: React.ErrorInfo;
+        props: T;
+    }): void;
     /** Custom error message */
     message?: string;
 
@@ -48,11 +47,12 @@ const NO_ERROR = {};
 const ErrorBoundary = LazyComponent(() => {
     // This component is used in a lot of files which end up importing other Webpack commons and causing circular imports.
     // For this reason, use a non import access here.
-    return class ErrorBoundary extends Vencord.Webpack.Common.React.PureComponent<React.PropsWithChildren<Props>> {
+    return class ErrorBoundary extends Vencord.Webpack.Common.React
+        .PureComponent<React.PropsWithChildren<Props>> {
         state = {
             error: NO_ERROR as any,
             stack: "",
-            message: ""
+            message: "",
         };
 
         static getDerivedStateFromError(error: any) {
@@ -63,7 +63,9 @@ const ErrorBoundary = LazyComponent(() => {
                 const eolIdx = stack.indexOf("\n");
                 if (eolIdx !== -1) {
                     message = stack.slice(0, eolIdx);
-                    stack = stack.slice(eolIdx + 1).replace(/https:\/\/\S+\/assets\//g, "");
+                    stack = stack
+                        .slice(eolIdx + 1)
+                        .replace(/https:\/\/\S+\/assets\//g, "");
                 }
             }
 
@@ -71,8 +73,16 @@ const ErrorBoundary = LazyComponent(() => {
         }
 
         componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-            this.props.onError?.({ error, errorInfo, props: this.props.wrappedProps });
-            logger.error(`${this.props.message || "A component threw an Error"}\n`, error, errorInfo.componentStack);
+            this.props.onError?.({
+                error,
+                errorInfo,
+                props: this.props.wrappedProps,
+            });
+            logger.error(
+                `${this.props.message || "A component threw an Error"}\n`,
+                error,
+                errorInfo.componentStack,
+            );
         }
 
         get isNoop() {
@@ -95,7 +105,9 @@ const ErrorBoundary = LazyComponent(() => {
                     </this.props.fallback>
                 );
 
-            const msg = this.props.message || "An error occurred while rendering this Component. More info can be found below and in your console.";
+            const msg =
+                this.props.message ||
+                "An error occurred while rendering this Component. More info can be found below and in your console.";
 
             return (
                 <ErrorCard style={{ overflow: "hidden" }}>
@@ -113,10 +125,14 @@ const ErrorBoundary = LazyComponent(() => {
             );
         }
     };
-}) as
-    LazyComponentWrapper<React.ComponentType<React.PropsWithChildren<Props>> & {
-        wrap<T extends object = any>(Component: React.ComponentType<T>, errorBoundaryProps?: Omit<Props<T>, "wrappedProps">): React.FunctionComponent<T>;
-    }>;
+}) as LazyComponentWrapper<
+    React.ComponentType<React.PropsWithChildren<Props>> & {
+        wrap<T extends object = any>(
+            Component: React.ComponentType<T>,
+            errorBoundaryProps?: Omit<Props<T>, "wrappedProps">,
+        ): React.FunctionComponent<T>;
+    }
+>;
 
 ErrorBoundary.wrap = (Component, errorBoundaryProps) => props => (
     <ErrorBoundary {...errorBoundaryProps} wrappedProps={props}>

@@ -10,15 +10,19 @@ import { Forms, Parser, TextInput, useEffect, useState } from "@webpack/common";
 
 const RegexGuide = {
     "\\i": "Special regex escape sequence that matches identifiers (varnames, classnames, etc.)",
-    "$$": "Insert a $",
+    $$: "Insert a $",
     "$&": "Insert the entire match",
     "$`\u200b": "Insert the substring before the match",
     "$'": "Insert the substring after the match",
-    "$n": "Insert the nth capturing group ($1, $2...)",
-    "$self": "Insert the plugin instance",
+    $n: "Insert the nth capturing group ($1, $2...)",
+    $self: "Insert the plugin instance",
 } as const;
 
-export function ReplacementInput({ replacement, setReplacement, replacementError }) {
+export function ReplacementInput({
+    replacement,
+    setReplacement,
+    replacementError,
+}) {
     const [isFunc, setIsFunc] = useState(false);
     const [error, setError] = useState<string>();
 
@@ -28,11 +32,8 @@ export function ReplacementInput({ replacement, setReplacement, replacementError
         if (isFunc) {
             try {
                 const func = (0, eval)(v);
-                if (typeof func === "function")
-                    setReplacement(() => func);
-
-                else
-                    setError("Replacement must be a function");
+                if (typeof func === "function") setReplacement(() => func);
+                else setError("Replacement must be a function");
             } catch (e) {
                 setReplacement(v);
                 setError((e as Error).message);
@@ -43,10 +44,8 @@ export function ReplacementInput({ replacement, setReplacement, replacementError
     }
 
     useEffect(() => {
-        if (isFunc)
-            onChange(replacement);
-        else
-            setError(void 0);
+        if (isFunc) onChange(replacement);
+        else setError(void 0);
     }, [isFunc]);
 
     return (
@@ -60,7 +59,9 @@ export function ReplacementInput({ replacement, setReplacement, replacementError
             />
             {!isFunc && (
                 <div>
-                    <Forms.FormTitle className={Margins.top8}>Cheat Sheet</Forms.FormTitle>
+                    <Forms.FormTitle className={Margins.top8}>
+                        Cheat Sheet
+                    </Forms.FormTitle>
 
                     {Object.entries(RegexGuide).map(([placeholder, desc]) => (
                         <Forms.FormText key={placeholder}>

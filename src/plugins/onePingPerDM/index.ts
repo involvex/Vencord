@@ -19,7 +19,7 @@ const settings = definePluginSettings({
             { label: "Both", value: "both_dms", default: true },
             { label: "User DMs", value: "user_dm" },
             { label: "Group DMs", value: "group_dm" },
-        ]
+        ],
     },
     allowMentions: {
         type: OptionType.BOOLEAN,
@@ -35,7 +35,8 @@ const settings = definePluginSettings({
 
 export default definePlugin({
     name: "OnePingPerDM",
-    description: "If unread messages are sent by a user in DMs multiple times, you'll only receive one audio ping. Read the messages to reset the limit",
+    description:
+        "If unread messages are sent by a user in DMs multiple times, you'll only receive one audio ping. Read the messages to reset the limit",
     authors: [Devs.ProffDea],
     settings,
     patches: [
@@ -44,26 +45,37 @@ export default definePlugin({
             replacement: [
                 {
                     match: /(\i\.\i\.getDesktopType\(\)===\i\.\i\.NEVER)\)/,
-                    replace: "$&if(!$self.isPrivateChannelRead(arguments[0]?.message))return;else "
+                    replace:
+                        "$&if(!$self.isPrivateChannelRead(arguments[0]?.message))return;else ",
                 },
                 {
                     match: /sound:(\i\?\i:void 0,volume:\i,onClick)/,
-                    replace: "sound:!$self.isPrivateChannelRead(arguments[0]?.message)?undefined:$1"
-                }
-            ]
-        }
+                    replace:
+                        "sound:!$self.isPrivateChannelRead(arguments[0]?.message)?undefined:$1",
+                },
+            ],
+        },
     ],
     isPrivateChannelRead(message: MessageJSON) {
         const channelType = ChannelStore.getChannel(message.channel_id)?.type;
         if (
-            (channelType !== ChannelType.DM && channelType !== ChannelType.GROUP_DM) ||
-            (channelType === ChannelType.DM && settings.store.channelToAffect === "group_dm") ||
-            (channelType === ChannelType.GROUP_DM && settings.store.channelToAffect === "user_dm") ||
-            (settings.store.allowMentions && message.mentions.some(m => m.id === UserStore.getCurrentUser().id)) ||
+            (channelType !== ChannelType.DM &&
+                channelType !== ChannelType.GROUP_DM) ||
+            (channelType === ChannelType.DM &&
+                settings.store.channelToAffect === "group_dm") ||
+            (channelType === ChannelType.GROUP_DM &&
+                settings.store.channelToAffect === "user_dm") ||
+            (settings.store.allowMentions &&
+                message.mentions.some(
+                    m => m.id === UserStore.getCurrentUser().id,
+                )) ||
             (settings.store.allowEveryone && message.mention_everyone)
         ) {
             return true;
         }
-        return ReadStateStore.getOldestUnreadMessageId(message.channel_id) === message.id;
+        return (
+            ReadStateStore.getOldestUnreadMessageId(message.channel_id) ===
+            message.id
+        );
     },
 });

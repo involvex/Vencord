@@ -16,8 +16,8 @@ export default definePlugin({
             find: "dotCycle",
             replacement: {
                 match: /focused:(\i)/g,
-                replace: (_, focused) => `_focused:${focused}=false`
-            }
-        }
-    ]
+                replace: (_, focused) => `_focused:${focused}=false`,
+            },
+        },
+    ],
 });

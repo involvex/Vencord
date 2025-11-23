@@ -1,20 +1,8 @@
 /*
- * Vencord, a modification for Discord's desktop app
- * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * Vencord, a Discord client mod
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { proxyLazy } from "@utils/lazy";
 import { Logger } from "@utils/Logger";
@@ -43,9 +31,14 @@ interface UserSettingDefinition<T> {
     userSettingsAPIName: string;
 }
 
-export const UserSettings: Record<PropertyKey, UserSettingDefinition<any>> | undefined = proxyLazyWebpack(() => {
+export const UserSettings:
+    | Record<PropertyKey, UserSettingDefinition<any>>
+    | undefined = proxyLazyWebpack(() => {
     const modId = findModuleId('"textAndImages","renderSpoilers"');
-    if (modId == null) return new Logger("UserSettingsAPI ").error("Didn't find settings module.");
+    if (modId == null)
+        return new Logger("UserSettingsAPI ").error(
+            "Didn't find settings module.",
+        );
 
     return wreq(modId as any);
 });
@@ -56,13 +49,22 @@ export const UserSettings: Record<PropertyKey, UserSettingDefinition<any>> | und
  * @param group The setting group
  * @param name The name of the setting
  */
-export function getUserSetting<T = any>(group: string, name: string): UserSettingDefinition<T> | undefined {
-    if (!Vencord.Plugins.isPluginEnabled("UserSettingsAPI")) throw new Error("Cannot use UserSettingsAPI without setting as dependency.");
+export function getUserSetting<T = any>(
+    group: string,
+    name: string,
+): UserSettingDefinition<T> | undefined {
+    if (!Vencord.Plugins.isPluginEnabled("UserSettingsAPI"))
+        throw new Error(
+            "Cannot use UserSettingsAPI without setting as dependency.",
+        );
 
     for (const key in UserSettings) {
         const userSetting = UserSettings[key];
 
-        if (userSetting.userSettingsAPIGroup === group && userSetting.userSettingsAPIName === name) {
+        if (
+            userSetting.userSettingsAPIGroup === group &&
+            userSetting.userSettingsAPIName === name
+        ) {
             return userSetting;
         }
     }
