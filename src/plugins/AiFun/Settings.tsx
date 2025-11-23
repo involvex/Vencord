@@ -23,35 +23,35 @@ export function AiFunSettingsPanel() {
     const modelOptions =
         currentSettings.aiProvider === "openai"
             ? [
-                  { label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" },
-                  { label: "GPT-4", value: "gpt-4" },
-                  { label: "GPT-4 Turbo", value: "gpt-4-turbo" },
-                  { label: "GPT-4o", value: "gpt-4o" },
-                  { label: "GPT-4o Mini", value: "gpt-4o-mini" },
-                  { label: "DALL-E 2", value: "dall-e-2" },
-                  { label: "DALL-E 3", value: "dall-e-3" },
-              ]
+                { label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" },
+                { label: "GPT-4", value: "gpt-4" },
+                { label: "GPT-4 Turbo", value: "gpt-4-turbo" },
+                { label: "GPT-4o", value: "gpt-4o" },
+                { label: "GPT-4o Mini", value: "gpt-4o-mini" },
+                { label: "DALL-E 2", value: "dall-e-2" },
+                { label: "DALL-E 3", value: "dall-e-3" },
+            ]
             : currentSettings.aiProvider === "gemini"
-              ? [
+                ? [
                     { label: "Gemini Pro", value: "gemini-pro" },
                     { label: "Gemini Pro Vision", value: "gemini-pro-vision" },
                     { label: "Gemini 1.5 Pro", value: "gemini-1.5-pro" },
                     { label: "Gemini 1.5 Flash", value: "gemini-1.5-flash" },
                 ]
-              : currentSettings.aiProvider === "claude"
-                ? [
-                      { label: "Claude 3 Opus", value: "claude-3-opus" },
-                      { label: "Claude 3 Sonnet", value: "claude-3-sonnet" },
-                      { label: "Claude 3 Haiku", value: "claude-3-haiku" },
-                  ]
-                : currentSettings.aiProvider === "cohere"
-                  ? [
-                        { label: "Command", value: "command" },
-                        { label: "Command Light", value: "command-light" },
-                        { label: "Command R", value: "command-r" },
-                        { label: "Command R+", value: "command-r-plus" },
+                : currentSettings.aiProvider === "claude"
+                    ? [
+                        { label: "Claude 3 Opus", value: "claude-3-opus" },
+                        { label: "Claude 3 Sonnet", value: "claude-3-sonnet" },
+                        { label: "Claude 3 Haiku", value: "claude-3-haiku" },
                     ]
-                  : [{ label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" }];
+                    : currentSettings.aiProvider === "cohere"
+                        ? [
+                            { label: "Command", value: "command" },
+                            { label: "Command Light", value: "command-light" },
+                            { label: "Command R", value: "command-r" },
+                            { label: "Command R+", value: "command-r-plus" },
+                        ]
+                        : [{ label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" }];
 
     const commandTypeOptions = [
         { label: "AI Meme (Image Generation)", value: "aimeme" },
@@ -85,7 +85,7 @@ export function AiFunSettingsPanel() {
     ) => {
         const cmds = currentSettings.customCommands ?? [];
         const newCmds = cmds.map((cmd: CustomCommand) =>
-            cmd.id === id ? { ...cmd, [field]: value } : cmd,
+            cmd.id === id ? { ...cmd, [field]: value ?? "" } : cmd,
         );
         currentSettings.customCommands = newCmds;
     };
@@ -171,10 +171,10 @@ export function AiFunSettingsPanel() {
 
             <Forms.FormTitle tag="h2">Model Parameters</Forms.FormTitle>
             <Forms.FormText>
-                Temperature (0-2): {currentSettings.temperature}
+                Temperature (0-2): {currentSettings.temperature ?? 0.7}
             </Forms.FormText>
             <TextInput
-                value={currentSettings.temperature.toString()}
+                value={currentSettings.temperature?.toString() || "0.7"}
                 onChange={(val: string) =>
                     (currentSettings.temperature = parseFloat(val) || 0.7)
                 }
@@ -185,10 +185,10 @@ export function AiFunSettingsPanel() {
             />
 
             <Forms.FormText>
-                Max Tokens: {currentSettings.maxTokens}
+                Max Tokens: {currentSettings.maxTokens ?? 1000}
             </Forms.FormText>
             <TextInput
-                value={currentSettings.maxTokens.toString()}
+                value={currentSettings.maxTokens?.toString() || "1000"}
                 onChange={(val: string) =>
                     (currentSettings.maxTokens = parseInt(val) || 1000)
                 }
@@ -197,9 +197,9 @@ export function AiFunSettingsPanel() {
                 max="4000"
             />
 
-            <Forms.FormText>Top P (0-1): {currentSettings.topP}</Forms.FormText>
+            <Forms.FormText>Top P (0-1): {currentSettings.topP ?? 1.0}</Forms.FormText>
             <TextInput
-                value={currentSettings.topP.toString()}
+                value={currentSettings.topP?.toString() || "1.0"}
                 onChange={(val: string) =>
                     (currentSettings.topP = parseFloat(val) || 1.0)
                 }
@@ -257,10 +257,10 @@ export function AiFunSettingsPanel() {
             />
 
             <Forms.FormText>
-                Timeout (ms): {currentSettings.timeoutMs}
+                Timeout (ms): {currentSettings.timeoutMs ?? 30000}
             </Forms.FormText>
             <TextInput
-                value={currentSettings.timeoutMs.toString()}
+                value={currentSettings.timeoutMs?.toString() || "30000"}
                 onChange={(val: string) =>
                     (currentSettings.timeoutMs = parseInt(val) || 30000)
                 }
@@ -271,53 +271,52 @@ export function AiFunSettingsPanel() {
             />
 
             <Forms.FormTitle tag="h2">Custom Commands</Forms.FormTitle>
-            {currentSettings.customCommands &&
-                currentSettings.customCommands.map((cmd: CustomCommand) => (
-                    <div
-                        key={cmd.id}
-                        style={{
-                            border: "1px solid var(--background-modifier-accent)",
-                            padding: "10px",
-                            margin: "10px 0",
-                            borderRadius: "4px",
-                        }}
+            {currentSettings.customCommands?.map((cmd: CustomCommand) => (
+                <div
+                    key={cmd.id}
+                    style={{
+                        border: "1px solid var(--background-modifier-accent)",
+                        padding: "10px",
+                        margin: "10px 0",
+                        borderRadius: "4px",
+                    }}
+                >
+                    <TextInput
+                        value={cmd.name}
+                        onChange={(val: string) =>
+                            handleCustomCommandChange(cmd.id, "name", val)
+                        }
+                        placeholder="/mycommand"
+                    />
+                    <TextInput
+                        value={cmd.description}
+                        onChange={(val: string) =>
+                            handleCustomCommandChange(
+                                cmd.id,
+                                "description",
+                                val,
+                            )
+                        }
+                        placeholder="What does this command do?"
+                    />
+                    <Forms.FormText>Command Type</Forms.FormText>
+                    <TextInput
+                        value={cmd.type}
+                        onChange={(value: string) =>
+                            handleCustomCommandChange(cmd.id, "type", value)
+                        }
+                        placeholder={commandTypeOptions
+                            .map(o => o.value)
+                            .join(" or ")}
+                    />
+                    <Button
+                        color={Button.Colors.RED}
+                        onClick={() => deleteCustomCommand(cmd.id)}
                     >
-                        <TextInput
-                            value={cmd.name}
-                            onChange={(val: string) =>
-                                handleCustomCommandChange(cmd.id, "name", val)
-                            }
-                            placeholder="/mycommand"
-                        />
-                        <TextInput
-                            value={cmd.description}
-                            onChange={(val: string) =>
-                                handleCustomCommandChange(
-                                    cmd.id,
-                                    "description",
-                                    val,
-                                )
-                            }
-                            placeholder="What does this command do?"
-                        />
-                        <Forms.FormText>Command Type</Forms.FormText>
-                        <TextInput
-                            value={cmd.type}
-                            onChange={(value: string) =>
-                                handleCustomCommandChange(cmd.id, "type", value)
-                            }
-                            placeholder={commandTypeOptions
-                                .map(o => o.value)
-                                .join(" or ")}
-                        />
-                        <Button
-                            color={Button.Colors.RED}
-                            onClick={() => deleteCustomCommand(cmd.id)}
-                        >
-                            Delete Command
-                        </Button>
-                    </div>
-                ))}
+                        Delete Command
+                    </Button>
+                </div>
+            ))}
             <Button color={Button.Colors.GREEN} onClick={addCustomCommand}>
                 Add New Custom Command
             </Button>
