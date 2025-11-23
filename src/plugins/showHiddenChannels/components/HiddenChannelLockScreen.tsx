@@ -172,7 +172,7 @@ function HiddenChannelLockScreen({ channel }: { channel: ExtendedChannel }) {
         if (Settings.plugins.PermissionsViewer.enabled) {
             setPermissions(
                 sortPermissionOverwrites(
-                    Object.values(permissionOverwrites).map(overwrite => ({
+                    Object.values(permissionOverwrites).map((overwrite) => ({
                         type: overwrite.type as PermissionType,
                         id: overwrite.id,
                         overwriteAllow: overwrite.allow,
@@ -193,7 +193,11 @@ function HiddenChannelLockScreen({ channel }: { channel: ExtendedChannel }) {
             )}
         >
             <div className={cl("container")}>
-                <img className={cl("logo")} src={HiddenChannelLogo} />
+                <img
+                    className={cl("logo")}
+                    src={HiddenChannelLogo}
+                    alt="Hidden channel lock icon"
+                />
 
                 <div className={cl("heading-container")}>
                     <Text variant="heading-xxl/bold">
@@ -216,8 +220,9 @@ function HiddenChannelLockScreen({ channel }: { channel: ExtendedChannel }) {
                                     width="32"
                                     height="32"
                                     viewBox="0 0 48 48"
-                                    aria-hidden={true}
+                                    aria-hidden="true"
                                     role="img"
+                                    aria-label="NSFW content warning"
                                 >
                                     <path
                                         fill="currentColor"
@@ -367,7 +372,7 @@ function HiddenChannelLockScreen({ channel }: { channel: ExtendedChannel }) {
                     <div className={cl("tags-container")}>
                         <Text variant="text-lg/bold">Available tags:</Text>
                         <div className={cl("tags")}>
-                            {availableTags.map(tag => (
+                            {availableTags.map((tag) => (
                                 <TagComponent tag={tag} key={tag.id} />
                             ))}
                         </div>
@@ -390,6 +395,7 @@ function HiddenChannelLockScreen({ channel }: { channel: ExtendedChannel }) {
                                         className={cl(
                                             "allowed-users-and-roles-container-permdetails-btn",
                                         )}
+                                        title="View permission details"
                                         onClick={() =>
                                             openRolesAndUsersPermissionsModal(
                                                 permissions,
@@ -404,6 +410,7 @@ function HiddenChannelLockScreen({ channel }: { channel: ExtendedChannel }) {
                                             width="24"
                                             height="24"
                                             viewBox="0 0 24 24"
+                                            aria-hidden="true"
                                         >
                                             <path
                                                 fill="currentColor"
@@ -431,6 +438,11 @@ function HiddenChannelLockScreen({ channel }: { channel: ExtendedChannel }) {
                                     className={cl(
                                         "allowed-users-and-roles-container-toggle-btn",
                                     )}
+                                    title={
+                                        defaultAllowedUsersAndRolesDropdownState
+                                            ? "Hide Allowed Users and Roles"
+                                            : "View Allowed Users and Roles"
+                                    }
                                     onClick={() =>
                                         (settings.store.defaultAllowedUsersAndRolesDropdownState =
                                             !defaultAllowedUsersAndRolesDropdownState)
@@ -445,6 +457,7 @@ function HiddenChannelLockScreen({ channel }: { channel: ExtendedChannel }) {
                                                 ? "scale(1 -1)"
                                                 : "scale(1 1)"
                                         }
+                                        aria-hidden="true"
                                     >
                                         <path
                                             fill="currentColor"

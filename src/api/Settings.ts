@@ -33,19 +33,19 @@ export interface Settings {
     transparent: boolean;
     winCtrlQ: boolean;
     macosVibrancyStyle:
-    | "content"
-    | "fullscreen-ui"
-    | "header"
-    | "hud"
-    | "menu"
-    | "popover"
-    | "selection"
-    | "sidebar"
-    | "titlebar"
-    | "tooltip"
-    | "under-page"
-    | "window"
-    | undefined;
+        | "content"
+        | "fullscreen-ui"
+        | "header"
+        | "hud"
+        | "menu"
+        | "popover"
+        | "selection"
+        | "sidebar"
+        | "titlebar"
+        | "tooltip"
+        | "under-page"
+        | "window"
+        | undefined;
     disableMinSize: boolean;
     winNativeTitleBar: boolean;
     plugins: {
@@ -278,12 +278,16 @@ export function definePluginSettings<
 }
 
 // Recursive type for generating all possible dot-notation paths through an object
-type Join<K, P> = K extends string | number ? (P extends string | number ? `${K}.${P}` : never) : never;
+type Join<K, P> = K extends string | number
+    ? P extends string | number
+        ? `${K}.${P}`
+        : never
+    : never;
 
-type Paths<T> = T extends object ? {
-    [K in keyof T]: T[K] extends object
-    ? K | Join<K, Paths<T[K]>>
-    : K
-}[keyof T] : never;
+type Paths<T> = T extends object
+    ? {
+          [K in keyof T]: T[K] extends object ? K | Join<K, Paths<T[K]>> : K;
+      }[keyof T]
+    : never;
 
 export type UseSettings<T extends object> = Paths<T>;

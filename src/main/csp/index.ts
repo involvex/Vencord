@@ -130,6 +130,9 @@ const patchCsp = (headers: PolicyMap) => {
             pushDirective(directive, "blob:", "data:", "vencord:", "vesktop:");
         }
 
+        // Add sentry-ipc protocol specifically for connect-src to fix Sentry IPC communication
+        pushDirective("connect-src", "sentry-ipc:");
+
         for (const [host, directives] of Object.entries(
             NativeSettings.store.customCspRules,
         )) {

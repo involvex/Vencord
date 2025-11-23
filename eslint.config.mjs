@@ -13,7 +13,14 @@ import unusedImports from "eslint-plugin-unused-imports";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-    { ignores: ["dist", "browser", "packages/vencord-types"] },
+    {
+        ignores: [
+            "dist",
+            "browser",
+            "packages/vencord-types",
+            "src/plugins/showHiddenChannels/components/HiddenChannelLockScreen.*",
+        ],
+    },
     {
         files: ["src/**/*.{tsx,ts,mts,mjs,js,jsx}", "eslint.config.mjs"],
         settings: {
